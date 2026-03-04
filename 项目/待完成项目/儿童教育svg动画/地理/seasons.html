@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动微课：晨昏线与四季变化（可爱版）</title>
+    <style>
+        :root {
+            /* 梦幻星空背景 */
+            --bg-dark: #2A2D5C;
+            --bg-light: #4A4E8C;
+            /* 玩具风 UI 面板 */
+            --panel-bg: #FFFFFF;
+            --panel-border: #FFD166;
+            /* 核心元素配色 (马卡龙色系) */
+            --sun-core: #FFD166;
+            --sun-ray: #FFB703;
+            --earth-water: #4BC0F8;
+            --earth-land: #84DCC6;
+            --shadow: rgba(26, 28, 67, 0.65);
+            /* 线条颜色 */
+            --line-eq: #FFFFFF;
+            --line-tropic: #FF9F1C;
+            --line-polar: #E0F2FE;
+            --text-main: #4A4A4A;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
+            color: var(--text-main);
+            font-family: 'Comic Sans MS', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .controls-wrapper {
+                width: 90vw;
+                padding: 20px 25px;
+            }
+            
+            svg {
+                width: 90vw;
+                height: auto;
+                max-width: 840px;
+                max-height: 420px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .controls-wrapper {
+                padding: 15px 20px;
+            }
+            
+            .month-labels {
+                font-size: 12px;
+                padding: 0 8px;
+            }
+            
+            .info-value {
+                font-size: 16px;
+                height: 45px;
+            }
+            
+            .info-label {
+                font-size: 12px;
+            }
+        }
+
+        .courseware-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* SVG 动画定义 */
+        @keyframes spin {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-180px); }
+        }
+        .land-group {
+            animation: spin 8s linear infinite;
+            transform: translateZ(0); /* 硬件加速 */
+        }
+
+        @keyframes sunRayRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .sun-rays {
+            animation: sunRayRotate 20s linear infinite;
+            transform-origin: -50px 0px;
+            transform: translateZ(0); /* 硬件加速 */
+        }
+
+        @keyframes floatBunny {
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(-5deg); }
+        }
+        .bunny-astro {
+            animation: floatBunny 4s ease-in-out infinite;
+            transform: translateZ(0); /* 硬件加速 */
+        }
+        
+        /* 平滑过渡效果 */
+        #tilted-earth {
+            transition: transform 0.5s ease-out;
+        }
+        
+        /* 滑块轨道悬停效果 */
+        input[type=range]::-webkit-slider-runnable-track:hover {
+            background: #E2E8F0;
+            transition: background 0.3s ease;
+        }
+
+        /* 底部玩具控制台 */
+        .controls-wrapper {
+            width: 800px;
+            background: var(--panel-bg);
+            padding: 25px 35px;
+            border-radius: 30px;
+            box-sizing: border-box;
+            border: 6px solid var(--panel-border);
+            box-shadow: 0 15px 0px rgba(0,0,0,0.1), 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* 装饰性小耳朵 */
+        .controls-wrapper::before, .controls-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            width: 40px;
+            height: 20px;
+            background: var(--panel-border);
+            border-radius: 20px 20px 0 0;
+        }
+        .controls-wrapper::before { left: 40px; }
+        .controls-wrapper::after { right: 40px; }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        /* 糖果进度条 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            z-index: 2;
+            position: relative;
+            cursor: pointer;
+        }
+        input[type=range]:focus { 
+            outline: none; 
+            /* 添加聚焦效果 */
+            box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 16px;
+            background: #F1F5F9;
+            border-radius: 10px;
+            border: 2px solid #CBD5E1;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            background: var(--sun-core);
+            border: 4px solid white;
+            cursor: grab;
+            -webkit-appearance: none;
+            margin-top: -12px;
+            box-shadow: 0 4px 10px rgba(255, 183, 3, 0.5);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input[type=range]::-webkit-slider-thumb:active { 
+            cursor: grabbing; 
+            transform: scale(1.15); 
+            box-shadow: 0 6px 15px rgba(255, 183, 3, 0.7);
+        }
+        /* 兼容其他浏览器 */
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 16px;
+            background: #F1F5F9;
+            border-radius: 10px;
+            border: 2px solid #CBD5E1;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            background: var(--sun-core);
+            border: 4px solid white;
+            cursor: grab;
+            box-shadow: 0 4px 10px rgba(255, 183, 3, 0.5);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input[type=range]::-moz-range-thumb:active { 
+            cursor: grabbing; 
+            transform: scale(1.15); 
+            box-shadow: 0 6px 15px rgba(255, 183, 3, 0.7);
+        }
+
+        .month-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #64748B;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 0 12px;
+            margin-top: 10px;
+        }
+
+        /* 可爱信息板 - 增加稳定性 */
+        .info-board {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* 顶部对齐，防止因为高度变化导致整个框跳动 */
+            width: 100%;
+            margin-top: 20px;
+            background: #F8FAFC;
+            border-radius: 20px;
+            padding: 15px 25px;
+            box-sizing: border-box;
+            border: 2px dashed #CBD5E1;
+            min-height: 100px; /* 固定最小高度 */
+            transition: all 0.3s ease;
+        }
+        
+        .info-board:hover {
+            border-color: var(--sun-core);
+            box-shadow: 0 0 15px rgba(255, 209, 102, 0.3);
+        }
+
+        .info-item { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+            flex: 1; /* 让三个板块等比平分宽度，互不挤压 */
+            padding: 0 10px;
+            transition: transform 0.2s ease;
+        }
+        
+        .info-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* 分别控制左、中、右三个模块的对齐方式 */
+        .info-item:nth-child(1) { align-items: flex-start; text-align: left; }
+        .info-item:nth-child(2) { align-items: center; text-align: center; }
+        .info-item:nth-child(3) { align-items: flex-end; text-align: right; }
+
+        .info-label { 
+            font-size: 13px; 
+            color: #94A3B8; 
+            font-weight: bold; 
+            transition: color 0.3s ease;
+        }
+        
+        .info-item:hover .info-label {
+            color: var(--sun-core);
+        }
+        
+        .info-value { 
+            font-size: 18px; 
+            font-weight: 900; 
+            color: #334155; 
+            height: 52px; /* 锁死高度：刚好能容纳两行文字 */
+            display: flex;
+            align-items: center; /* 无论是一行还是两行，都保持垂直居中 */
+            line-height: 1.4;
+            transition: all 0.3s ease;
+        }
+        
+        .info-item:hover .info-value {
+            transform: scale(1.02);
+        }
+        
+        .highlight-text { 
+            color: #FF9F1C; 
+            transition: color 0.3s ease;
+        }
+        
+        .info-item:hover .highlight-text {
+            color: var(--sun-ray);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="courseware-container">
+    
+    <!-- SVG 动画区 -->
+    <svg width="840" height="420" viewBox="0 0 840 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- 太阳光晕 -->
+            <radialGradient id="sunGradient">
+                <stop offset="30%" stop-color="#FFF3B0" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#FFF3B0" stop-opacity="0" />
+            </radialGradient>
+            <!-- 地球圆形遮罩 -->
+            <clipPath id="earth-clip">
+                <circle cx="0" cy="0" r="140" />
+            </clipPath>
+            <!-- 小兔头盔反光 -->
+            <linearGradient id="glassGlare" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fff" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+
+        <!-- 梦幻星空背景 (星星与云彩) -->
+        <g opacity="0.8">
+            <path d="M 50 100 Q 80 80 110 100 Q 140 120 170 100" fill="none" stroke="#FFF" stroke-width="2" stroke-dasharray="4 8" opacity="0.3"/>
+            <path d="M 600 350 Q 630 330 660 350 Q 690 370 720 350" fill="none" stroke="#FFF" stroke-width="2" stroke-dasharray="4 8" opacity="0.3"/>
+            <!-- 可爱的小星星 -->
+            <polygon points="120,40 125,50 135,50 127,58 130,68 120,62 110,68 113,58 105,50 115,50" fill="#FFD166" opacity="0.6" transform="scale(0.8) translate(50, 20)"/>
+            <polygon points="120,40 125,50 135,50 127,58 130,68 120,62 110,68 113,58 105,50 115,50" fill="#FFD166" opacity="0.4" transform="scale(0.5) translate(800, 600)"/>
+            <circle cx="400" cy="350" r="2" fill="#FFF"/>
+            <circle cx="750" cy="120" r="3" fill="#FFF"/>
+            <circle cx="350" cy="80" r="1.5" fill="#FFF"/>
+        </g>
+
+        <!-- 左侧：可爱的太阳公公 -->
+        <g transform="translate(-40, 210)">
+            <!-- 大光晕 -->
+            <circle cx="0" cy="0" r="260" fill="url(#sunGradient)" />
+            
+            <!-- 旋转的光芒 -->
+            <g class="sun-rays">
+                <!-- 生成多个圆润的太阳芒 -->
+                <path d="M -50 -140 L -40 -170 L -60 -170 Z" fill="var(--sun-ray)" rx="5"/>
+                <path d="M -50 140 L -40 170 L -60 170 Z" fill="var(--sun-ray)"/>
+                <path d="M 90 0 L 120 -10 L 120 10 Z" fill="var(--sun-ray)"/>
+                <path d="M -190 0 L -220 -10 L -220 10 Z" fill="var(--sun-ray)"/>
+                <path d="M 50 -100 L 70 -120 L 50 -130 Z" fill="var(--sun-ray)"/>
+                <path d="M -150 100 L -170 120 L -150 130 Z" fill="var(--sun-ray)"/>
+                <path d="M 50 100 L 70 120 L 50 130 Z" fill="var(--sun-ray)"/>
+                <path d="M -150 -100 L -170 -120 L -150 -130 Z" fill="var(--sun-ray)"/>
+            </g>
+
+            <!-- 太阳脸蛋 -->
+            <circle cx="-50" cy="0" r="110" fill="var(--sun-core)" />
+            <circle cx="-50" cy="0" r="100" fill="#FFDB7A" /> <!-- 内圈高光 -->
+            
+            <!-- 可爱的表情 -->
+            <g transform="translate(-15, -10)">
+                <!-- 眼睛 -->
+                <circle cx="-50" cy="-15" r="7" fill="#5D4037" />
+                <circle cx="-20" cy="-15" r="7" fill="#5D4037" />
+                <!-- 眼中高光 -->
+                <circle cx="-52" cy="-17" r="2.5" fill="#FFF" />
+                <circle cx="-22" cy="-17" r="2.5" fill="#FFF" />
+                <!-- 腮红 -->
+                <ellipse cx="-70" cy="5" rx="12" ry="6" fill="#FF8A8A" opacity="0.6" />
+                <ellipse cx="0" cy="5" rx="12" ry="6" fill="#FF8A8A" opacity="0.6" />
+                <!-- 笑脸嘴巴 -->
+                <path d="M -50 5 Q -35 25 -20 5" fill="none" stroke="#5D4037" stroke-width="5" stroke-linecap="round" />
+            </g>
+
+            <!-- 太阳直射光线 (可爱虚线) -->
+            <g id="direct-ray">
+                <line x1="80" y1="0" x2="440" y2="0" stroke="#FF5A5F" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 12" />
+                <polygon points="440,-8 456,0 440,8" fill="#FF5A5F" stroke-linejoin="round"/>
+                <!-- 带背景的文字框 -->
+                <rect x="220" y="-35" width="110" height="26" rx="13" fill="#FF5A5F" />
+                <text x="275" y="-17" fill="#FFF" font-size="14" font-weight="bold" text-anchor="middle">☀️ 太阳直射光</text>
+            </g>
+        </g>
+
+        <!-- 右上方：宇航员小兔 -->
+        <g class="bunny-astro" transform="translate(680, 80)">
+            <!-- 喷气背包小尾迹 -->
+            <circle cx="-30" cy="30" r="8" fill="#FFF" opacity="0.6"/>
+            <circle cx="-45" cy="40" r="5" fill="#FFF" opacity="0.4"/>
+            <!-- 身体 -->
+            <rect x="-15" y="0" width="30" height="35" rx="10" fill="#FFF" />
+            <!-- 胳膊 -->
+            <path d="M -15 10 Q -25 5 -30 20" fill="none" stroke="#FFF" stroke-width="8" stroke-linecap="round"/>
+            <path d="M 15 10 Q 25 5 30 20" fill="none" stroke="#FFF" stroke-width="8" stroke-linecap="round"/>
+            <!-- 兔耳朵 (在头盔里折叠) -->
+            <ellipse cx="-8" cy="-18" rx="5" ry="14" fill="#FFB7B2" transform="rotate(-30 -8 -18)" />
+            <ellipse cx="8" cy="-18" rx="5" ry="14" fill="#FFB7B2" transform="rotate(30 8 -18)" />
+            <!-- 头盔 -->
+            <circle cx="0" cy="-5" r="24" fill="#FFF" />
+            <circle cx="0" cy="-5" r="20" fill="#4BC0F8" opacity="0.8" />
+            <!-- 头盔玻璃反光 -->
+            <path d="M -12 -18 Q 0 -22 12 -18 Q 8 -10 -12 -10 Z" fill="url(#glassGlare)" />
+            <!-- 眼睛和嘴 -->
+            <circle cx="-6" cy="-5" r="2" fill="#1E1B4B" />
+            <circle cx="6" cy="-5" r="2" fill="#1E1B4B" />
+            <path d="M -3 -1 Q 0 2 3 -1" fill="none" stroke="#1E1B4B" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- 装饰小星星 -->
+            <text x="-40" y="-10" font-size="20">✨</text>
+        </g>
+
+        <!-- 右侧：胖乎乎的地球系统 -->
+        <g transform="translate(600, 210)">
+            
+            <!-- 1. 动态倾斜层 -->
+            <g id="tilted-earth">
+                <!-- 可爱地轴 (带小圆帽) -->
+                <line x1="0" y1="-180" x2="0" y2="180" stroke="#FFF" stroke-width="6" stroke-linecap="round" />
+                <circle cx="0" cy="-185" r="8" fill="#FF5A5F" />
+                <circle cx="0" cy="185" r="8" fill="#4BC0F8" />
+                <!-- 标签背景 -->
+                <rect x="-24" y="-215" width="48" height="20" rx="10" fill="#FF5A5F" />
+                <text x="0" y="-201" fill="#FFF" font-size="12" font-weight="bold" text-anchor="middle">北极</text>
+                
+                <!-- 地球本体 -->
+                <circle cx="0" cy="0" r="140" fill="var(--earth-water)" clip-path="url(#earth-clip)" />
+                
+                <!-- 纬线与自转陆地层 -->
+                <g clip-path="url(#earth-clip)">
+                    <!-- 自转的大陆贴图 (变得更圆润饱满) -->
+                    <g class="land-group">
+                        <!-- 第一组 -->
+                        <path d="M -100 -60 Q -50 -100 -20 -20 Q -40 40 -90 40 Z" fill="var(--earth-land)" />
+                        <circle cx="-40" cy="-50" r="15" fill="var(--earth-land)" />
+                        <path d="M 20 -30 Q 80 -60 100 10 Q 70 90 10 70 Z" fill="var(--earth-land)" />
+                        <circle cx="90" cy="50" r="20" fill="var(--earth-land)" />
+                        <!-- 第二组 (平移 180) -->
+                        <path d="M 80 -60 Q 130 -100 160 -20 Q 140 40 90 40 Z" fill="var(--earth-land)" />
+                        <circle cx="140" cy="-50" r="15" fill="var(--earth-land)" />
+                        <path d="M 200 -30 Q 260 -60 280 10 Q 250 90 190 70 Z" fill="var(--earth-land)" />
+                        <circle cx="270" cy="50" r="20" fill="var(--earth-land)" />
+                    </g>
+
+                    <!-- 关键纬线标注 (加粗、变色) -->
+                    <!-- 北极圈 -->
+                    <line x1="-140" y1="-128" x2="140" y2="-128" stroke="var(--line-polar)" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/>
+                    <!-- 北回归线 -->
+                    <line x1="-140" y1="-56" x2="140" y2="-56" stroke="var(--line-tropic)" stroke-width="3" stroke-dasharray="8 6" stroke-linecap="round"/>
+                    <!-- 赤道 (带小装饰) -->
+                    <line x1="-140" y1="0" x2="140" y2="0" stroke="var(--line-eq)" stroke-width="4" />
+                    <!-- 南回归线 -->
+                    <line x1="-140" y1="56" x2="140" y2="56" stroke="var(--line-tropic)" stroke-width="3" stroke-dasharray="8 6" stroke-linecap="round"/>
+                    <!-- 南极圈 -->
+                    <line x1="-140" y1="128" x2="140" y2="128" stroke="var(--line-polar)" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/>
+                </g>
+                
+                <!-- 微微发光的大气层 -->
+                <circle cx="0" cy="0" r="140" fill="none" stroke="#FFF" stroke-width="4" opacity="0.3" />
+            </g>
+
+            <!-- 2. 绝对静止层：晨昏线阴影区 -->
+            <g clip-path="url(#earth-clip)">
+                <rect id="terminator" x="0" y="-140" width="140" height="280" fill="var(--shadow)" />
+                <!-- 晨昏线的高光分割边界 -->
+                <line x1="0" y1="-140" x2="0" y2="140" stroke="#FFF" stroke-width="3" opacity="0.9" />
+                <line x1="3" y1="-140" x2="3" y2="140" stroke="#FFD166" stroke-width="1.5" opacity="0.5" />
+            </g>
+
+        </g>
+    </svg>
+
+    <!-- 玩具控制区 -->
+    <div class="controls-wrapper">
+        <div class="slider-container">
+            <input type="range" id="monthSlider" min="1" max="12" step="0.1" value="6">
+        </div>
+        <div class="month-labels">
+            <span>❄️ 1月</span><span>2月</span><span>🌱 3月</span><span>4月</span>
+            <span>5月</span><span style="color: #FF9F1C; font-size: 16px;">☀️ 6月</span>
+            <span>7月</span><span>8月</span><span>🍂 9月</span><span>10月</span>
+            <span>11月</span><span>⛄ 12月</span>
+        </div>
+
+        <div class="info-board">
+            <div class="info-item">
+                <span class="info-label">🌍 当前节气</span>
+                <span class="info-value" id="val-season">夏至</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">📍 太阳直射位置</span>
+                <span class="info-value highlight-text" id="val-subsolar">北回归线 (23.5°N)</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">✨ 极区奇观</span>
+                <span class="info-value" id="val-polar" style="color: #FF5A5F;">北极圈极昼<br>南极圈极夜</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const slider = document.getElementById('monthSlider');
+    const tiltedEarth = document.getElementById('tilted-earth');
+    const valSeason = document.getElementById('val-season');
+    const valSubsolar = document.getElementById('val-subsolar');
+    const valPolar = document.getElementById('val-polar');
+
+    // 节流函数，减少频繁更新
+    function throttle(func, delay) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, delay);
+            }
+        };
+    }
+
+    // 核心物理计算与萌系UI更新
+    function updateEarthPhysics() {
+        const month = parseFloat(slider.value);
+        
+        // 计算地轴倾角（更精确的计算）
+        const angle = -23.5 * Math.cos((month - 6) * (Math.PI / 6));
+        tiltedEarth.setAttribute('transform', `rotate(${angle})`);
+
+        // 更新教学信息
+        let seasonText = "地球旅行中 🚀";
+        let subsolarText = "";
+        let polarText = "极区昼夜交替中 🌙";
+        let polarColor = "#4BC0F8";
+
+        if (month >= 5.5 && month <= 6.5) {
+            seasonText = "夏至 (Summer)";
+            subsolarText = "北回归线 (23.5°N)";
+            polarText = "🌞 北极圈极昼\n💤 南极圈极夜";
+            polarColor = "#FF5A5F";
+        } else if (month >= 11.5 || month <= 1.5) {
+            seasonText = "冬至 (Winter)";
+            subsolarText = "南回归线 (23.5°S)";
+            polarText = "💤 北极圈极夜\n🌞 南极圈极昼";
+            polarColor = "#4BC0F8";
+        } else if (month >= 2.5 && month <= 3.5) {
+            seasonText = "春分 (Spring)";
+            subsolarText = "赤道 (0°)";
+            polarText = "⚖️ 全球昼夜平分\n无极昼极夜啦";
+            polarColor = "#10B981";
+        } else if (month >= 8.5 && month <= 9.5) {
+            seasonText = "秋分 (Autumn)";
+            subsolarText = "赤道 (0°)";
+            polarText = "⚖️ 全球昼夜平分\n无极昼极夜啦";
+            polarColor = "#10B981";
+        } else {
+            let lat = (angle * -1).toFixed(1);
+            let ns = lat > 0 ? "N" : "S";
+            subsolarText = `约 ${Math.abs(lat)}° ${ns}`;
+            
+            // 非节气时的极区状态
+            if (lat > 66.5) {
+                polarText = "🌞 北极圈极昼\n南极圈部分极夜";
+                polarColor = "#FF5A5F";
+            } else if (lat < -66.5) {
+                polarText = "北极圈部分极夜\n🌞 南极圈极昼";
+                polarColor = "#4BC0F8";
+            } else {
+                polarText = "极区昼夜交替中 🌙";
+                polarColor = "#64748B";
+            }
+        }
+
+        // 平滑更新文本内容
+        function updateText(element, text) {
+            element.style.opacity = '0';
+            setTimeout(() => {
+                element.innerText = text;
+                element.style.opacity = '1';
+            }, 150);
+        }
+
+        function updateHtml(element, html, color) {
+            element.style.opacity = '0';
+            setTimeout(() => {
+                element.innerHTML = html;
+                element.style.color = color;
+                element.style.opacity = '1';
+            }, 150);
+        }
+
+        updateText(valSeason, seasonText);
+        updateText(valSubsolar, subsolarText);
+        // 将换行符转为 <br> 以在面板中双行显示
+        updateHtml(valPolar, polarText.replace(/\n/g, '<br>'), polarColor);
+    }
+
+    // 使用节流函数优化事件监听
+    const throttledUpdate = throttle(updateEarthPhysics, 100);
+    slider.addEventListener('input', throttledUpdate);
+    updateEarthPhysics();
+</script>
+
+</body>
+</html>

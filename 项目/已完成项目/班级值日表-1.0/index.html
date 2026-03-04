@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级值日表</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="calendar-styles.css">
+    <link rel="stylesheet" href="homepage-styles.css">
+    <link rel="stylesheet" href="duty-calendar-styles.css">
+</head>
+
+<body>
+    <!-- 加载遮罩 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p id="loadingText">加载中...</p>
+        <p id="loadingHint" class="loading-hint" style="display: none;"></p>
+    </div>
+
+    <!-- 学生端 -->
+    <div id="studentView" class="view-container" style="display: none;">
+        <div class="container">
+            <h1 class="page-title">📅 本周值日安排</h1>
+
+            <!-- 今日值日（玻璃拟态卡片） -->
+            <div id="todayDuty" class="glass-card pulse-card">
+                <h2 class="card-title">📋 今日值日</h2>
+                <div id="todayContent" class="duty-content">
+                    <p class="loading-text">加载中...</p>
+                </div>
+            </div>
+
+            <!-- 本周值日（渐变卡片列表） -->
+            <div class="section-header">
+                <h2>本周值日表</h2>
+            </div>
+            <div id="weeklyDuty" class="duty-list">
+                <p class="loading-text">加载中...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 教师端 -->
+    <div id="teacherView" class="view-container" style="display: none;">
+
+        <!-- 班级选择页 -->
+        <div id="classSelectPage" class="page-content" style="display: none;">
+            <div class="container">
+                <!-- 主标题区域 -->
+                <div class="homepage-hero">
+                    <div class="hero-icon">📅</div>
+                    <h1 class="hero-title">班级值日表</h1>
+                    <p class="hero-subtitle">智能管理 · 轻松排班</p>
+                </div>
+
+                <!-- 班级选择区域 -->
+                <div class="class-select-section">
+                    <div class="section-header-modern">
+                        <div class="section-icon">🏫</div>
+                        <h2 class="section-title-modern">选择班级</h2>
+                    </div>
+                    <div id="classList" class="class-grid">
+                        <p class="loading-text">加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理页面 -->
+        <div id="managePage" class="page-content" style="display: none;">
+            <!-- 顶部返回按钮 -->
+            <div id="teacherHeader" class="teacher-header" style="display: none;">
+                <button class="btn-neomorph btn-back" onclick="backToClassSelect()">← 返回</button>
+                <h2 id="headerTitle" class="header-title"></h2>
+            </div>
+
+            <!-- 小组管理 -->
+            <div id="groupManagePage" class="tab-page">
+                <div class="container">
+                    <h2 class="section-title">小组管理</h2>
+                    <button id="addGroupBtn" class="btn-primary">+ 创建小组</button>
+
+                    <div id="groupList" class="group-grid">
+                        <p class="empty-text">暂无小组，点击上方按钮创建</p>
+                    </div>
+
+                    <!-- 提示信息 -->
+                    <div class="info-tip">
+                        <span class="tip-icon">💡</span>
+                        <span class="tip-text">提示：如果编辑了小组成员，请在"值日配置"页面重新生成值日表</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 值日配置 -->
+            <div id="configPage" class="tab-page" style="display: none;">
+                <div class="container">
+                    <h2 class="section-title">值日配置</h2>
+
+                    <div class="calendar-config">
+                        <!-- 日期选择板块（学年/自定义模式切换） -->
+                        <div class="date-selection-panel">
+                            <!-- 模式选择 -->
+                            <div class="selection-mode">
+                                <label class="mode-radio">
+                                    <input type="radio" name="dateMode" value="schoolYear" checked>
+                                    <span>学年模式</span>
+                                </label>
+                                <label class="mode-radio">
+                                    <input type="radio" name="dateMode" value="custom">
+                                    <span>自定义</span>
+                                </label>
+                            </div>
+
+                            <!-- 学年模式控件 -->
+                            <div id="schoolYearMode" class="date-mode-group">
+                                <div class="selection-group">
+                                    <label>选择学年:</label>
+                                    <select id="yearSelect" class="form-input-compact">
+                                        <!-- 年份选项将由JavaScript动态生成 -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 自定义模式控件（初始隐藏） -->
+                            <div id="customDateMode" class="date-mode-group" style="display: none;">
+                                <div class="selection-group">
+                                    <label>起始日期:</label>
+                                    <input type="date" id="startDateInput" class="form-input-compact">
+                                </div>
+
+                                <div class="selection-group">
+                                    <label>结束日期:</label>
+                                    <input type="date" id="endDateInput" class="form-input-compact">
+                                </div>
+                            </div>
+
+                            <div class="selection-actions">
+                                <button id="clearAllBtn" class="btn-action btn-reset">重置</button>
+                                <button id="applyRangeBtn" class="btn-action btn-confirm">确定</button>
+                            </div>
+                        </div>
+
+                        <!-- 选择提示（未确定时间范围时显示） -->
+                        <div id="dateSelectionHint" class="date-selection-hint" style="display: block;">
+                            <p>⚠️ 请先选择学年或自定义日期范围，然后点击"确定"按钮后才能选择具体日期</p>
+                        </div>
+
+                        <!-- 颜色图例 -->
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot legend-selected"></span>
+                                <span class="legend-label">已选中（值日）</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-unselected"></span>
+                                <span class="legend-label">未选中（工作日）</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-weekend"></span>
+                                <span class="legend-label">周末</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-compensatory"></span>
+                                <span class="legend-label">调休(需值日)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-holiday"></span>
+                                <span class="legend-label">节假日</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-today"></span>
+                                <span class="legend-label">今天</span>
+                            </div>
+                        </div>
+
+                        <!-- 月份导航 -->
+                        <div class="month-navigation">
+                            <button id="prevMonthBtn" class="nav-btn">← 上一月</button>
+                            <h3 id="currentMonthTitle">一月</h3>
+                            <button id="nextMonthBtn" class="nav-btn">下一月 →</button>
+                            <button id="showAllMonthsBtn" class="btn-toggle">显示全年</button>
+                        </div>
+
+                        <!-- 日历显示年份切换 -->
+                        <div class="calendar-year-control">
+                            <div class="year-navigation">
+                                <button id="prevYearBtn" class="nav-btn">← 上一年</button>
+                                <span id="currentYearDisplay" class="year-display">2026年</span>
+                                <button id="nextYearBtn" class="nav-btn">下一年 →</button>
+                            </div>
+                        </div>
+
+                        <!-- 日历容器 -->
+                        <div id="calendarContainer" class="calendar-container">
+                            <p class="loading-text">加载中...</p>
+                        </div>
+
+                        <!-- 保存按钮 -->
+                        <div class="config-actions">
+                            <button id="saveConfigBtn" class="btn-primary">保存配置</button>
+                            <button id="generateBtn" class="btn-primary">生成值日表</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 值日表查看 -->
+            <div id="schedulePage" class="tab-page" style="display: none;">
+                <div class="container">
+                    <h2 class="section-title">值日表</h2>
+
+                    <!-- 年份切换控制 -->
+                    <div class="calendar-year-control">
+                        <div class="year-navigation">
+                            <button id="schedulePrevYearBtn" class="year-nav-btn">
+                                <span class="nav-arrow">←</span>
+                            </button>
+                            <span id="scheduleYearDisplay" class="year-display">2026年</span>
+                            <button id="scheduleNextYearBtn" class="year-nav-btn">
+                                <span class="nav-arrow">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 颜色图例 -->
+                    <div class="calendar-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot legend-selected"></span>
+                            <span class="legend-label">已选中（值日）</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot legend-unselected"></span>
+                            <span class="legend-label">未选中（工作日）</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot legend-weekend"></span>
+                            <span class="legend-label">周末</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot legend-compensatory"></span>
+                            <span class="legend-label">调休(需值日)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot legend-holiday"></span>
+                            <span class="legend-label">节假日</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot legend-today"></span>
+                            <span class="legend-label">今天</span>
+                        </div>
+                    </div>
+
+                    <!-- 日历容器 -->
+                    <div id="scheduleCalendarContainer" class="calendar-container">
+                        <p class="empty-text">暂无值日表，请先配置并生成</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部导航 -->
+            <div class="bottom-nav">
+                <button class="nav-item active" data-page="group">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">小组管理</span>
+                </button>
+                <button class="nav-item" data-page="config">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">值日配置</span>
+                </button>
+                <button class="nav-item" data-page="schedule">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">值日表</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：创建/编辑小组 -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">创建小组</h3>
+            <div class="form-group">
+                <label>小组名称</label>
+                <input type="text" id="groupName" class="form-input" placeholder="第1组">
+            </div>
+            <div class="form-group">
+                <label>选择成员</label>
+                <div id="studentList" class="student-list">
+                    <p class="loading-text">加载学生列表...</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="saveGroupBtn" class="btn-primary">保存</button>
+                <button id="cancelGroupBtn" class="btn-neomorph">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js?v=BUILD141048"></script>
+    <script src="calendar.js?v=BUILD141048"></script>
+    <script src="duty-calendar.js?v=BUILD141048"></script>
+    <script src="app.js?v=BUILD141048"></script>
+</body>
+
+</html>

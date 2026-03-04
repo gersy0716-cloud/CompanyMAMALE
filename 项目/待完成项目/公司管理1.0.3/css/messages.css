@@ -1,0 +1,171 @@
+/* ==================== 消息页面样式 ==================== */
+
+/* 消息列表容器 */
+#messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 消息卡片 */
+.msg-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.msg-card:hover {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.msg-card.msg-unread {
+    background: #fafbff;
+    border-color: #e0e7ff;
+}
+
+.msg-card.msg-unread:hover {
+    background: #f0f4ff;
+}
+
+/* 消息图标 */
+.msg-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.msg-unread .msg-icon {
+    background: #eff6ff;
+}
+
+/* 消息内容区 */
+.msg-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.msg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.msg-type-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.msg-type-task_assigned {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.msg-type-discussion_reply {
+    background: #f0fdfa;
+    color: #0d9488;
+}
+
+.msg-type-announcement {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.msg-type-skill_shared {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+.msg-type-github_shared {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.msg-type-default {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.msg-time {
+    font-size: 12px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.msg-content {
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.msg-unread .msg-content {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.msg-sender {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* 未读圆点 */
+.msg-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4080FF;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+/* 侧边栏角标 */
+.nav-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    margin-left: auto;
+}
+
+/* 消息页头部操作栏 */
+.msg-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 未读计数文字 */
+#msg-unread-count {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+}

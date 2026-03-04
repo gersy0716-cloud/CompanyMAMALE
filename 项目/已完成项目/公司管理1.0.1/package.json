@@ -1,0 +1,69 @@
+{
+  "name": "mamale-desktop",
+  "version": "1.0.1",
+  "description": "码码乐内部协作管理平台",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.mamale.desktop",
+    "productName": "码码乐",
+    "directories": {
+      "output": "dist"
+    },
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    },
+    "cscLink": null,
+    "files": [
+      "index.html",
+      "main.js",
+      "preload.js",
+      "js/**/*",
+      "css/**/*",
+      "build/icon.ico",
+      "build/tray-icon.png"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "Mamale_Management_V${version}_Setup.${ext}",
+      "sign": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "码码乐",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
+    },
+    "publish": null
+  },
+  "devDependencies": {
+    "ali-oss": "^6.23.0",
+    "electron": "^29.4.6",
+    "electron-builder": "24.13.3"
+  },
+  "keywords": [
+    "electron",
+    "desktop",
+    "mamale"
+  ],
+  "author": "码码乐",
+  "license": "MIT"
+}

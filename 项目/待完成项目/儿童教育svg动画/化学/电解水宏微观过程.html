@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电解水宏微观交互课件 - Edu SVG Wizard</title>
+    <style>
+        :root {
+            --bg-color: #F0F4F8;
+            --panel-bg: #FFFFFF;
+            --water-color: #60A5FA;
+            --water-dark: #3B82F6;
+            --oxygen-color: #EF4444; /* 氧原子红色 */
+            --hydrogen-color: #F9FAFB; /* 氢原子白色 */
+            --cathode-color: #10B981; /* 负极绿色 */
+            --anode-color: #F59E0B; /* 正极橙色 */
+            --text-main: #1F2937;
+            --text-light: #6B7280;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #app-container {
+            width: 1000px;
+            height: 650px;
+            background: var(--panel-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1100px) {
+            #app-container {
+                width: 90vw;
+                height: 90vh;
+                max-width: 1000px;
+                max-height: 650px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #app-container {
+                width: 95vw;
+                height: 95vh;
+            }
+            
+            .dashboard {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+            }
+            
+            .control-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-panel {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            #micro-view {
+                transform: translate(600, 260) scale(0.8);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #micro-view {
+                transform: translate(550, 260) scale(0.6);
+            }
+            
+            .stat-box {
+                min-width: 70px;
+                padding: 4px 8px;
+            }
+            
+            .stat-value {
+                font-size: 16px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+
+        /* UI Controls Overlay */
+        .dashboard {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 94%;
+            box-sizing: border-box; /* 防止内边距撑破容器 */
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 12px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            border: 1px solid #E5E7EB;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        button.play-btn {
+            background: var(--water-dark);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button.play-btn:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        button.play-btn.active {
+            background: #EF4444;
+        }
+
+        button.play-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 按钮点击效果 */
+        button.play-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button.play-btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .slider-container label {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 130px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        input[type=range]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--water-dark);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+        }
+        
+        input[type=range]::-webkit-slider-thumb:active {
+            transform: scale(1.3);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #E5E7EB;
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track:hover {
+            background: #CBD5E1;
+        }
+        
+        /* 兼容其他浏览器 */
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #E5E7EB;
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
+        
+        input[type=range]::-moz-range-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--water-dark);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        input[type=range]::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+        }
+
+        .stats-panel {
+            display: flex;
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: #F3F4F6;
+            padding: 6px 12px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 85px;
+            border-left: 4px solid #ccc;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-box.h2 { 
+            border-color: var(--cathode-color);
+        }
+        
+        .stat-box.h2:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .stat-box.o2 { 
+            border-color: var(--anode-color);
+        }
+        
+        .stat-box.o2:hover {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-main);
+            font-family: monospace;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover .stat-value {
+            transform: scale(1.05);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .stat-box:hover .stat-label {
+            color: var(--text-main);
+        }
+
+        .equation {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-main);
+            background: #FEF3C7;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px dashed #F59E0B;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+        .equation.active { opacity: 1; }
+
+        /* SVG Tooltip & Interactions */
+        .tooltip-trigger { cursor: help; }
+        .tooltip-trigger:hover + .tooltip { opacity: 1; visibility: visible; }
+        .tooltip {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+        }
+
+        /* Micro Animation Classes */
+        .h2o-mol { 
+            transition: transform 0.5s ease-in-out;
+            transform: translateZ(0); /* 硬件加速 */
+        }
+        .atom { 
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateZ(0); /* 硬件加速 */
+        }
+        
+        /* Bubble CSS animation */
+        @keyframes rise {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-150px) scale(1.2); opacity: 0; }
+        }
+        .bubble {
+            animation: rise linear forwards;
+            transform-origin: center;
+            transform: translateZ(0); /* 硬件加速 */
+        }
+        
+        /* 电极发光效果 */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .electrode-active {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        /* 电场线动画 */
+        @keyframes flow {
+            0% { stroke-dashoffset: 10; }
+            100% { stroke-dashoffset: 0; }
+        }
+        #electric-field.active {
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes split-h1 {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, -20px); }
+            100% { transform: translate(-80px, 0); }
+        }
+        @keyframes split-h2 {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, 20px); }
+            100% { transform: translate(-80px, -15px); }
+        }
+        @keyframes split-o {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 0); }
+            100% { transform: translate(80px, 0); }
+        }
+
+        .animating-h1 { animation: split-h1 2s ease-in-out forwards; }
+        .animating-h2 { animation: split-h2 2s ease-in-out forwards; }
+        .animating-o { animation: split-o 2s ease-in-out forwards; }
+
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <svg width="100%" height="100%" viewBox="0 0 1000 650">
+        <defs>
+            <!-- 水的渐变色 -->
+            <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#93C5FD" />
+                <stop offset="100%" stop-color="#3B82F6" />
+            </linearGradient>
+            <!-- 气泡渐变 -->
+            <radialGradient id="bubble-grad" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.2"/>
+            </radialGradient>
+            
+            <!-- 仪器剪裁路径 (保证水只在管内) -->
+            <clipPath id="tube-clip">
+                <path d="M 220 150 L 280 150 L 280 480 L 420 480 L 420 150 L 480 150 L 480 500 Q 480 520 460 520 L 240 520 Q 220 520 220 500 Z" />
+                <rect x="330" y="100" width="40" height="380" /> <!-- 中间漏斗 -->
+            </clipPath>
+
+            <!-- 原子滤镜：增加立体感 -->
+            <filter id="atom-shadow">
+                <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+            </filter>
+        </defs>
+
+        <!-- 标题 -->
+        <text x="50" y="60" font-size="28" font-weight="bold" fill="#1F2937">电解水宏微观过程</text>
+        <text x="50" y="90" font-size="14" fill="#6B7280">拖动电压滑块观察反应速率，观察两极气泡与体积比例 (正氧负氢，氢二氧一)</text>
+
+        <!-- ================= 宏观视图 (左侧) ================= -->
+        <g id="macro-view" transform="translate(50, 20)">
+            
+            <!-- 玻璃管背景 -->
+            <path d="M 220 150 L 280 150 L 280 480 L 420 480 L 420 150 L 480 150 L 480 500 Q 480 520 460 520 L 240 520 Q 220 520 220 500 Z" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="4"/>
+            <rect x="330" y="100" width="40" height="380" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="4" />
+            <!-- 中间连接管 -->
+            <rect x="280" y="440" width="140" height="40" fill="#F8FAFC" />
+            
+            <!-- 液体层 (使用clip-path) -->
+            <g clip-path="url(#tube-clip)">
+                <!-- 初始水位都在 Y=180 -->
+                <rect id="liquid-left" x="200" y="180" width="100" height="400" fill="url(#water-grad)" transition="y 0.5s" />
+                <rect id="liquid-right" x="400" y="180" width="100" height="400" fill="url(#water-grad)" transition="y 0.5s" />
+                <rect id="liquid-center" x="320" y="200" width="60" height="400" fill="url(#water-grad)" transition="y 0.5s" />
+                <!-- 底部连通液体 -->
+                <rect x="200" y="440" width="300" height="100" fill="url(#water-grad)" />
+            </g>
+
+            <!-- 气泡容器 -->
+            <g id="bubble-container" clip-path="url(#tube-clip)"></g>
+
+            <!-- 刻度线 -->
+            <g stroke="#94A3B8" stroke-width="1">
+                <!-- 左侧刻度 (氢气 2V) -->
+                <line x1="220" y1="200" x2="230" y2="200"/> <text x="195" y="205" font-size="12" fill="#64748B">10</text>
+                <line x1="220" y1="240" x2="230" y2="240"/> <text x="195" y="245" font-size="12" fill="#64748B">20</text>
+                <line x1="220" y1="280" x2="230" y2="280"/> <text x="195" y="285" font-size="12" fill="#64748B">30</text>
+                <line x1="220" y1="320" x2="230" y2="320"/> <text x="195" y="325" font-size="12" fill="#64748B">40</text>
+                
+                <!-- 右侧刻度 (氧气 1V) -->
+                <line x1="470" y1="200" x2="480" y2="200"/> <text x="485" y="205" font-size="12" fill="#64748B">10</text>
+                <line x1="470" y1="240" x2="480" y2="240"/> <text x="485" y="245" font-size="12" fill="#64748B">20</text>
+                <line x1="470" y1="280" x2="480" y2="280"/> <text x="485" y="285" font-size="12" fill="#64748B">30</text>
+            </g>
+
+            <!-- 电极与电源线 -->
+            <!-- 负极 (左) -->
+            <g class="tooltip-trigger">
+                <rect x="240" y="480" width="20" height="60" fill="#4B5563" rx="4"/>
+                <rect x="248" y="540" width="4" height="30" fill="#10B981" />
+                <circle cx="250" cy="570" r="12" fill="#10B981" />
+                <text x="250" y="575" font-size="14" fill="white" text-anchor="middle" font-weight="bold">-</text>
+            </g>
+            <g class="tooltip">
+                <rect x="150" y="590" width="120" height="30" fill="#1F2937" rx="6"/>
+                <text x="210" y="610" font-size="12" fill="white" text-anchor="middle">负极产生氢气 (H₂)</text>
+            </g>
+
+            <!-- 正极 (右) -->
+            <g class="tooltip-trigger">
+                <rect x="440" y="480" width="20" height="60" fill="#4B5563" rx="4"/>
+                <rect x="448" y="540" width="4" height="30" fill="#F59E0B" />
+                <circle cx="450" cy="570" r="12" fill="#F59E0B" />
+                <text x="450" y="575" font-size="14" fill="white" text-anchor="middle" font-weight="bold">+</text>
+            </g>
+            <g class="tooltip">
+                <rect x="430" y="590" width="120" height="30" fill="#1F2937" rx="6"/>
+                <text x="490" y="610" font-size="12" fill="white" text-anchor="middle">正极产生氧气 (O₂)</text>
+            </g>
+            
+            <!-- 气体积聚标识 -->
+            <text x="250" y="140" font-size="16" font-weight="bold" fill="#10B981" text-anchor="middle">氢气 (H₂)</text>
+            <text x="450" y="140" font-size="16" font-weight="bold" fill="#EF4444" text-anchor="middle">氧气 (O₂)</text>
+
+        </g>
+
+        <!-- ================= 微观视图 (右侧放大镜) ================= -->
+        <g id="micro-view" transform="translate(700, 260)">
+            <!-- 放大镜外框 -->
+            <circle cx="0" cy="0" r="160" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="8" filter="drop-shadow(0 10px 15px rgba(0,0,0,0.1))"/>
+            <text x="0" y="-130" font-size="16" font-weight="bold" fill="#475569" text-anchor="middle">微观反应区</text>
+            
+            <!-- 电场线装饰 (通电时显示) -->
+            <g id="electric-field" opacity="0" stroke="#FDE68A" stroke-width="2" stroke-dasharray="5,5">
+                <line x1="-120" y1="-80" x2="120" y2="-80" />
+                <line x1="-120" y1="0" x2="120" y2="0" />
+                <line x1="-120" y1="80" x2="120" y2="80" />
+            </g>
+
+            <!-- 极性提示 -->
+            <text x="-130" y="0" font-size="24" fill="#10B981" font-weight="bold">-</text>
+            <text x="130" y="0" font-size="24" fill="#F59E0B" font-weight="bold">+</text>
+
+            <!-- 预置一个静态的水分子用于展示，动画开启后隐藏 -->
+            <g id="demo-h2o" transform="translate(0, 0)">
+                <circle cx="0" cy="0" r="24" fill="var(--oxygen-color)" filter="url(#atom-shadow)"/>
+                <text x="0" y="5" font-size="16" fill="white" text-anchor="middle" font-weight="bold">O</text>
+                
+                <circle cx="-20" cy="20" r="14" fill="var(--hydrogen-color)" stroke="#D1D5DB" filter="url(#atom-shadow)"/>
+                <text x="-20" y="25" font-size="12" fill="#374151" text-anchor="middle" font-weight="bold">H</text>
+
+                <circle cx="20" cy="20" r="14" fill="var(--hydrogen-color)" stroke="#D1D5DB" filter="url(#atom-shadow)"/>
+                <text x="20" y="25" font-size="12" fill="#374151" text-anchor="middle" font-weight="bold">H</text>
+            </g>
+
+            <!-- 动态微观粒子层 -->
+            <g id="particle-arena"></g>
+        </g>
+
+        <!-- 装饰箭头连接宏观与微观 -->
+        <path d="M 540 350 Q 600 350 630 260 L 680 260" fill="none" stroke="#94A3B8" stroke-width="3" stroke-dasharray="6,6" marker-end="url(#arrow)"/>
+        <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 Z" fill="#94A3B8"/>
+            </marker>
+        </defs>
+
+    </svg>
+
+    <!-- ================= 交互控制台 ================= -->
+    <div class="dashboard">
+        <div class="control-group">
+            <button id="playBtn" class="play-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+                通电开始实验
+            </button>
+            <button id="resetBtn" class="play-btn" style="background: #6B7280;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                重置实验
+            </button>
+            
+            <div class="slider-container">
+                <label for="voltageSlider">通电电压 (影响反应速率)</label>
+                <input type="range" id="voltageSlider" min="1" max="10" value="5">
+            </div>
+        </div>
+
+        <div id="equationDisplay" class="equation">
+            2H₂O <span style="font-size: 12px;">(通电)</span> → 2H₂↑ + O₂↑
+        </div>
+
+        <div class="stats-panel">
+            <div class="stat-box h2">
+                <div class="stat-label">氢气 (H₂) 体积</div>
+                <div class="stat-value" id="h2-vol">0.0 mL</div>
+            </div>
+            <div class="stat-box o2">
+                <div class="stat-label">氧气 (O₂) 体积</div>
+                <div class="stat-value" id="o2-vol">0.0 mL</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 状态管理
+    const state = {
+        isPlaying: false,
+        voltage: 5,
+        h2Volume: 0,
+        o2Volume: 0,
+        liquidStartY: 180,
+        maxVolume: 40, // 最大刻度
+        microAnimationInterval: null,
+        bubbleInterval: null
+    };
+
+    // DOM 元素引用
+    const playBtn = document.getElementById('playBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const voltageSlider = document.getElementById('voltageSlider');
+    const equationDisplay = document.getElementById('equationDisplay');
+    const h2VolDisplay = document.getElementById('h2-vol');
+    const o2VolDisplay = document.getElementById('o2-vol');
+    const liquidLeft = document.getElementById('liquid-left');
+    const liquidRight = document.getElementById('liquid-right');
+    const liquidCenter = document.getElementById('liquid-center');
+    const bubbleContainer = document.getElementById('bubble-container');
+    const particleArena = document.getElementById('particle-arena');
+    const electricField = document.getElementById('electric-field');
+    const demoH2o = document.getElementById('demo-h2o');
+
+    // 格式化数字：修正单位为 mL (毫升)
+    const formatVol = (val) => val.toFixed(1) + ' mL';
+
+    // 节流函数，减少频繁更新
+    function throttle(func, delay) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, delay);
+            }
+        };
+    }
+
+    // 播放按钮事件
+    playBtn.addEventListener('click', () => {
+        state.isPlaying = !state.isPlaying;
+        if (state.isPlaying) {
+            playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 断电停止`;
+            playBtn.classList.add('active');
+            equationDisplay.classList.add('active');
+            electricField.style.opacity = '1';
+            electricField.classList.add('active');
+            demoH2o.style.display = 'none'; // 隐藏静态演示
+            startSimulation();
+        } else {
+            playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg> 通电开始实验`;
+            playBtn.classList.remove('active');
+            equationDisplay.classList.remove('active');
+            electricField.style.opacity = '0';
+            electricField.classList.remove('active');
+            stopSimulation();
+        }
+    });
+
+    // 滑块事件
+    voltageSlider.addEventListener('input', throttle((e) => {
+        state.voltage = parseInt(e.target.value);
+        if (state.isPlaying) {
+            // 实时调整生成频率，不中断当前状态
+            clearInterval(state.bubbleInterval);
+            clearInterval(state.microAnimationInterval);
+            
+            const bubbleDelay = Math.max(50, 300 - (state.voltage * 20)); // 最小延迟50ms
+            state.bubbleInterval = setInterval(spawnBubbles, bubbleDelay);
+
+            // 微观动画通过递归实现，不需要调整间隔
+        }
+    }, 100));
+
+    // 重置按钮事件
+    resetBtn.addEventListener('click', () => {
+        if (state.isPlaying) {
+            playBtn.click(); // 若正在通电，则先断电
+        }
+        // 重置液面高度和气体数据
+        state.h2Volume = 0;
+        state.o2Volume = 0;
+        h2VolDisplay.textContent = '0.0 mL';
+        o2VolDisplay.textContent = '0.0 mL';
+        liquidLeft.setAttribute('y', state.liquidStartY);
+        liquidRight.setAttribute('y', state.liquidStartY);
+        liquidCenter.setAttribute('y', state.liquidStartY);
+        bubbleContainer.innerHTML = '';
+        particleArena.innerHTML = '';
+    });
+
+    // 核心物理模拟循环
+    let reqAnimFrame;
+    function updatePhysics() {
+        if (!state.isPlaying) return;
+
+        // 根据电压计算速率 (H2是O2的两倍)
+        const rate = (state.voltage * 0.005);
+        
+        if (state.h2Volume < state.maxVolume) {
+            state.h2Volume += rate * 2; // 氢气生成快
+            state.o2Volume += rate * 1; // 氧气生成慢
+
+            // 限制最大值
+            state.h2Volume = Math.min(state.h2Volume, state.maxVolume);
+            state.o2Volume = Math.min(state.o2Volume, state.maxVolume);
+
+            // 更新数据面板
+            h2VolDisplay.textContent = formatVol(state.h2Volume);
+            o2VolDisplay.textContent = formatVol(state.o2Volume);
+
+            // 更新液面高度 (Y向下是增加，所以液面下降即Y增大)
+            // 刻度：每10v对应Y轴约40px
+            const h2Drop = state.h2Volume * 4; 
+            const o2Drop = state.o2Volume * 4;
+            
+            liquidLeft.setAttribute('y', state.liquidStartY + h2Drop);
+            liquidRight.setAttribute('y', state.liquidStartY + o2Drop);
+            
+            // 中间液面稍微上升 (简单模拟排开水)
+            liquidCenter.setAttribute('y', Math.max(state.liquidStartY - 50, state.liquidStartY - (h2Drop + o2Drop) * 0.2));
+        }
+
+        reqAnimFrame = requestAnimationFrame(updatePhysics);
+    }
+
+    // 生成气泡特效
+    function spawnBubbles() {
+        const createBubble = (side) => {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            const isLeft = side === 'left';
+            const startX = isLeft ? (240 + Math.random() * 20) : (440 + Math.random() * 20);
+            const startY = 480; // 从电极上方产生
+            const radius = 2 + Math.random() * 3;
+            
+            circle.setAttribute('cx', startX);
+            circle.setAttribute('cy', startY);
+            circle.setAttribute('r', radius);
+            circle.setAttribute('fill', 'url(#bubble-grad)');
+            circle.classList.add('bubble');
+            
+            // 随机动画时长，受电压影响
+            const duration = 2 / (state.voltage * 0.2 + 0.5) + Math.random();
+            circle.style.animationDuration = `${duration}s`;
+
+            bubbleContainer.appendChild(circle);
+
+            // 动画结束后移除
+            setTimeout(() => {
+                if(bubbleContainer.contains(circle)) bubbleContainer.removeChild(circle);
+            }, duration * 1000);
+        };
+
+        // 氢气产生气泡多
+        createBubble('left');
+        if (Math.random() > 0.3) createBubble('left'); // 随机增加氢气气泡
+        createBubble('right');
+    }
+
+    // 微观粒子动画序列
+    function runMicroAnimation() {
+        particleArena.innerHTML = ''; // 清空
+        demoH2o.style.display = 'none'; // 隐藏静态演示的水分子，显示新动画
+
+        // 创建一个水分子组
+        const h2o = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        h2o.setAttribute('transform', 'translate(0, 80)'); // 从下方游入
+        h2o.style.transition = 'transform 0.5s ease-out';
+
+        // 氧原子 (红)
+        const o = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        o.innerHTML = `<circle cx="0" cy="0" r="24" fill="var(--oxygen-color)" filter="url(#atom-shadow)"/><text x="0" y="5" font-size="16" fill="white" text-anchor="middle" font-weight="bold">O</text>`;
+        
+        // 氢原子1 (白)
+        const h1 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        h1.innerHTML = `<circle cx="-20" cy="20" r="14" fill="var(--hydrogen-color)" stroke="#D1D5DB" filter="url(#atom-shadow)"/><text x="-20" y="25" font-size="12" fill="#374151" text-anchor="middle" font-weight="bold">H</text>`;
+        
+        // 氢原子2 (白)
+        const h2 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        h2.innerHTML = `<circle cx="20" cy="20" r="14" fill="var(--hydrogen-color)" stroke="#D1D5DB" filter="url(#atom-shadow)"/><text x="20" y="25" font-size="12" fill="#374151" text-anchor="middle" font-weight="bold">H</text>`;
+
+        h2o.appendChild(o);
+        h2o.appendChild(h1);
+        h2o.appendChild(h2);
+        particleArena.appendChild(h2o);
+
+        // 动画序列
+        setTimeout(() => {
+            // 1. 移动到中心
+            h2o.setAttribute('transform', 'translate(0, 0)');
+            
+            setTimeout(() => {
+                // 2. 短暂停留后开始分裂
+                // 断裂与重组 (直接设置动画样式)
+                o.style.animation = 'split-o 1.5s ease-in-out forwards';
+                h1.style.animation = 'split-h1 1.5s ease-in-out forwards';
+                h2.style.animation = 'split-h2 1.5s ease-in-out forwards';
+                
+                // 3. 动画结束后直接开始下一个分子的动画
+                setTimeout(() => {
+                    runMicroAnimation(); // 递归调用，实现连续动画
+                }, 2000); // 分裂动画完成后立即开始下一个
+            }, 500); // 短暂停留0.5秒
+        }, 50);
+    }
+
+    function startSimulation() {
+        updatePhysics();
+        // 气泡生成频率反比于电压
+        const bubbleDelay = Math.max(50, 300 - (state.voltage * 20)); // 最小延迟50ms
+        state.bubbleInterval = setInterval(spawnBubbles, bubbleDelay);
+
+        // 微观动画：直接调用一次，通过递归实现连续动画
+        runMicroAnimation(); // 立即执行一次
+    }
+
+    function stopSimulation() {
+        cancelAnimationFrame(reqAnimFrame);
+        clearInterval(state.bubbleInterval);
+        particleArena.innerHTML = ''; // 清空运动中的微观粒子
+        demoH2o.style.display = 'block'; // 恢复静态演示的水分子
+    }
+
+</script>
+</body>
+</html>

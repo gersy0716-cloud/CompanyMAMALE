@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试风格描述生成</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .log {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>测试风格描述生成 API</h1>
+
+        <div>
+            <label>风格名称：</label>
+            <input type="text" id="styleName" placeholder="例如：赛博朋克、森林童话..." value="赛博朋克">
+        </div>
+
+        <div>
+            <label>API Key：</label>
+            <input type="text" id="apiKey" placeholder="输入你的 API Key">
+        </div>
+
+        <div>
+            <label>API Base URL：</label>
+            <input type="text" id="baseUrl" placeholder="例如：https://dalu.chatgptten.com/v1" value="https://dalu.chatgptten.com/v1">
+        </div>
+
+        <button onclick="testGeneration()">测试生成</button>
+        <button onclick="clearResult()">清除结果</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script type="module">
+        import OpenAI from 'https://cdn.jsdelivr.net/npm/openai@4.20.1/+esm';
+
+        window.testGeneration = async function() {
+            const styleName = document.getElementById('styleName').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const baseUrl = document.getElementById('baseUrl').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!styleName.trim()) {
+                resultDiv.className = 'error';
+                resultDiv.textContent = '请输入风格名称';
+                return;
+            }
+
+            if (!apiKey.trim()) {
+                resultDiv.className = 'error';
+                resultDiv.textContent = '请输入 API Key';
+                return;
+            }
+
+            resultDiv.textContent = '正在生成中...';
+            resultDiv.className = '';
+
+            try {
+                console.log('=== 开始测试 ===');
+                console.log('风格名称:', styleName);
+                console.log('API Key长度:', apiKey.length);
+                console.log('Base URL:', baseUrl);
+
+                const client = new OpenAI({
+                    apiKey: apiKey,
+                    baseURL: baseUrl,
+                    dangerouslyAllowBrowser: true
+                });
+
+                const prompt = `
+你是一位专业的PPT设计师和视觉艺术专家。
+
+用户想要创建一个名为"${styleName}"的PPT风格。
+
+请为这个风格生成一段详细的视觉描述提示词，用于指导AI生成具有该风格特征的PPT幻灯片图片。
+
+描述应该包括：
+- 色彩风格（主色调、配色方案）
+- 视觉元素（图形、图案、装饰）
+- 排版风格（字体风格、布局特点）
+- 整体氛围和感觉
+- 适用场景
+
+请参考以下优秀示例的格式和详细程度：
+
+示例1："K12童趣卡通风格，色彩鲜艳明快（如明黄、天蓝、草绿），包含可爱的卡通插画角色（如学生、小动物），使用圆润可爱的字体，版式活泼有趣，适合幼儿园及小学低年级，能够充分吸引孩子注意力。"
+
+示例2："模拟达芬奇手稿的视觉风格，采用褐色牛皮纸质感背景，使用深棕色或乌贼墨色线条。画面包含精密的解剖图、机械草图、镜像文字、几何图形等元素，线条细腻精准，具有文艺复兴时期的科学美学，整体风格古典神秘，充满探索精神，适合历史、科学、艺术、发明创造类课程。"
+
+请直接返回风格描述文本，不要包含其他解释或格式。长度控制在100-200字左右。
+                `;
+
+                console.log('发送请求...');
+                console.log('Prompt:', prompt.substring(0, 200) + '...');
+
+                const response = await client.chat.completions.create({
+                    model: "gemini-3-pro-preview",
+                    messages: [
+                        {
+                            role: "system",
+                            content: "你是一位专业的PPT设计师和视觉艺术专家，擅长用准确的语言描述各种视觉风格。"
+                        },
+                        {
+                            role: "user",
+                            content: prompt
+                        }
+                    ],
+                    temperature: 0.8,
+                    max_tokens: 500
+                });
+
+                console.log('收到响应:', response);
+
+                const description = response.choices[0]?.message?.content?.trim();
+
+                if (!description) {
+                    throw new Error('AI 未返回有效的风格描述');
+                }
+
+                console.log('生成的描述:', description);
+
+                resultDiv.className = 'success';
+                resultDiv.innerHTML = `
+<strong>✅ 生成成功！</strong><br><br>
+<strong>风格名称：</strong>${styleName}<br><br>
+<strong>生成的描述：</strong><br>
+${description}<br><br>
+<div class="log">
+<strong>API响应详情：</strong><br>
+模型: ${response.model}<br>
+使用Token: ${response.usage?.total_tokens || 'N/A'}<br>
+完成原因: ${response.choices[0]?.finish_reason || 'N/A'}
+</div>
+                `;
+
+            } catch (error) {
+                console.error('生成失败:', error);
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+<strong>❌ 生成失败</strong><br><br>
+<strong>错误信息：</strong><br>
+${error.message}<br><br>
+<div class="log">
+<strong>错误详情：</strong><br>
+${error.stack || '无堆栈信息'}
+</div>
+                `;
+            }
+        };
+
+        window.clearResult = function() {
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = '';
+        };
+    </script>
+</body>
+</html>

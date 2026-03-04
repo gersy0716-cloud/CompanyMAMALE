@@ -1,0 +1,901 @@
+/* ============================================================
+   任务管理模块 — 极简商务视觉体系 (Version 2.0)
+   设计原则：呼吸感、精确性、明确的等级制度
+   ============================================================ */
+
+/* 1. 列表容器与筛选 */
+.task-list-container {
+    margin-top: 1.5rem;
+    animation: fadeIn var(--transition-normal);
+}
+
+.filter-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 6px;
+    background: #f4f5f7;
+    border-radius: 16px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.filter-tab {
+    padding: 6px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.filter-tab:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+}
+
+.filter-tab.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+}
+
+.filter-tab:active {
+    transform: translateY(0) scale(0.96);
+    transition: all 0.1s ease;
+}
+
+.filter-tab::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.6s ease;
+}
+
+.filter-tab:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* 2. 表格布局固化 */
+.data-table {
+    width: 100%;
+}
+
+.data-table th,
+.data-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f1f3;
+    vertical-align: middle;
+}
+
+/* 操作列特殊处理 */
+.data-table td:last-child {
+    min-width: 180px;
+    text-align: center;
+}
+
+/* 标题栏 — 独立且可点击 */
+.task-title-cell {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.task-title-cell:hover {
+    background: hsla(220, 100%, 98%, 1);
+}
+
+.task-title-link {
+    font-weight: 700;
+    color: var(--text-1);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.2s;
+    flex-wrap: wrap;
+}
+
+/* 建子任务按钮样式 */
+.task-decompose-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 11px;
+    height: 24px;
+    padding: 0 8px;
+}
+
+.task-title-cell:hover .task-title-link {
+    color: var(--primary);
+}
+
+/* 3. 优先级标签 — 明确且美观 */
+.priority-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #f8fafc;
+    /* 统一中性背景 */
+    border: 1px solid #e2e8f0;
+}
+
+.priority-dot.p-high {
+    color: #ef4444;
+    background: #fff1f2;
+    border-color: #fee2e2;
+}
+
+.priority-dot.p-medium {
+    color: #d97706;
+    background: #fffbeb;
+    border-color: #fef3c7;
+}
+
+.priority-dot.p-low {
+    color: #16a34a;
+    background: #f0fdf4;
+    border-color: #dcfce7;
+}
+
+/* 5. 任务类型标签 (主线/支线) */
+.task-type-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-right: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+}
+
+.task-type-badge.main {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: white;
+    border: 1px solid #dc2626;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.task-type-badge.branch {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    color: white;
+    border: 1px solid #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.task-type-badge.small {
+    padding: 2px 8px;
+    font-size: 10px;
+    border-radius: 4px;
+    margin-right: 4px;
+}
+
+/* 4. 执行人头像组 — 解决变形问题 */
+.assignee-group {
+    display: flex;
+    align-items: center;
+}
+
+.assignee-avatar {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    /* 核心修复：防止被压缩变窄 */
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    margin-left: -10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.assignee-avatar:first-child {
+    margin-left: 0;
+}
+
+.assignee-avatar:hover {
+    transform: translateY(-5px) scale(1.1);
+    z-index: 10;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 5. 交互操作栏 — 现代化设计，提升视觉层次感 */
+.task-ops-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    min-height: 32px;
+}
+
+.btn-status-action {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 按钮点击效果 */
+.btn-status-action:active {
+    transform: scale(0.96);
+}
+
+/* 主操作按钮 - 接取 */
+.btn-action-pickup {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    min-width: 80px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.btn-action-pickup:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+
+/* 提交按钮 */
+.btn-action-submit {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+}
+
+.btn-action-submit:hover {
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+}
+
+/* 放弃按钮 */
+.btn-action-abandon {
+    background: white;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action-abandon:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+    transform: translateY(-1px);
+}
+
+/* 情况汇报按钮 */
+.btn-action-remark {
+    background: white;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action-remark:hover {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-color: #7dd3fc;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+    transform: translateY(-1px);
+}
+
+/* 建子任务按钮 */
+.btn-action-decompose {
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action-decompose:hover {
+    background: #f8fafc;
+    color: var(--primary);
+    border-color: var(--primary-light);
+    box-shadow: 0 4px 12px rgba(64, 128, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+/* 已接取按钮 */
+.btn-action-already-taken {
+    background: #eff6ff;
+    color: var(--primary);
+    border: 1px solid #dbeafe;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action-already-taken:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(64, 128, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+/* 完成按钮 */
+.btn-action-complete {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.btn-action-complete:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+/* 状态展示标签（列表内） */
+.progress-tag {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.prog-pending {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.prog-doing {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
+}
+
+.prog-waiting {
+    background: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fef3c7;
+}
+
+.prog-done {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #dcfce7;
+}
+
+/* 子任务树形结构样式 */
+.task-parent-row {
+    background: #ffffff !important;
+}
+
+.task-parent-row:hover {
+    background: #f8fafc !important;
+}
+
+.task-parent-row .task-title-link {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.task-subtask-row td:first-child {
+    padding-left: 40px !important;
+}
+
+.task-subtask-row {
+    background: #f8fafc !important;
+}
+
+.task-subtask-row:hover {
+    background: #f1f5f9 !important;
+}
+
+.task-subtask-row td {
+    color: #64748b !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.task-subtask-row .task-title-link {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.task-subtask-row .priority-dot {
+    opacity: 0.8;
+}
+
+.task-subtask-row .progress-tag {
+    opacity: 0.8;
+}
+
+.task-subtask-row .assignee-avatar {
+    opacity: 0.8;
+}
+
+.task-subtask-row .btn-status-action {
+    opacity: 0.8;
+}
+
+/* 递归渲染中的连线容器 */
+.task-tree-prefix {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-right: 8px;
+    font-family: Consolas, "Courier New", monospace;
+    font-weight: 600;
+    letter-spacing: -1px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* 任务栏报警（有问题时变红） */
+.task-row-error {
+    background: #fff1f2 !important;
+    /* 极浅红背景 */
+}
+
+.task-row-error td {
+    border-bottom: 1px solid #fecaca !important;
+}
+
+.task-row-error .task-title-link {
+    color: #be123c !important;
+    /* 深红文字 */
+}
+
+.task-row-error:hover {
+    background: #ffe4e6 !important;
+}
+
+/* 6. 任务详情（Modal 内）修饰 */
+.task-detail-container {
+    padding: 10px;
+}
+
+.task-detail-section {
+    margin-bottom: 24px;
+}
+
+.task-detail-label {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.task-description-box {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.task-description-box.empty {
+    color: #94a3b8;
+    font-style: italic;
+    text-align: center;
+    background: #ffffff;
+    border: 2px dashed #e2e8f0;
+}
+
+/* 子任务行修饰 */
+.subtask-row {
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    margin-bottom: 4px;
+}
+
+.subtask-row:hover {
+    background: #f1f5f9;
+}
+
+.subtask-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-right: 14px;
+    accent-color: var(--primary);
+}
+
+/* 文件上传区域 */
+.file-upload-zone {
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8fafc;
+}
+
+.file-upload-zone:hover {
+    border-color: #94a3b8;
+    background: #f1f5f9;
+}
+
+.file-upload-zone.active {
+    border-color: var(--primary);
+    background: #eff6ff;
+}
+
+.file-upload-zone.active svg {
+    stroke: var(--primary);
+}
+
+.file-upload-zone.active p {
+    color: var(--primary);
+}
+
+/* 文件列表 */
+.file-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.file-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.file-item .file-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.file-item .file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-item .file-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-item .file-size {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.file-item .remove-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.file-item .remove-btn:hover {
+    background: #fee2e2;
+}
+
+.file-item .remove-btn:hover svg {
+    stroke: #ef4444;
+}
+
+/* 7. 任务详情 - 现代化双栏布局强化 */
+.modal:has(.task-detail-grid) {
+    width: 900px !important;
+    max-width: 95vw;
+}
+
+.modal:has(.task-detail-grid) .modal-header,
+.modal:has(.task-detail-grid) .modal-footer {
+    display: none;
+}
+
+.task-detail-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    border: 1px solid #f1f5f9;
+    color: #94a3b8;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.task-detail-close:hover {
+    color: var(--text-1);
+    transform: rotate(90deg);
+    background: #f8fafc;
+}
+
+.task-detail-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-1);
+    margin-bottom: 24px;
+    line-height: 1.3;
+}
+
+.task-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 0;
+    margin: -24px -32px;
+    /* 抵消 modal-body 的 padding */
+}
+
+.task-detail-main {
+    padding: 32px;
+    min-width: 0;
+}
+
+.task-detail-sidebar {
+    padding: 32px;
+    background: #f8fafc;
+    border-left: 1px solid #f1f5f9;
+    border-bottom-right-radius: var(--radius-xl);
+    position: relative;
+}
+
+.task-detail-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+}
+
+.task-description-box {
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.task-description-box.empty {
+    padding: 24px;
+    background: transparent;
+    border: none;
+    color: #94a3b8 !important;
+    text-align: center;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* 确保相关附件的空状态也使用相同颜色 */
+.task-detail-section:has(.attachment-grid)+.task-detail-section .task-description-box.empty {
+    color: #94a3b8 !important;
+}
+
+/* 侧边栏属性行 (并排布局) */
+.sidebar-attr-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.sidebar-attr-row .sidebar-attr-item {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* 侧边栏属性项 */
+.sidebar-attr-item {
+    margin-bottom: 24px;
+}
+
+.sidebar-attr-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.assignee-info-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.assignee-info-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* 附件卡片预览 */
+.attachment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.attachment-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.attachment-card.file-only .attachment-preview {
+    display: none;
+}
+
+.attachment-preview {
+    aspect-ratio: 16/10;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.attachment-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.attachment-info {
+    padding: 8px 10px;
+}
+
+.attachment-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+/* 响应式适配 */
+@media (max-width: 850px) {
+    .task-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .task-detail-sidebar {
+        border-left: none;
+        border-top: 1px solid #f1f5f9;
+        border-bottom-left-radius: var(--radius-xl);
+    }
+}
+
+/* 特殊提示信息风格 */
+.action-info-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    background: hsla(220, 100%, 96%, 1);
+    padding: 4px 12px;
+    border-radius: 4px;
+}
+
+/* ============================================================
+   ͼƬ��ͼԤ�� Lightbox
+   ============================================================ */
+
+/* 任务完成度进度条 */
+.task-progress-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    margin-top: 4px;
+    padding: 2px 0;
+    user-select: none;
+}
+
+.task-progress-wrap:hover .task-progress-bar {
+    box-shadow: 0 0 0 2px rgba(64, 128, 255, 0.15);
+}
+
+.task-progress-bar {
+    width: 80px;
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 3px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.task-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.task-progress-text {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 32px;
+}

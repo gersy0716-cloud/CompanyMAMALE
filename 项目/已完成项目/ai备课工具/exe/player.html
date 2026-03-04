@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI备课工具 - 演示文稿播放器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* 加载界面 */
+        #loadScreen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        #loadScreen h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s;
+        }
+
+        .load-button {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .load-button:hover {
+            transform: scale(1.05);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* 播放界面 */
+        #playScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: black;
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide-media {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* 互动工具图标 */
+        .interactive-icon {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #ff6b35;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+            z-index: 40;
+            animation: pulse 2s infinite;
+        }
+
+        .interactive-icon:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 互动工具预览 */
+        .interactive-preview {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .interactive-preview.active {
+            display: flex;
+        }
+
+        .interactive-content {
+            position: relative;
+            background: white;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-button:hover {
+            background: white;
+        }
+
+        /* 控制栏 */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            z-index: 50;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .page-info {
+            color: white;
+            font-size: 1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* 过渡动画 */
+        .slide-wrapper {
+            position: absolute;
+            inset: 0;
+        }
+
+        .fade-enter {
+            animation: fadeIn 0.5s;
+        }
+
+        .fade-exit {
+            animation: fadeOut 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* 加载提示 */
+        .loading {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载界面 -->
+    <div id="loadScreen">
+        <h1>🎓 AI备课工具播放器</h1>
+        <button class="load-button" onclick="document.getElementById('fileInput').click()">
+            📁 加载演示文稿
+        </button>
+        <input type="file" id="fileInput" accept=".json" onchange="loadPresentation(event)">
+    </div>
+
+    <!-- 播放界面 -->
+    <div id="playScreen">
+        <div id="slideContainer" class="slide-container"></div>
+
+        <!-- 控制栏 -->
+        <div class="controls">
+            <button class="control-btn" onclick="previousSlide()" title="上一页 (←)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="page-info" id="pageInfo">1 / 1</div>
+            <button class="control-btn" onclick="nextSlide()" title="下一页 (→)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+            <button class="control-btn" onclick="exitPresentation()" title="退出 (Esc)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let slides = [];
+        let currentIndex = 0;
+
+        // 加载演示文稿
+        function loadPresentation(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (!data.slides || !Array.isArray(data.slides)) {
+                        alert('无效的演示文稿格式');
+                        return;
+                    }
+
+                    slides = data.slides;
+
+                    // 切换到播放界面
+                    document.getElementById('loadScreen').style.display = 'none';
+                    document.getElementById('playScreen').style.display = 'block';
+
+                    // 进入全屏
+                    enterFullscreen();
+
+                    // 显示第一张
+                    showSlide(0);
+
+                    console.log('演示文稿加载成功:', data.metadata);
+                } catch (error) {
+                    alert('加载失败: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 显示幻灯片
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+
+            currentIndex = index;
+            const slide = slides[index];
+            const container = document.getElementById('slideContainer');
+
+            // 清空容器
+            container.innerHTML = '';
+
+            // 创建幻灯片包装器
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-wrapper fade-enter';
+
+            // 显示视频或图片
+            if (slide.videoUrl) {
+                const video = document.createElement('video');
+                video.src = slide.videoUrl;
+                video.className = 'slide-media';
+                video.controls = true;
+                video.autoplay = true;
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '100%';
+                wrapper.appendChild(video);
+
+                // 视频结束自动翻页
+                video.onended = () => {
+                    if (currentIndex < slides.length - 1) {
+                        nextSlide();
+                    }
+                };
+            } else if (slide.imageUrl) {
+                const img = document.createElement('img');
+                img.src = slide.imageUrl;
+                img.className = 'slide-media';
+                img.alt = slide.title;
+                wrapper.appendChild(img);
+            } else {
+                // 无媒体，显示文字
+                const textDiv = document.createElement('div');
+                textDiv.style.color = 'white';
+                textDiv.style.fontSize = '2rem';
+                textDiv.style.textAlign = 'center';
+                textDiv.innerHTML = `<h1>${slide.title}</h1><p style="margin-top: 1rem;">${slide.content}</p>`;
+                wrapper.appendChild(textDiv);
+            }
+
+            // 添加互动工具
+            if (slide.interactiveTools && slide.interactiveTools.length > 0) {
+                slide.interactiveTools.forEach(tool => {
+                    const icon = document.createElement('div');
+                    icon.className = 'interactive-icon';
+                    icon.textContent = tool.label;
+                    icon.style.left = tool.x + '%';
+                    icon.style.top = tool.y + '%';
+                    icon.style.transform = 'translate(-50%, -50%)';
+                    icon.onclick = (e) => {
+                        e.stopPropagation();
+                        showInteractive(tool);
+                    };
+                    wrapper.appendChild(icon);
+                });
+            }
+
+            container.appendChild(wrapper);
+
+            // 更新页码
+            document.getElementById('pageInfo').textContent = `${index + 1} / ${slides.length}`;
+        }
+
+        // 显示互动工具
+        function showInteractive(tool) {
+            const preview = document.createElement('div');
+            preview.className = 'interactive-preview active';
+
+            const content = document.createElement('div');
+            content.className = 'interactive-content';
+            content.style.width = (tool.width || 90) + '%';
+            content.style.height = (tool.height || 90) + '%';
+            content.style.maxWidth = '177.78vh';
+            content.style.maxHeight = '56.25vw';
+
+            const iframe = document.createElement('iframe');
+            iframe.srcdoc = tool.htmlContent;
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.sandbox = 'allow-scripts allow-forms allow-modals allow-popups';
+
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-button';
+            closeBtn.innerHTML = '×';
+            closeBtn.onclick = () => preview.remove();
+
+            content.appendChild(closeBtn);
+            content.appendChild(iframe);
+            preview.appendChild(content);
+            document.getElementById('slideContainer').appendChild(preview);
+        }
+
+        // 下一张
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                showSlide(currentIndex + 1);
+            }
+        }
+
+        // 上一张
+        function previousSlide() {
+            if (currentIndex > 0) {
+                showSlide(currentIndex - 1);
+            }
+        }
+
+        // 退出演示
+        function exitPresentation() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            document.getElementById('playScreen').style.display = 'none';
+            document.getElementById('loadScreen').style.display = 'flex';
+            slides = [];
+            currentIndex = 0;
+        }
+
+        // 进入全屏
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => {
+                    console.log('全屏失败:', err);
+                });
+            }
+        }
+
+        // 键盘控制
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('playScreen').style.display === 'none') return;
+
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'PageUp':
+                    previousSlide();
+                    break;
+                case 'ArrowRight':
+                case 'PageDown':
+                case ' ':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'Escape':
+                    exitPresentation();
+                    break;
+                case 'Home':
+                    showSlide(0);
+                    break;
+                case 'End':
+                    showSlide(slides.length - 1);
+                    break;
+            }
+        });
+
+        // 点击屏幕翻页
+        document.getElementById('slideContainer').addEventListener('click', (e) => {
+            if (e.target.closest('.interactive-preview')) return;
+
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+
+            if (clickX < screenWidth / 3) {
+                previousSlide();
+            } else if (clickX > screenWidth * 2 / 3) {
+                nextSlide();
+            }
+        });
+
+        // 全屏状态监听
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && document.getElementById('playScreen').style.display !== 'none') {
+                // 退��全屏时返回加载界面
+                exitPresentation();
+            }
+        });
+    </script>
+</body>
+</html>

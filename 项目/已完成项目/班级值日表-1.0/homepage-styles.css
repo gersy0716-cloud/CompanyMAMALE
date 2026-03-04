@@ -1,0 +1,201 @@
+/* ========== 首页主标题区域 ========== */
+.homepage-hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(135deg, rgba(255, 248, 240, 0.8) 0%, rgba(255, 240, 224, 0.8) 100%);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(212, 176, 152, 0.15);
+    border: 1px solid rgba(232, 196, 168, 0.3);
+}
+
+.hero-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #5E4A3A;
+    margin: 0 0 12px 0;
+    letter-spacing: 2px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: #8B7A6F;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* ========== 班级选择区域 ========== */
+.class-select-section {
+    margin-top: 40px;
+}
+
+.section-header-modern {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    border: 1px solid rgba(232, 196, 168, 0.2);
+}
+
+.section-icon {
+    font-size: 28px;
+}
+
+.section-title-modern {
+    font-size: 24px;
+    font-weight: 600;
+    color: #5E4A3A;
+    margin: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .homepage-hero {
+        padding: 40px 20px 30px;
+    }
+
+    .hero-icon {
+        font-size: 56px;
+    }
+
+    .hero-title {
+        font-size: 36px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+    }
+
+    .section-title-modern {
+        font-size: 20px;
+    }
+}
+
+/* ========== 首页管理模式选择 ========== */
+.management-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.mode-card {
+    background: linear-gradient(135deg, #FFF8F0 0%, #FFF0E0 100%);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(212, 176, 152, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(232, 196, 168, 0.1) 0%, rgba(212, 176, 152, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mode-card:hover::before {
+    opacity: 1;
+}
+
+.mode-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(212, 176, 152, 0.25);
+}
+
+.mode-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.mode-card h3 {
+    color: #5E4A3A;
+    font-size: 24px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.mode-card p {
+    color: #8B7A6F;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.mode-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(139, 122, 111, 0.15);
+    color: #8B7A6F;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mode-badge-primary {
+    background: linear-gradient(135deg, #E8C4A8 0%, #D4B098 100%);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .management-mode-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .mode-card {
+        padding: 30px 20px;
+    }
+
+    .mode-icon {
+        font-size: 48px;
+    }
+
+    .mode-card h3 {
+        font-size: 20px;
+    }
+}

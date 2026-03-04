@@ -1,0 +1,255 @@
+/* ==========================================
+   Skill 商店 — 清透果冻网格
+   风格: 与整体项目高度统一（清透·柔光·空气感）
+   ========================================== */
+
+/* Skill 网格布局 */
+.skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-4);
+}
+
+/* Skill 卡片 */
+.skill-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+}
+
+.skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.skill-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(64, 128, 255, 0.3);
+}
+
+.skill-card:hover::before {
+    opacity: 1;
+}
+
+/* Skill 卡片内容 */
+.skill-card-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-1);
+    margin-bottom: var(--space-2);
+    line-height: 1.4;
+}
+
+.skill-card-desc {
+    font-size: 13px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-6);
+    flex: 1;
+}
+
+/* Skill 卡片页脚 */
+.skill-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.skill-card-uploader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.uploader-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+}
+
+.skill-card-date {
+    font-size: 11px;
+    color: var(--text-4);
+}
+
+/* Skill 搜索与筛选区域 */
+.skill-search-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+    margin-bottom: var(--space-4);
+}
+
+/* 提高权重，覆盖 common.css 中的 .search-input */
+.page-content .skill-search-bar .search-input {
+    position: relative;
+    width: 100% !important;
+    max-width: 650px !important;
+    height: 56px !important;
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: var(--radius-full) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05) !important;
+    padding: 0 24px 0 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: all var(--transition-normal) !important;
+}
+
+.page-content .skill-search-bar .search-input:focus-within {
+    box-shadow: 0 12px 48px rgba(64, 128, 255, 0.15) !important;
+    border-color: var(--primary) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.page-content .skill-search-bar .search-input input {
+    height: 100% !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 16px !important;
+    color: var(--text-1) !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.page-content .skill-search-bar .search-input svg {
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: var(--text-4);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 标签筛选栏 - 对齐任务模块 */
+.tag-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: var(--radius-lg);
+}
+
+/* Skill 详情面板优化 */
+.skill-detail {
+    padding: var(--space-2);
+}
+
+.skill-detail-section {
+    background: rgba(0, 0, 0, 0.02);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.markdown-body {
+    line-height: 1.8;
+    color: var(--text-1);
+}
+
+/* Skill 上传/编辑表单 */
+.skill-upload-form {
+    padding: var(--space-2);
+}
+
+.tag-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+#skill-tag-input {
+    border: none !important;
+    padding: 0 !important;
+    height: 24px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* 空状态 */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.empty-state p {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-3);
+    margin: 0 0 8px 0;
+}
+
+.empty-state span {
+    font-size: 13px;
+    color: var(--text-4);
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .skill-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .skill-search-bar .search-input {
+        max-width: 100%;
+    }
+}

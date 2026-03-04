@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库管理系统 - Database Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h1>数据库管理系统</h1>
+                </div>
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">未连接</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Configuration Panel -->
+            <section class="card config-card">
+                <div class="card-header">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6m0-13a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"/>
+                        </svg>
+                        数据库配置
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="apiUrl">API 地址</label>
+                        <input type="text" id="apiUrl" value="https://data.520ai.cc/" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="apiKey">API Key</label>
+                        <input type="text" id="apiKey" value="IbJFuCQ2Qg7xFfxbm27MXq8IPYAiBAmWwRBk0o3I" placeholder="输入API Key">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="databaseId">数据库 ID</label>
+                            <input type="text" id="databaseId" value="bse2oDvQd5aD5EIq4MS" placeholder="输入数据库ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="tableId">表 ID</label>
+                            <input type="text" id="tableId" value="tGQBiIQtxC" placeholder="输入表ID">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="testConnection">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        测试连接
+                    </button>
+                </div>
+            </section>
+
+            <!-- Data Display Section -->
+            <section class="card data-card">
+                <div class="card-header">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z"/>
+                        </svg>
+                        数据列表
+                    </h2>
+                    <button class="btn btn-secondary" id="refreshData">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <polyline points="1 20 1 14 7 14"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        刷新
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="loading-state" id="loadingState">
+                        <div class="spinner"></div>
+                        <p>加载中...</p>
+                    </div>
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M9 9h6m-6 4h6m-6 4h4"/>
+                        </svg>
+                        <p>暂无数据</p>
+                        <p class="empty-hint">点击下方按钮添加第一条记录</p>
+                    </div>
+                    <div class="data-table-container" id="dataTableContainer" style="display: none;">
+                        <table class="data-table" id="dataTable">
+                            <thead>
+                                <tr id="tableHeader">
+                                    <!-- Dynamic headers will be inserted here -->
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Dynamic data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Data Section -->
+            <section class="card add-card">
+                <div class="card-header">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        添加数据
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form id="addDataForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recordName">名称 (name) *</label>
+                                <input type="text" id="recordName" placeholder="输入名称" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                保存记录
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/>
+                                </svg>
+                                清空
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <div class="toast-content">
+                <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4m0-4h.01"/>
+                </svg>
+                <span class="toast-message"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

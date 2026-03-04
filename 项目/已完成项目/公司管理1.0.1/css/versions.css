@@ -1,0 +1,526 @@
+/* ==========================================
+   版本更新模块 — 状态卡片 + 时间线
+   ========================================== */
+
+/* === 顶部状态卡片 === */
+.version-status-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8) var(--space-10);
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-10);
+}
+
+/* 背景装饰光晕 */
+.version-status-card::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    right: -10%;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, var(--primary-glow), transparent 70%);
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.version-status-card::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: 10%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0, 180, 42, 0.06), transparent 70%);
+    pointer-events: none;
+}
+
+/* 状态图标容器 */
+.version-status-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.version-status-icon.is-latest {
+    background: linear-gradient(135deg, rgba(0, 180, 42, 0.12), rgba(0, 180, 42, 0.04));
+    box-shadow: 0 8px 24px rgba(0, 180, 42, 0.1);
+}
+
+.version-status-icon.has-update {
+    background: linear-gradient(135deg, rgba(64, 128, 255, 0.12), rgba(64, 128, 255, 0.04));
+    box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+/* 状态信息区 */
+.version-status-info {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.version-status-ver {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-1);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.version-status-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.version-status-label.is-latest {
+    color: var(--success);
+}
+
+.version-status-label.has-update {
+    color: var(--primary);
+}
+
+/* 状态呼吸圆点 */
+.version-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.version-status-dot.is-latest {
+    background: var(--success);
+    box-shadow: 0 0 0 3px rgba(0, 180, 42, 0.2);
+    animation: version-pulse-green 2s infinite;
+}
+
+.version-status-dot.has-update {
+    background: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    animation: version-pulse-blue 2s infinite;
+}
+
+@keyframes version-pulse-green {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 3px rgba(0, 180, 42, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(0, 180, 42, 0.08);
+    }
+}
+
+@keyframes version-pulse-blue {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(64, 128, 255, 0.08);
+    }
+}
+
+/* 状态卡片操作区 */
+.version-status-actions {
+    display: flex;
+    gap: var(--space-3);
+    position: relative;
+    z-index: 1;
+}
+
+/* === 历史区域标题 === */
+.version-history-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    padding-left: var(--space-1);
+}
+
+.version-history-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-1);
+}
+
+.version-history-count {
+    font-size: var(--font-size-xs);
+    color: var(--text-3);
+    background: var(--gray-1);
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-weight: 500;
+}
+
+/* === 时间线容器 === */
+.version-timeline {
+    position: relative;
+    padding-left: 32px;
+}
+
+/* 时间线竖线 */
+.version-timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gray-3), var(--gray-2));
+    border-radius: 2px;
+}
+
+/* === 时间线项 === */
+.version-timeline-item {
+    position: relative;
+    padding-bottom: var(--space-8);
+}
+
+.version-timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+/* 时间线圆点 */
+.version-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 22px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gray-4);
+    border: 2.5px solid var(--bg-card-solid);
+    box-shadow: 0 0 0 2px var(--gray-3);
+    z-index: 2;
+    transition: all var(--transition-normal);
+}
+
+/* 最新版本圆点高亮 */
+.version-timeline-item.is-latest::before {
+    background: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light), 0 0 12px var(--primary-glow);
+    width: 14px;
+    height: 14px;
+    left: -26px;
+    top: 21px;
+}
+
+/* 当前版本圆点 */
+.version-timeline-item.is-current::before {
+    background: var(--success);
+    box-shadow: 0 0 0 3px var(--success-light), 0 0 12px rgba(0, 180, 42, 0.15);
+}
+
+/* 时间线卡片 */
+.version-timeline-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.version-timeline-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--primary-light);
+}
+
+/* 卡片头部 */
+.version-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.version-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.version-card-ver {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--text-1);
+}
+
+/* 版本标签 */
+.version-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    height: 22px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.3px;
+}
+
+.version-tag.tag-latest {
+    background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+    color: white;
+    box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.version-tag.tag-current {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.version-tag.tag-history {
+    background: var(--gray-1);
+    color: var(--text-3);
+}
+
+/* 卡片元信息 */
+.version-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--font-size-xs);
+    color: var(--text-3);
+}
+
+.version-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.version-card-meta-item svg {
+    width: 13px;
+    height: 13px;
+    opacity: 0.7;
+}
+
+/* === 更新日志 === */
+.version-changelog {
+    background: var(--gray-1);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.version-changelog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.version-changelog-list li {
+    position: relative;
+    padding-left: 18px;
+    font-size: var(--font-size-sm);
+    color: var(--text-2);
+    line-height: 2;
+}
+
+.version-changelog-list li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 11px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0.6;
+}
+
+/* 没有格式化的纯文本 changelog */
+.version-changelog-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-2);
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+/* === 下载按钮 === */
+.version-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 16px;
+    background: var(--gray-1);
+    color: var(--text-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.version-download-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.version-download-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* === 更新弹窗 === */
+.version-update-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: version-overlay-in 0.3s ease;
+}
+
+@keyframes version-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.version-update-dialog {
+    background: var(--bg-card-solid);
+    border-radius: var(--radius-xl);
+    padding: var(--space-10);
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    text-align: center;
+    animation: version-dialog-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes version-dialog-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.version-update-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-5);
+    box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.version-update-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-1);
+    margin-bottom: var(--space-2);
+}
+
+.version-update-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--text-3);
+    margin-bottom: var(--space-5);
+}
+
+.version-update-changelog {
+    background: var(--gray-1);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    color: var(--text-2);
+    line-height: 1.8;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: var(--space-6);
+}
+
+.version-update-actions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.version-update-actions .btn {
+    flex: 1;
+    height: 42px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+}
+
+/* 空状态样式 */
+.version-empty {
+    text-align: center;
+    padding: var(--space-12) var(--space-8);
+    color: var(--text-3);
+}
+
+.version-empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-xl);
+    background: var(--gray-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-5);
+}
+
+.version-empty p {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--text-2);
+    margin-bottom: var(--space-2);
+}
+
+.version-empty span {
+    font-size: var(--font-size-sm);
+    color: var(--text-3);
+}

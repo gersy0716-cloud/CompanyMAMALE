@@ -1,0 +1,41 @@
+# 忽略大文件
+dist/
+
+# 忽略node_modules
+node_modules/
+
+# 忽略环境变量文件
+.env
+.env.local
+.env.*.local
+
+# 忽略日志文件
+logs
+*.log
+
+# 忽略编辑器文件
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 忽略操作系统文件
+.DS_Store
+Thumbs.db
+
+# 忽略构建文件
+build/
+out/
+
+# 忽略临时文件
+*.tmp
+*.temp
+
+# 忽略包含敏感信息的配置文件
+**/config.js
+**/config.local.js
+**/config.prod.js
+**/config.dev.js

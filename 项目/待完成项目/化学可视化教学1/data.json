@@ -1,0 +1,516 @@
+{
+    "atoms": [
+        {
+            "id": 1,
+            "name": "氢",
+            "symbol": "H",
+            "protons": 1,
+            "shells": [
+                1
+            ],
+            "mass": 1.008
+        },
+        {
+            "id": 2,
+            "name": "氦",
+            "symbol": "He",
+            "protons": 2,
+            "shells": [
+                2
+            ],
+            "mass": 4.003
+        },
+        {
+            "id": 3,
+            "name": "锂",
+            "symbol": "Li",
+            "protons": 3,
+            "shells": [
+                2,
+                1
+            ],
+            "mass": 6.941
+        },
+        {
+            "id": 4,
+            "name": "铍",
+            "symbol": "Be",
+            "protons": 4,
+            "shells": [
+                2,
+                2
+            ],
+            "mass": 9.012
+        },
+        {
+            "id": 5,
+            "name": "硼",
+            "symbol": "B",
+            "protons": 5,
+            "shells": [
+                2,
+                3
+            ],
+            "mass": 10.811
+        },
+        {
+            "id": 6,
+            "name": "碳",
+            "symbol": "C",
+            "protons": 6,
+            "shells": [
+                2,
+                4
+            ],
+            "mass": 12.011
+        },
+        {
+            "id": 7,
+            "name": "氮",
+            "symbol": "N",
+            "protons": 7,
+            "shells": [
+                2,
+                5
+            ],
+            "mass": 14.007
+        },
+        {
+            "id": 8,
+            "name": "氧",
+            "symbol": "O",
+            "protons": 8,
+            "shells": [
+                2,
+                6
+            ],
+            "mass": 15.999
+        },
+        {
+            "id": 9,
+            "name": "氟",
+            "symbol": "F",
+            "protons": 9,
+            "shells": [
+                2,
+                7
+            ],
+            "mass": 18.998
+        },
+        {
+            "id": 10,
+            "name": "氖",
+            "symbol": "Ne",
+            "protons": 10,
+            "shells": [
+                2,
+                8
+            ],
+            "mass": 20.180
+        },
+        {
+            "id": 11,
+            "name": "钠",
+            "symbol": "Na",
+            "protons": 11,
+            "shells": [
+                2,
+                8,
+                1
+            ],
+            "mass": 22.990
+        },
+        {
+            "id": 12,
+            "name": "镁",
+            "symbol": "Mg",
+            "protons": 12,
+            "shells": [
+                2,
+                8,
+                2
+            ],
+            "mass": 24.305
+        },
+        {
+            "id": 13,
+            "name": "铝",
+            "symbol": "Al",
+            "protons": 13,
+            "shells": [
+                2,
+                8,
+                3
+            ],
+            "mass": 26.982
+        },
+        {
+            "id": 14,
+            "name": "硅",
+            "symbol": "Si",
+            "protons": 14,
+            "shells": [
+                2,
+                8,
+                4
+            ],
+            "mass": 28.085
+        },
+        {
+            "id": 15,
+            "name": "磷",
+            "symbol": "P",
+            "protons": 15,
+            "shells": [
+                2,
+                8,
+                5
+            ],
+            "mass": 30.974
+        },
+        {
+            "id": 16,
+            "name": "硫",
+            "symbol": "S",
+            "protons": 16,
+            "shells": [
+                2,
+                8,
+                6
+            ],
+            "mass": 32.06
+        },
+        {
+            "id": 17,
+            "name": "氯",
+            "symbol": "Cl",
+            "protons": 17,
+            "shells": [
+                2,
+                8,
+                7
+            ],
+            "mass": 35.45
+        },
+        {
+            "id": 18,
+            "name": "氩",
+            "symbol": "Ar",
+            "protons": 18,
+            "shells": [
+                2,
+                8,
+                8
+            ],
+            "mass": 39.948
+        },
+        {
+            "id": 19,
+            "name": "钾",
+            "symbol": "K",
+            "protons": 19,
+            "shells": [
+                2,
+                8,
+                8,
+                1
+            ],
+            "mass": 39.098
+        },
+        {
+            "id": 20,
+            "name": "钙",
+            "symbol": "Ca",
+            "protons": 20,
+            "shells": [
+                2,
+                8,
+                8,
+                2
+            ],
+            "mass": 40.078
+        },
+        {
+            "id": 26,
+            "name": "铁",
+            "symbol": "Fe",
+            "protons": 26,
+            "shells": [
+                2,
+                8,
+                14,
+                2
+            ],
+            "mass": 55.845
+        },
+        {
+            "id": 29,
+            "name": "铜",
+            "symbol": "Cu",
+            "protons": 29,
+            "shells": [
+                2,
+                8,
+                18,
+                1
+            ],
+            "mass": 63.546
+        }
+    ],
+    "molecules": [
+        {
+            "id": "h2",
+            "name": "氢气",
+            "formula": "H2",
+            "atoms": [
+                {
+                    "element": "H",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        0,
+                        0,
+                        1
+                    ]
+                }
+            ],
+            "unit": "第四单元"
+        },
+        {
+            "id": "o2",
+            "name": "氧气",
+            "formula": "O2",
+            "atoms": [
+                {
+                    "element": "O",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "O",
+                    "pos": [
+                        0,
+                        0,
+                        1.2
+                    ]
+                }
+            ],
+            "unit": "第二单元"
+        },
+        {
+            "id": "h2o",
+            "name": "水",
+            "formula": "H2O",
+            "atoms": [
+                {
+                    "element": "O",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        0.75,
+                        0.6,
+                        0
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        -0.75,
+                        0.6,
+                        0
+                    ]
+                }
+            ],
+            "unit": "第四单元"
+        },
+        {
+            "id": "co2",
+            "name": "二氧化碳",
+            "formula": "CO2",
+            "atoms": [
+                {
+                    "element": "C",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "O",
+                    "pos": [
+                        1.16,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "O",
+                    "pos": [
+                        -1.16,
+                        0,
+                        0
+                    ]
+                }
+            ],
+            "unit": "第六单元"
+        },
+        {
+            "id": "ch4",
+            "name": "甲烷",
+            "formula": "CH4",
+            "atoms": [
+                {
+                    "element": "C",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        0.63,
+                        0.63,
+                        0.63
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        -0.63,
+                        -0.63,
+                        0.63
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        -0.63,
+                        0.63,
+                        -0.63
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        0.63,
+                        -0.63,
+                        -0.63
+                    ]
+                }
+            ],
+            "unit": "第七单元"
+        },
+        {
+            "id": "nh3",
+            "name": "氨气",
+            "formula": "NH3",
+            "atoms": [
+                {
+                    "element": "N",
+                    "pos": [
+                        0,
+                        0,
+                        0.1
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        0.93,
+                        0,
+                        -0.27
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        -0.46,
+                        0.81,
+                        -0.27
+                    ]
+                },
+                {
+                    "element": "H",
+                    "pos": [
+                        -0.46,
+                        -0.81,
+                        -0.27
+                    ]
+                }
+            ],
+            "unit": "第七单元"
+        },
+        {
+            "id": "hcl",
+            "name": "氯化氢",
+            "formula": "HCl",
+            "atoms": [
+                {
+                    "element": "H",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "element": "Cl",
+                    "pos": [
+                        0,
+                        0,
+                        1.27
+                    ]
+                }
+            ],
+            "unit": "第十单元"
+        }
+    ],
+    "reactions": [
+        {
+            "id": "p_burn",
+            "name": "红磷燃烧",
+            "equation": "4P + 5O_2 ===(\\text{点燃}) 2P_2O_5",
+            "phenomena": "剧烈燃烧，产生大量白烟，放出热量。",
+            "unit": "第二单元"
+        },
+        {
+            "id": "fe_burn",
+            "name": "铁丝在氧气中燃烧",
+            "equation": "3Fe + 2O_2 ===(\\text{点燃}) Fe_3O_4",
+            "phenomena": "剧烈燃烧，火星四射，生成黑色固体。",
+            "unit": "第二单元"
+        },
+        {
+            "id": "water_elec",
+            "name": "水的电解",
+            "equation": "2H_2O ===(\\text{通电}) 2H_2\\uparrow + O_2\\uparrow",
+            "phenomena": "正负极产生气泡，体积比约 1:2。",
+            "unit": "第四单元"
+        },
+        {
+            "id": "acid_base",
+            "name": "中和反应",
+            "equation": "HCl + NaOH === NaCl + H_2O",
+            "phenomena": "加入酚酞变色，逐滴滴入盐酸直到褪色。",
+            "unit": "第十单元"
+        }
+    ]
+}

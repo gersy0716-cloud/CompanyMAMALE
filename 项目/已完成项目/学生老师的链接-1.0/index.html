@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="unauthorized-container" id="unauthorizedContainer">
+        <div class="unauthorized-card">
+            <div class="unauthorized-icon">🔒</div>
+            <h1>访问未授权</h1>
+            <p>您没有权限访问此页面，请确保您拥有正确的访问令牌。</p>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer" style="display: none;">
+        <header class="header">
+            <div class="header-content">
+                <h1>学生老师信息管理系统</h1>
+                <div id="paramDisplay" style="font-size: 12px; color: #666; margin-top: 5px;"></div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="loading-container" id="loadingContainer">
+                <div class="spinner"></div>
+                <p id="loadingText">正在加载数据...</p>
+            </div>
+
+            <div class="error-container" id="errorContainer" style="display: none;">
+                <div class="error-icon">⚠️</div>
+                <h2>加载失败</h2>
+                <p id="errorMessage"></p>
+                <button class="retry-button" onclick="loadStudentData()">重试</button>
+            </div>
+
+            <!-- 教师信息展示界面（首页） -->
+            <div class="teacher-content" id="teacherContent" style="display: none;">
+                <h2 class="page-title">教师信息管理</h2>
+
+                <div class="search-bar">
+                    <input type="text" id="teacherSearchInput" placeholder="搜索教师姓名、科目..." oninput="filterTeachers()">
+                    <button class="search-button">🔍</button>
+                </div>
+
+                <div class="student-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTeachers">0</div>
+                        <div class="stat-label">教师总数</div>
+                    </div>
+                </div>
+
+                <div class="student-table-container">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>任教科目</th>
+                                <th>任教班级</th>
+                                <th>联系电话</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacherTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 班级选择界面（用于学生信息） -->
+            <div class="class-selection" id="classSelection" style="display: none;">
+                <h2>请选择班级</h2>
+                <div class="class-grid" id="classGrid">
+                    <!-- 班级卡片将动态加载 -->
+                </div>
+            </div>
+
+            <!-- 学生信息展示界面（二级页面） -->
+            <div class="student-content" id="studentContent" style="display: none;">
+                <div class="breadcrumb">
+                    <button class="back-button" onclick="backToClassSelection()">← 返回班级选择</button>
+                    <span class="current-class" id="currentClassName">当前班级</span>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="搜索学生姓名、学号..." oninput="filterStudents()">
+                    <button class="search-button">🔍</button>
+                </div>
+
+                <div class="student-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalStudents">0</div>
+                        <div class="stat-label">总学生数</div>
+                    </div>
+                </div>
+
+                <div class="student-table-container">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>学号</th>
+                                <th>姓名</th>
+                                <th>班级</th>
+                                <th>年级</th>
+                                <th>状态</th>
+                                <th>联系方式</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar" id="navBar" style="display: none;">
+        <button class="nav-button" onclick="showClassSelection()">👨‍🎓 学生</button>
+        <button class="nav-button" onclick="showTeacherList()">👨‍🏫 教师</button>
+    </div>
+
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>学生详细信息</h2>
+            <div id="studentDetails"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="teacherModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTeacherModal()">&times;</span>
+            <h2>教师详细信息</h2>
+            <div id="teacherDetails"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>酸碱中和反应 - 宏微观双可视化</title>
+    <style>
+        :root {
+            --bg-color: #F0F4F8;
+            --panel-bg: #FFFFFF;
+            --text-main: #334E68;
+            --text-light: #829AB1;
+            --btn-color: #3EBD93;
+            --btn-hover: #2DA77D;
+            --btn-reset: #FF7E67;
+            --acid-color: #4AB3F4;
+            --base-color: #F064A6;
+            --water-color: #30C2E3;
+            --na-color: #B28DFF;
+            --cl-color: #8DE095;
+            --liquid-pink: rgba(240, 100, 166, 0.8);
+            --liquid-clear: rgba(220, 235, 245, 0.5);
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 28px; color: var(--text-main); margin: 0 0 10px 0; letter-spacing: 2px; }
+        .header p { font-size: 16px; color: var(--text-light); margin: 0; }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            background: var(--bg-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .macro-panel { flex: 1.2; min-width: 320px; }
+        .micro-panel { flex: 1; min-width: 300px; overflow: hidden; }
+        .data-panel { flex: 1; min-width: 300px; }
+
+        .controls {
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 20px;
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        button {
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .btn-add { background-color: var(--btn-color); box-shadow: 0 4px 15px rgba(62, 189, 147, 0.3); }
+        .btn-add:hover { background-color: var(--btn-hover); transform: translateY(-2px); }
+        .btn-add:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
+        .btn-reset { background-color: var(--btn-reset); box-shadow: 0 4px 15px rgba(255, 126, 103, 0.3); }
+
+        .status-text { font-size: 18px; font-weight: bold; color: var(--text-main); }
+
+        /* --- 动画控制 --- */
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translate(110px, 45px); }
+            50% { transform: translate(110px, 35px); }
+        }
+
+        .drop-anim {
+            animation: fall 0.5s cubic-bezier(0.5, 0, 1, 1) forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) scale(1.2); opacity: 1; }
+            80% { transform: translateY(115px) scale(0.9); opacity: 1; }
+            100% { transform: translateY(130px) scale(0); opacity: 0; }
+        }
+
+        .wiggle { animation: liquidWiggle 0.6s ease-in-out; }
+        @keyframes liquidWiggle {
+            0%, 100% { d: path('M10,240 Q60,240 110,240 Q160,240 210,240 L210,380 L10,380 Z'); }
+            30% { d: path('M10,240 Q60,230 110,240 Q160,250 210,240 L210,380 L10,380 Z'); }
+            60% { d: path('M10,240 Q60,250 110,240 Q160,230 210,240 L210,380 L10,380 Z'); }
+        }
+
+        /* 离子与微观 */
+        .ion { transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .hidden-ion { opacity: 0; transform: scale(0); pointer-events: none; }
+        .visible-ion { opacity: 1; transform: scale(1); }
+        .scale-wrapper { transition: transform 0.3s ease; }
+        .merge-anim { animation: mergePulse 0.6s ease-out forwards; }
+        @keyframes mergePulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.4); filter: brightness(1.5); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .equation-box {
+            margin-top: 15px; padding: 10px; background: var(--bg-color);
+            border-radius: 10px; font-family: monospace; font-size: 16px; text-align: center;
+        }
+        .eq-highlight { color: var(--btn-reset); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🧪 酸碱中和反应探秘</h1>
+        <p>宏观变色现象 与 微观离子碰撞</p>
+    </div>
+
+    <div class="container">
+        <!-- 宏观面板 -->
+        <div class="panel macro-panel">
+            <div class="panel-title">宏观现象</div>
+            <!-- 增加了 SVG 的高度，确保滴管显示全 -->
+            <svg width="240" height="380" viewBox="0 0 220 380" id="macro-svg">
+                <defs>
+                    <!-- 调整裁剪路径，适应新的烧杯高度 -->
+                    <clipPath id="beaker-clip">
+                        <path d="M10,160 L10,340 Q10,360 30,360 L190,360 Q210,360 210,340 L210,160 Z" />
+                    </clipPath>
+                    <g id="scale-lines">
+                        <line x1="20" y1="310" x2="35" y2="310" stroke="#fff" stroke-width="2"/>
+                        <line x1="20" y1="260" x2="45" y2="260" stroke="#fff" stroke-width="2"/>
+                        <line x1="20" y1="210" x2="35" y2="210" stroke="#fff" stroke-width="2"/>
+                    </g>
+                </defs>
+
+                <!-- 烧杯液体 (整体坐标下移) -->
+                <g clip-path="url(#beaker-clip)">
+                    <g id="liquid-group" style="transition: transform 0.5s ease-in-out;">
+                        <path id="liquid-path" d="M10,240 Q60,240 110,240 Q160,240 210,240 L210,400 L10,400 Z" 
+                              fill="var(--liquid-pink)" style="transition: fill 1s ease;" />
+                    </g>
+                </g>
+
+                <!-- 烧杯轮廓 (移至 y=140 开始) -->
+                <path d="M5,140 L10,140 L10,340 Q10,360 30,360 L190,360 Q210,360 210,340 L210,140 L215,140" 
+                      fill="none" stroke="#B2C4D4" stroke-width="4" stroke-linecap="round"/>
+                <use href="#scale-lines" />
+                <text x="50" y="265" fill="#fff" font-size="12" opacity="0.6">50ml</text>
+
+                <!-- 重新设计的完整胶头滴管 -->
+                <!-- transform 由 CSS 控制，防止 transform 冲突 -->
+                <g id="dropper" class="floating">
+                    <!-- 完整的橡胶 BulB -->
+                    <path id="dropper-head" d="M-18,0 C-18,-25 18,-25 18,0 L14,25 L-14,25 Z" fill="#FF7E67" 
+                          style="transform-origin: 0px 25px; transition: transform 0.2s ease;" />
+                    <!-- 玻璃管 (更长、更真实的比例) -->
+                    <path d="M-9,25 L9,25 L6,105 L-6,105 Z" fill="rgba(255,255,255,0.8)" stroke="#B2C4D4" stroke-width="2"/>
+                    <!-- 内部液柱 -->
+                    <path d="M-6,30 L6,30 L4,100 L-4,100 Z" fill="var(--liquid-clear)" />
+                    <!-- 液滴落点 -->
+                    <circle id="falling-drop" cx="0" cy="110" r="5" fill="var(--liquid-clear)" opacity="0" />
+                    <!-- 可爱的装饰脸部 -->
+                    <circle cx="-5" cy="5" r="2" fill="#fff"/><circle cx="5" cy="5" r="2" fill="#fff"/>
+                    <path d="M-3,12 Q0,15 3,12" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round"/>
+                </g>
+            </svg>
+            <div class="equation-box">
+                溶液状态：<span id="sol-status" style="color:var(--base-color); font-weight:bold;">碱性 (红色)</span>
+            </div>
+        </div>
+
+        <!-- 微观面板 -->
+        <div class="panel micro-panel">
+            <div class="panel-title">微观本质</div>
+            <svg width="250" height="250" viewBox="0 0 250 250">
+                <circle cx="125" cy="125" r="120" fill="#E8F0F8" stroke="#CFD9E3" stroke-width="8"/>
+                <g id="ion-container"></g>
+            </svg>
+            <div class="equation-box">
+                本质: <span class="eq-highlight">H⁺ + OH⁻ → H₂O</span>
+            </div>
+        </div>
+
+        <!-- 数据面板 -->
+        <div class="panel data-panel">
+            <div class="panel-title">pH 曲线</div>
+            <svg width="280" height="250" viewBox="0 0 280 250">
+                <line x1="30" y1="20" x2="30" y2="220" stroke="#829AB1" stroke-width="2"/>
+                <line x1="30" y1="220" x2="260" y2="220" stroke="#829AB1" stroke-width="2"/>
+                <line x1="30" y1="120" x2="260" y2="120" stroke="#FF7E67" stroke-width="2" stroke-dasharray="5,5"/>
+                <polyline id="ph-curve" points="" fill="none" stroke="var(--btn-color)" stroke-width="4" stroke-linecap="round"/>
+                <circle id="current-point" cx="-10" cy="-10" r="6" fill="#FFF" stroke="var(--btn-color)" stroke-width="3"/>
+                <text x="5" y="125" fill="#FF7E67" font-size="12" font-weight="bold">7</text>
+            </svg>
+            <div class="equation-box">
+                pH 值: <span id="ph-display" style="font-size: 20px; font-weight:bold; color:var(--base-color);">13.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 控制 -->
+    <div class="controls">
+        <div class="status-text">滴入 HCl：<span id="drop-count">0</span> 滴</div>
+        <button class="btn-add" id="btnAdd" onclick="addAcid()">滴加盐酸</button>
+        <button class="btn-reset" onclick="resetExperiment()">重新开始</button>
+    </div>
+
+    <script>
+        const MAX_DROPS = 10;
+        let currentDrops = 0;
+        let isAnimating = false;
+        const phValues = [13.0, 12.8, 12.5, 12.0, 10.5, 7.0, 3.5, 2.0, 1.5, 1.2, 1.0];
+        
+        const ionPositions = [
+            {na:[60,60], oh:[180,70], cl:[50,180]},
+            {na:[130,40], oh:[70,120], cl:[190,150]},
+            {na:[200,100], oh:[130,180], cl:[60,100]},
+            {na:[80,200], oh:[190,200], cl:[120,90]},
+            {na:[170,160], oh:[100,150], cl:[210,60]}
+        ];
+
+        function createIon(text, x, y, color, id, isVisible, isMolecule = false) {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('id', id);
+            g.setAttribute('class', `ion ${isVisible ? 'visible-ion' : 'hidden-ion'}`);
+            g.style.transform = `translate(${x}px, ${y}px)`;
+
+            const floatG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            floatG.setAttribute('class', 'floating-ion'); 
+            // 简单的离子微动，不影响主平移
+            floatG.innerHTML = `<animateTransform attributeName="transform" type="translate" values="0,0; 0,5; 0,0" dur="${2+Math.random()}s" repeatCount="indefinite" />`;
+            
+            const scaleG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            scaleG.setAttribute('class', 'scale-wrapper');
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('r', isMolecule ? 18 : 14);
+            circle.setAttribute('fill', color);
+            circle.setAttribute('stroke', '#fff');
+            circle.setAttribute('stroke-width', '2');
+
+            const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            t.setAttribute('text-anchor', 'middle');
+            t.setAttribute('y', 5);
+            t.setAttribute('fill', '#fff');
+            t.setAttribute('font-size', isMolecule ? '12' : '10');
+            t.textContent = text;
+
+            scaleG.appendChild(circle); scaleG.appendChild(t);
+            floatG.appendChild(scaleG); g.appendChild(floatG);
+            return g;
+        }
+
+        function initMicroView() {
+            const container = document.getElementById('ion-container');
+            container.innerHTML = '';
+            ionPositions.forEach((pos, i) => {
+                container.appendChild(createIon('Na⁺', pos.na[0], pos.na[1], 'var(--na-color)', `na-${i}`, true));
+                container.appendChild(createIon('OH⁻', pos.oh[0], pos.oh[1], 'var(--base-color)', `oh-${i}`, true));
+                container.appendChild(createIon('H₂O', pos.oh[0], pos.oh[1], 'var(--water-color)', `h2o-${i}`, false, true));
+                container.appendChild(createIon('Cl⁻', 125, 20, 'var(--cl-color)', `cl-${i}`, false));
+                container.appendChild(createIon('H⁺', 125, 20, 'var(--acid-color)', `h-${i}`, false));
+            });
+            for(let i=0; i<5; i++) {
+                container.appendChild(createIon('H⁺', 125, 20, 'var(--acid-color)', `eh-${i}`, false));
+                container.appendChild(createIon('Cl⁻', 125, 20, 'var(--cl-color)', `ecl-${i}`, false));
+            }
+        }
+
+        function updateChart() {
+            let pts = "";
+            for (let i = 0; i <= currentDrops; i++) {
+                let x = 30 + i * 22;
+                let y = 220 - (phValues[i] / 14) * 200;
+                pts += `${x},${y} `;
+                if(i === currentDrops) {
+                    const dot = document.getElementById('current-point');
+                    dot.setAttribute('cx', x); dot.setAttribute('cy', y);
+                    document.getElementById('ph-display').textContent = phValues[i].toFixed(1);
+                }
+            }
+            document.getElementById('ph-curve').setAttribute('points', pts);
+            const status = document.getElementById('sol-status');
+            const ph = phValues[currentDrops];
+            status.textContent = ph > 7 ? '碱性 (红色)' : (ph === 7 ? '中性 (无色)' : '酸性 (无色)');
+            status.style.color = ph > 7 ? 'var(--base-color)' : (ph === 7 ? 'var(--btn-color)' : 'var(--acid-color)');
+        }
+
+        function addAcid() {
+            if (currentDrops >= MAX_DROPS || isAnimating) return;
+            isAnimating = true;
+            document.getElementById('btnAdd').disabled = true;
+
+            const head = document.getElementById('dropper-head');
+            const drop = document.getElementById('falling-drop');
+            const liquid = document.getElementById('liquid-path');
+            const group = document.getElementById('liquid-group');
+
+            // 胶头挤压动画
+            head.style.transform = "scaleY(0.7)";
+            setTimeout(() => head.style.transform = "scaleY(1)", 200);
+
+            drop.classList.remove('drop-anim');
+            void drop.offsetWidth;
+            drop.classList.add('drop-anim');
+
+            setTimeout(() => {
+                currentDrops++;
+                document.getElementById('drop-count').textContent = currentDrops;
+                liquid.classList.add('wiggle');
+                setTimeout(()=>liquid.classList.remove('wiggle'), 600);
+
+                group.style.transform = `translateY(-${currentDrops * 3}px)`;
+                if (currentDrops === 5) liquid.style.fill = "var(--liquid-clear)";
+
+                updateChart();
+                triggerMicro(currentDrops);
+
+                setTimeout(() => {
+                    isAnimating = false;
+                    document.getElementById('btnAdd').disabled = currentDrops >= MAX_DROPS;
+                }, 600);
+            }, 500);
+        }
+
+        function triggerMicro(idx) {
+            const i = idx - 1;
+            if (idx <= 5) {
+                const h = document.getElementById(`h-${i}`);
+                const cl = document.getElementById(`cl-${i}`);
+                const oh = document.getElementById(`oh-${i}`);
+                const h2o = document.getElementById(`h2o-${i}`);
+                h.classList.replace('hidden-ion', 'visible-ion');
+                cl.classList.replace('hidden-ion', 'visible-ion');
+
+                setTimeout(() => {
+                    h.style.transform = oh.style.transform;
+                    cl.style.transform = `translate(${ionPositions[i].cl[0]}px, ${ionPositions[i].cl[1]}px)`;
+                    setTimeout(() => {
+                        h.classList.replace('visible-ion', 'hidden-ion');
+                        oh.classList.replace('visible-ion', 'hidden-ion');
+                        h2o.classList.replace('hidden-ion', 'visible-ion');
+                        h2o.querySelector('.scale-wrapper').classList.add('merge-anim');
+                    }, 800);
+                }, 50);
+            } else {
+                const ei = idx - 6;
+                const eh = document.getElementById(`eh-${ei}`);
+                const ecl = document.getElementById(`ecl-${ei}`);
+                eh.classList.replace('hidden-ion', 'visible-ion');
+                ecl.classList.replace('hidden-ion', 'visible-ion');
+                setTimeout(() => {
+                    eh.style.transform = `translate(${100 + ei*20}px, ${100 + ei*10}px)`;
+                    ecl.style.transform = `translate(${150 - ei*20}px, ${150 + ei*5}px)`;
+                }, 50);
+            }
+        }
+
+        function resetExperiment() {
+            currentDrops = 0;
+            document.getElementById('drop-count').textContent = '0';
+            document.getElementById('btnAdd').disabled = false;
+            document.getElementById('liquid-path').style.fill = "var(--liquid-pink)";
+            document.getElementById('liquid-group').style.transform = "translateY(0)";
+            initMicroView();
+            updateChart();
+        }
+
+        initMicroView();
+        updateChart();
+    </script>
+</body>
+</html>

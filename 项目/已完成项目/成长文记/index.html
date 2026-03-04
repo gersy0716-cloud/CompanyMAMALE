@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>成长文记 - 作文助手</title>
+    <meta name="description" content="五年级上册第一单元习作《那一刻，我长大了》作文教学辅助工具">
+
+    <!-- 通用样式 -->
+    <link rel="stylesheet" href="css/common.css">
+    <!-- 手机端样式 -->
+    <link rel="stylesheet" href="css/mobile.css">
+    <!-- 屏幕端样式 -->
+    <link rel="stylesheet" href="css/screen.css">
+
+
+</head>
+
+<body>
+    <!-- ========== 手机端视图 ========== -->
+    <div id="mobileView" class="view-container hidden">
+        <!-- 头部 -->
+        <header class="mobile-header">
+            <h1>成长文记</h1>
+            <p class="subtitle">那一刻，我长大了</p>
+        </header>
+
+        <!-- 功能按钮区 -->
+        <main class="mobile-main">
+            <!-- 成长时刻上传 -->
+            <div class="function-card">
+                <button class="btn btn-large btn-primary" id="photoUploadBtn">
+                    📷 成长时刻
+                </button>
+                <p class="function-desc">拍摄并上传成长瞬间</p>
+            </div>
+
+            <!-- 作文上传 -->
+            <div class="function-card">
+                <button class="btn btn-large btn-primary" id="essayUploadBtn">
+                    📝 作文上传
+                </button>
+                <p class="function-desc">拍摄作文并识别文字</p>
+            </div>
+
+            <!-- 语音提示词 -->
+            <div class="function-card" id="voicePromptCard">
+                <button class="btn btn-large btn-info" id="voicePromptBtn">
+                    🎤 语音提示词
+                </button>
+                <div class="recording-waveform hidden" id="recordingWaveform">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <p class="function-desc">为作文录制语音润色提示</p>
+            </div>
+        </main>
+
+        <!-- 隐藏的文件输入框（支持拍照或从图库选择） -->
+        <input type="file" id="photoInput" accept="image/*" style="display: none;">
+        <input type="file" id="essayInput" accept="image/*" style="display: none;">
+    </div>
+
+    <!-- ========== 屏幕端视图 ========== -->
+    <div id="screenView" class="view-container hidden">
+        <!-- TAB导航 -->
+        <nav class="screen-nav">
+            <button class="tab-btn active" data-tab="growth">🖼️ 成长时刻</button>
+            <button class="tab-btn" data-tab="polish">✍️ 作文润色</button>
+        </nav>
+
+        <!-- TAB1: 成长时刻 -->
+        <div id="growthTab" class="tab-content active">
+            <div class="slideshow-container">
+                <div class="slideshow-image-wrapper">
+                    <div class="slideshow-image" id="slideshowImage">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📷</div>
+                            <p>暂无成长时刻照片</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 底部控制栏：包含了 左右切换 + 中间按钮组 -->
+                <div class="slideshow-bottom-bar">
+                    <button class="slideshow-nav prev" id="prevPhotoBtn" aria-label="上一张">❮</button>
+                    <div class="slideshow-controls">
+                        <button class="btn btn-success" id="startSlideshowBtn">▶️ 开始</button>
+                        <button class="btn btn-danger" id="stopSlideshowBtn" disabled>⏸️ 停止</button>
+                        <button class="btn btn-info" id="refreshSlideshowBtn">🔄 刷新照片</button>
+                    </div>
+                    <button class="slideshow-nav next" id="nextPhotoBtn" aria-label="下一张">❯</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB2: 作文润色 -->
+        <div id="polishTab" class="tab-content">
+            <div class="polish-layout">
+                <!-- 左侧侧边栏：作品管理 -->
+                <aside class="polish-sidebar">
+                    <div class="sidebar-tabs">
+                        <button class="sidebar-tab active" id="tabPending">待润色</button>
+                        <button class="sidebar-tab" id="tabHistory">历程记录</button>
+                    </div>
+                    <div class="sidebar-search">
+                        <input type="text" id="essaySearchInput" placeholder="搜索原文或提示词...">
+                    </div>
+                    <div class="sidebar-list-container glass-scroll">
+                        <div class="sidebar-list" id="essaySidebarList">
+                            <!-- 动态加载作品卡片 -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- 右侧主工作区：润色中心 -->
+                <main class="polish-main">
+                    <!-- 顶部工具栏 -->
+                    <header class="polish-main-header">
+                        <div class="id-badge" id="currentEssayIdBadge">未选中</div>
+                        <div class="main-actions">
+                            <button class="btn btn-outline" id="refreshListBtn">🔄 同步数据</button>
+                        </div>
+                    </header>
+
+                    <div class="polish-work-area">
+                        <!-- 左栏：原文与输入 -->
+                        <div class="work-panel panel-left">
+                            <div class="panel-header">
+                                <span>📄 原文内容</span>
+                                <div class="font-tools">
+                                    <button class="btn-tool hidden" id="viewOriginalImageBtn" title="查看手写原文">🖼️
+                                        查看图片</button>
+                                    <button class="btn-tool" id="originalFontDecreaseBtn">A-</button>
+                                    <button class="btn-tool" id="originalFontIncreaseBtn">A+</button>
+                                </div>
+                            </div>
+                            <div class="panel-content glass-scroll">
+                                <div class="text-content" id="originalTextContent">
+                                    <p class="placeholder">请从左侧列表选择作品</p>
+                                </div>
+                            </div>
+                            <div class="panel-footer prompt-area">
+                                <div class="prompt-label">💡 润色要求</div>
+                                <textarea id="promptInput" placeholder="此处将显示来自手机录音的润色要求..." disabled></textarea>
+                                <button class="btn btn-glow" id="polishBtn" disabled>✨ 开始润色</button>
+                            </div>
+                        </div>
+
+                        <!-- 右栏：润色建议 -->
+                        <div class="work-panel panel-right">
+                            <div class="panel-header">
+                                <span>🚀 润色建议</span>
+                                <div class="font-tools">
+                                    <button class="btn-tool" id="resultFontDecreaseBtn">A-</button>
+                                    <button class="btn-tool" id="resultFontIncreaseBtn">A+</button>
+                                </div>
+                            </div>
+                            <div class="panel-content glass-scroll" id="polishResult">
+                                <p class="placeholder">AI 的专业润色建议将显示在这里</p>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Loading遮罩 ========== -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-container">
+            <div class="loading"></div>
+            <p class="loading-text" id="loadingText">加载中...</p>
+        </div>
+    </div>
+
+    <!-- ========== 弹窗：OCR识别结果 ========== -->
+    <div class="modal hidden" id="ocrResultModal">
+        <div class="modal-content">
+            <h3>📝 识别结果</h3>
+            <textarea class="textarea" id="ocrResultText" rows="10"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="ocrCancelBtn">❌ 取消</button>
+                <button class="btn btn-secondary" id="ocrEditBtn">✏️ 编辑</button>
+                <button class="btn btn-primary" id="ocrConfirmBtn">✅ 确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 弹窗：语音转文字结果 ========== -->
+    <div class="modal hidden" id="voiceResultModal">
+        <div class="modal-content">
+            <h3>🎤 语音转文字结果</h3>
+            <textarea class="textarea" id="voiceResultText" rows="5"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="voiceCancelBtn">❌ 取消</button>
+                <button class="btn btn-secondary" id="voiceEditBtn">✏️ 编辑</button>
+                <button class="btn btn-primary" id="voiceConfirmBtn">✅ 确认保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== JS脚本 ========== -->
+    <!-- Markdown解析库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <!-- 配置和数据库 -->
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <!-- 主入口 -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

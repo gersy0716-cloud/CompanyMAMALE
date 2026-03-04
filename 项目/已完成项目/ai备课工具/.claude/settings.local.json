@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(xargs cat:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(head:*)",
+      "Bash(if exist \"node_modules\\\\.vite\" rmdir /s /q \"node_modules\\\\.vite\")",
+      "Bash(powershell -Command \"if \\(Test-Path ''node_modules\\\\.vite''\\) { Remove-Item -Recurse -Force ''node_modules\\\\.vite'' }\")",
+      "Bash(npx tailwindcss:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(test:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx tsc:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(node scripts/generateStylePreviews.js:*)",
+      "Bash(node scripts/batchGenerateImages.js:*)",
+      "Bash(node -e \"\nimport axios from ''axios'';\n\nconst API_URL = ''https://3w-api.mamale.vip/api/app/zjAi/myUnifiedOpenAiStream'';\nconst requestBody = {\n  provideName: ''TuZi'',\n  model: ''gemini-3-pro-image-preview-2k'',\n  messages: [{\n    role: ''user'',\n    content: ''儿童教育PPT风格预览图，色彩鲜艳明快，包含可爱的卡通插画，16:9比例''\n  }]\n};\n\nconst response = await axios.post\\(API_URL, requestBody, {\n  headers: { ''Content-Type'': ''application/json'' },\n  responseType: ''stream'',\n  timeout: 150000\n}\\);\n\nlet fullContent = '''';\nconst stream = response.data;\n\nawait new Promise\\(\\(resolve\\) => {\n  let buffer = '''';\n  stream.on\\(''data'', \\(chunk\\) => {\n    buffer += chunk.toString\\(\\);\n    const lines = buffer.split\\(''\\\\n''\\);\n    buffer = lines.pop\\(\\) || '''';\n    for \\(const line of lines\\) {\n      if \\(line.startsWith\\(''data: ''\\)\\) {\n        const data = line.slice\\(6\\).trim\\(\\);\n        if \\(data && data !== ''[DONE]''\\) {\n          try {\n            const parsed = JSON.parse\\(data\\);\n            const content = parsed.choices?.[0]?.delta?.content;\n            if \\(content\\) fullContent += content;\n          } catch \\(e\\) {}\n        }\n      }\n    }\n  }\\);\n  stream.on\\(''end'', \\(\\) => {\n    console.log\\(''完整内容:'', fullContent.substring\\(0, 500\\)\\);\n    resolve\\(\\);\n  }\\);\n}\\);\n\")",
+      "Bash(ls:*)",
+      "Bash(node scripts/uploadStyleImages.js:*)",
+      "Bash(node scripts/compressImages.js:*)",
+      "WebFetch(domain:app.520ai.cc)",
+      "Skill(generate-image-prompt)",
+      "Skill(generate-image)",
+      "Bash(node -e \"\nconst https = require\\(''https''\\);\nconst url = new URL\\(''https://3w-api.mamale.vip/api/app/zjAi/myUnifiedOpenAiStream''\\);\n\nconst prompt = \\\\`设计一张专业的演示文稿幻灯片 \\(PPT Slide\\)。\n\n设计指令:\nA breathtaking, epic masterpiece illustrating the legendary ''Peach Garden Oath'' from the Three Kingdoms. In a sprawling garden bathed in the golden glow of sunset, three heroes kneel in solemn unity before a ceremonial altar adorned with burning incense and sacrificial wine. Center stage features Liu Bei with a benevolent, noble expression wearing modest woven robes; to his right, the imposing Guan Yu with his iconic flushed complexion, magnificent long beard, and flowing green battle robes; to his left, the fierce Zhang Fei with a dark visage, wild tiger beard, and sturdy black armor. They raise earthenware bowls, swearing eternal brotherhood. The air is filled with a blizzard of vibrant pink peach blossom petals drifting in the breeze, creating a sacred, ethereal atmosphere. The visual style combines the intricate brushwork of classical Chinese Gongbi painting with cinematic photorealism. Rich warm color palette featuring soft pinks, antique golds, and deep earth tones. Majestic, historical, bond of loyalty, highly detailed, 8k resolution, wide angle view. --ar 16:9\n\n重要要求:\n- 图片看起来必须像一张完成度极高的PPT页面\n- 保持高分辨率，专业排版\n- 宽高比: 16:9\n- 确保设计风格与描述严格一致\\\\`;\n\nconst requestBody = JSON.stringify\\({\n  provideName: ''TuZi'',\n  model: ''nano-banana-2'',\n  messages: [{ role: ''user'', content: prompt }]\n}\\);\n\nconst options = {\n  hostname: url.hostname,\n  path: url.pathname,\n  method: ''POST'',\n  headers: {\n    ''Content-Type'': ''application/json'',\n    ''Authorization'': ''Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkI3RDU5REJCNDFGMjZDNTBENkEyRDE5RDQ3RjI0OThFIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3NjU5NzQ1NDksImV4cCI6MTc5NzUxMDU0OSwiaXNzIjoiaHR0cHM6Ly9vYXV0aC5tYW1hbGUudmlwIiwiYXVkIjoiQ29kZUFCQyIsImNsaWVudF9pZCI6IkNvZGVBQkNfQXBwIiwic3ViIjoiMTM5ZGNhMzktNDcwYi0yYjAwLWZkMGEtM2ExNjg5NmUwYTE4IiwiYXV0aF90aW1lIjoxNzY1OTc0NTQ4LCJpZHAiOiJsb2NhbCIsInRlbmFudGlkIjoiYzE4NjMyODUtMjVkMS00NGZlLTgwNWMtNWRkZjYxMWY4M2QzIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJlbWFpbCI6ImxpY2tpZXNAcXEuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJGYWxzZSIsIm5hbWUiOiJsaWNraWVzIiwiaWF0IjoxNzY1OTc0NTQ5LCJzY29wZSI6WyJhZGRyZXNzIiwiQ29kZUFCQyIsImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9maWxlIiwicm9sZSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.EEg6zzeAE7LhTDhCizz-xi24MMakxoDAcT5pWAtiwnNPTlM7t_26-CJfbQdgULa6bHJwJXktd6n18UpJMgRLzn9uyuI-jPbYdIPeXjHi4LAR9WBuMuUicf7WyrV_HO-SxzYE18kUfdt6In3iJY2wCghZ2vmHVJfdyWqZQJZ7s35bG1ne6HwVB6PLNnjrKudh4FdhYh3B5W35vFbL63d-6i9Uq5ahOvwBIQKeDie6m9g1SWa9mYOAtkc6Z_RhXbII7DoMf4S4LXJDc4a0mJxz-EX2lsyO9PCKVm4eXfHfnkvrrBtp6MnkrpRi9_RZjxwfj4qyofXhI23eQs0lKTHoNQ''\n  }\n};\n\nlet fullContent = '''';\n\nconst req = https.request\\(options, \\(res\\) => {\n  let buffer = '''';\n  res.on\\(''data'', \\(chunk\\) => {\n    buffer += chunk.toString\\(\\);\n    const lines = buffer.split\\(''\\\\n''\\);\n    buffer = lines.pop\\(\\) || '''';\n    for \\(const line of lines\\) {\n      if \\(line.startsWith\\(''data: ''\\)\\) {\n        const data = line.slice\\(6\\).trim\\(\\);\n        if \\(data && data !== ''[DONE]''\\) {\n          try {\n            const parsed = JSON.parse\\(data\\);\n            const content = parsed.choices?.[0]?.delta?.content;\n            if \\(content\\) fullContent += content;\n          } catch \\(e\\) {}\n        }\n      }\n    }\n  }\\);\n  res.on\\(''end'', \\(\\) => {\n    console.log\\(fullContent\\);\n  }\\);\n}\\);\n\nreq.on\\(''error'', \\(e\\) => {\n  console.error\\(''Error:'', e.message\\);\n}\\);\n\nreq.write\\(requestBody\\);\nreq.end\\(\\);\n\")",
+      "Bash(node:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}

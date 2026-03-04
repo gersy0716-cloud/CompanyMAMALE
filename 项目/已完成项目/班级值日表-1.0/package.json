@@ -1,0 +1,14 @@
+{
+    "name": "class-duty-schedule",
+    "version": "1.0.0",
+    "description": "班级值日表系统",
+    "scripts": {
+        "dev:teacher": "vite --port 5000 --open",
+        "dev:student": "vite --port 5174 --open",
+        "build": "vite build",
+        "preview": "vite preview --port 5000"
+    },
+    "devDependencies": {
+        "vite": "^5.0.0"
+    }
+}

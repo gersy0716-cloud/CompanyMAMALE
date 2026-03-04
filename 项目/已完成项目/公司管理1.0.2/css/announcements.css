@@ -1,0 +1,134 @@
+/* ==========================================
+   公告 — 玻璃卡片列表
+   ========================================== */
+.announcement-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.announcement-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-5) var(--space-6);
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.announcement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.announcement-card.pinned {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid hsla(var(--primary-h), 60%, 75%, 0.25);
+}
+
+.announcement-card.pinned::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.announcement-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: var(--space-2);
+}
+
+.announcement-content {
+    font-size: var(--font-size-base);
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: var(--space-4);
+}
+
+.announcement-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.announcement-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--text-3);
+}
+
+.announcement-author-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+.announcement-time {
+    font-size: var(--font-size-xs);
+    color: var(--text-4);
+}
+
+.pin-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    margin-right: var(--space-2);
+    box-shadow: 0 1px 2px rgba(var(--primary-h), var(--primary-s), 40%, 0.1);
+}
+
+.announcement-actions {
+    display: flex;
+    gap: var(--space-4);
+    opacity: 0.1;
+    transition: opacity 0.2s ease;
+}
+
+.announcement-card:hover .announcement-actions {
+    opacity: 1;
+}
+
+.announcement-actions .btn-text:hover {
+    color: var(--primary);
+}
+
+.announcement-actions .btn-delete:hover {
+    color: var(--error);
+}
+
+/* 仪表盘预览 */
+.announcement-preview {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-card);
+    padding: var(--space-4);
+}
+
+.announcement-preview-item {
+    padding: var(--space-3) 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-2);
+}
+
+.announcement-preview-item+.announcement-preview-item {
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+}

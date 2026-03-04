@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>橙意课件在线演示器 - 交互点管理版</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 React 和 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- 引入 Babel 用于解析 JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 引入 jsPDF 用于生成 PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        /* 自定义滚动条 */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        
+        :fullscreen { overflow: hidden; }
+        .presentation-mode { background-color: black !important; }
+
+        /* --- 舞台与变换容器 --- */
+        .slide-stage {
+            perspective: 2000px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            touch-action: none; /* 禁止默认触摸行为 */
+        }
+
+        .slide-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden; 
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: black;
+        }
+
+        /* 缩放容器：这是实际被缩放和平移的对象 */
+        .zoom-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out; /* 平滑过渡，但不要太慢以免拖拽延迟 */
+            will-change: transform;
+        }
+
+        .slide-media {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* 标注层 SVG */
+        .annotation-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: auto;
+        }
+        .annotation-layer.pointer-none { pointer-events: none; }
+
+        /* 交互点层 */
+        .hotspot-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20; 
+            pointer-events: none; 
+        }
+        
+        .hotspot-item {
+            pointer-events: auto;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            /* 抓手样式在组件内控制 */
+            user-select: none;
+        }
+
+        /* 动画定义 */
+        @keyframes breathe-glow {
+            0% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0)); }
+            50% { transform: scale(1.15); filter: brightness(1.2) drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+            100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0)); }
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; border-width: 4px; }
+            100% { transform: scale(2.5); opacity: 0; border-width: 0px; }
+        }
+
+        .animate-breathe { animation: breathe-glow 2s infinite ease-in-out; }
+        
+        .dot-ripple::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            animation: ripple 2s infinite cubic-bezier(0, 0.2, 0.8, 1);
+        }
+
+        /* 工具提示框 - 修正为右侧显示 */
+        .tooltip-content {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: left center; /* 动画原点改为左侧 */
+        }
+        .tooltip-hidden { opacity: 0; transform: scale(0.8) translateY(-50%) translateX(-10px); pointer-events: none; } /* 初始状态：垂直居中，稍微偏左 */
+        .tooltip-visible { opacity: 1; transform: scale(1) translateY(-50%) translateX(0); pointer-events: auto; } /* 显示状态：垂直居中 */
+
+        /* 幻灯片切换动画 */
+        .fade-enter { opacity: 0; animation: fadeIn 0.8s ease forwards; z-index: 2; }
+        .fade-exit { opacity: 1; animation: fadeOut 0.8s ease forwards; z-index: 1; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; } }
+
+        .slideUp-enter { transform: translateY(100%); animation: slideUpIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 2; }
+        .slideUp-exit { transform: translateY(0); animation: slideUpOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 1; }
+        @keyframes slideUpIn { to { transform: translateY(0); } }
+        @keyframes slideUpOut { to { transform: translateY(-20%) scale(0.9); opacity: 0; } }
+
+        .slideLeft-enter { transform: translateX(100%); animation: slideLeftIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 2; }
+        .slideLeft-exit { transform: translateX(0); animation: slideLeftOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; z-index: 1; }
+        @keyframes slideLeftIn { to { transform: translateX(0); } }
+        @keyframes slideLeftOut { to { transform: translateX(-30%); opacity: 0.5; } }
+
+        .flip-exit { transform-origin: left center; animation: flipOut 1.0s cubic-bezier(0.4, 0, 0.2, 1) forwards; z-index: 2; }
+        .flip-enter { transform-origin: left center; animation: flipIn 1.0s cubic-bezier(0.4, 0, 0.2, 1) forwards; z-index: 1; }
+        @keyframes flipOut { 0% { transform: rotateY(0deg); filter: brightness(1); opacity: 1; } 100% { transform: rotateY(-90deg); filter: brightness(0.3); opacity: 0; } }
+        @keyframes flipIn { 0% { transform: rotateY(90deg); filter: brightness(0.3); opacity: 0; } 100% { transform: rotateY(0deg); filter: brightness(1); opacity: 1; } }
+
+        .tool-active { @apply bg-red-600 text-white border-red-500; }
+        .hotspot-tool-active { @apply bg-blue-600 text-white border-blue-500; }
+        
+        /* 鼠标光标状态 */
+        .cursor-grab-canvas { cursor: grab; }
+        .cursor-grabbing-canvas { cursor: grabbing; }
+
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect, useCallback } = React;
+
+        // --- 图标组件 ---
+        const Icons = {
+            Upload: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+            Play: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+            Pause: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
+            Image: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
+            Music: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+            Trash2: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
+            ChevronLeft: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="15 18 9 12 15 6"/></svg>,
+            ChevronRight: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="9 18 15 12 9 6"/></svg>,
+            GripVertical: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>,
+            Maximize2: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>,
+            Minimize2: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>,
+            Save: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>,
+            FolderOpen: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
+            Presentation: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
+            ExternalLink: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
+            Clock: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+            Sparkles: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>,
+            Plus: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+            Pdf: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
+            Video: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>,
+            Pen: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>,
+            ArrowUpRight: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>,
+            Square: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>,
+            RotateCcw: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>,
+            Eraser: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" /><path d="M22 21H7" /><path d="m5 11 9 9" /></svg>,
+            Target: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+            MapPin: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>,
+            Star: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+            ThumbsUp: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>,
+            ThumbsDown: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>,
+            ZoomIn: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>,
+            RefreshCw: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        };
+
+        // --- 丝滑拖拽的交互点组件 (本地状态优化版) ---
+        const DraggableHotspot = ({ data, index, onUpdate, isPresentationMode, onDelete }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [isDragging, setIsDragging] = useState(false);
+            const [localPos, setLocalPos] = useState({ x: data.x, y: data.y }); // 本地位置，解决拖拽卡顿
+            
+            const startPosRef = useRef({ x: 0, y: 0 });
+            const itemRef = useRef(null);
+
+            // 监听 data 变化（例如 undo 后）同步回本地
+            useEffect(() => {
+                setLocalPos({ x: data.x, y: data.y });
+            }, [data.x, data.y]);
+
+            const handleMouseDown = (e) => {
+                if (isPresentationMode) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDragging(true);
+                startPosRef.current = { x: e.clientX, y: e.clientY };
+            };
+
+            // 新增：双击删除处理函数
+            const handleDoubleClick = (e) => {
+                // 如果是演示模式，不执行删除
+                if (isPresentationMode) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 调用父组件传入的删除回调
+                if (onDelete) {
+                    onDelete();
+                }
+            };
+
+            // 独立的鼠标移动监听，只更新当前组件，不触发父组件重绘
+            useEffect(() => {
+                const handleMouseMove = (e) => {
+                    if (!isDragging) return;
+                    
+                    const container = itemRef.current?.offsetParent; // 获取定位父级 (zoom-container)
+                    if (!container) return;
+
+                    const rect = container.getBoundingClientRect();
+                    // 计算相对百分比
+                    let newX = ((e.clientX - rect.left) / rect.width) * 100;
+                    let newY = ((e.clientY - rect.top) / rect.height) * 100;
+
+                    // 边界限制
+                    newX = Math.max(0, Math.min(100, newX));
+                    newY = Math.max(0, Math.min(100, newY));
+
+                    setLocalPos({ x: newX, y: newY });
+                };
+
+                const handleMouseUp = (e) => {
+                    if (isDragging) {
+                        setIsDragging(false);
+                        const dist = Math.sqrt(
+                            Math.pow(e.clientX - startPosRef.current.x, 2) + 
+                            Math.pow(e.clientY - startPosRef.current.y, 2)
+                        );
+                        // 如果位移很小，视为点击
+                        if (dist < 5) {
+                            setIsOpen(!isOpen);
+                        } else {
+                            // 拖拽结束，提交最终位置给父组件
+                            onUpdate(index, localPos);
+                        }
+                    }
+                };
+
+                if (isDragging) {
+                    window.addEventListener('mousemove', handleMouseMove);
+                    window.addEventListener('mouseup', handleMouseUp);
+                }
+                return () => {
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    window.removeEventListener('mouseup', handleMouseUp);
+                };
+            }, [isDragging, index, onUpdate, isOpen, localPos]);
+
+            // 演示模式下的点击
+            const handlePresClick = () => {
+                if(isPresentationMode) setIsOpen(!isOpen);
+            }
+
+            const IconComponent = {
+                dot: Icons.Target,
+                pin: Icons.MapPin,
+                star: Icons.Star,
+                thumbsUp: Icons.ThumbsUp,
+                thumbsDown: Icons.ThumbsDown
+            }[data.style] || Icons.Target;
+
+            // 动态大小倍率
+            const sizeScale = data.iconSize || 1; 
+
+            return (
+                <div 
+                    ref={itemRef}
+                    className="hotspot-item group"
+                    style={{ left: `${localPos.x}%`, top: `${localPos.y}%`, cursor: isPresentationMode ? 'pointer' : (isDragging ? 'grabbing' : 'grab') }}
+                    onMouseDown={handleMouseDown}
+                    onClick={handlePresClick}
+                    onDoubleClick={handleDoubleClick} // 绑定双击事件
+                    title={!isPresentationMode ? "双击可删除此交互点" : ""}
+                >
+                    {/* 图标主体 */}
+                    <div className={`relative ${data.style === 'dot' ? 'dot-ripple' : 'animate-breathe'}`} style={{ transform: `scale(${sizeScale})` }}>
+                        <div className={`relative z-10 p-1 rounded-full shadow-lg transition-transform duration-300 ${isOpen ? 'scale-125' : ''}`} 
+                             style={{ color: data.iconColor || data.color, backgroundColor: data.style === 'dot' ? 'transparent' : 'white' }}>
+                            {data.style === 'dot' ? (
+                                <div className="w-4 h-4 rounded-full bg-current shadow-sm"></div>
+                            ) : (
+                                <IconComponent className="w-6 h-6" />
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* 弹出气泡 - 修改为右侧显示 */}
+                    <div className={`absolute left-full top-1/2 ml-3 w-max max-w-xs bg-black/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm shadow-xl z-50 tooltip-content ${isOpen ? 'tooltip-visible' : 'tooltip-hidden'}`}
+                         style={{ marginLeft: `${12 * sizeScale}px` }}>
+                        <p style={{ color: data.textColor, fontSize: data.fontSize }}>{data.text}</p>
+                        {/* 左侧小三角 */}
+                        <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-[1px] border-4 border-transparent border-r-black/80"></div>
+                    </div>
+                </div>
+            );
+        };
+
+        function App() {
+            const [images, setImages] = useState([]);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [audioSrc, setAudioSrc] = useState(null);
+            const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+            const [draggedItemIndex, setDraggedItemIndex] = useState(null);
+            const [isLoading, setIsLoading] = useState(false);
+            const [isPresentationMode, setIsPresentationMode] = useState(false);
+            const [isFullscreen, setIsFullscreen] = useState(false);
+            const [duration, setDuration] = useState(3000);
+            const [effect, setEffect] = useState('fade');
+            
+            // --- 标注 & 交互相关状态 ---
+            const [activeTool, setActiveTool] = useState('none'); 
+            const [annotations, setAnnotations] = useState({}); 
+            const [currentDrawing, setCurrentDrawing] = useState(null);
+            const [brushColor, setBrushColor] = useState('#EF4444');
+            const [showColorPicker, setShowColorPicker] = useState(false);
+
+            // --- 缩放 & 漫游状态 ---
+            const [zoomState, setZoomState] = useState({ scale: 1, x: 0, y: 0 });
+            const [isPanning, setIsPanning] = useState(false);
+            const panStartRef = useRef({ x: 0, y: 0 });
+
+            // 交互点配置状态
+            const [hotspotConfig, setHotspotConfig] = useState({
+                text: "请点击此处查看详情",
+                style: "dot", 
+                fontSize: "14px",
+                textColor: "#FFFFFF",
+                iconSize: 1,        // 新增：图标大小倍率
+                iconColor: "#EF4444" // 新增：图标颜色
+            });
+            const [showHotspotConfig, setShowHotspotConfig] = useState(false);
+
+            const colors = [
+                { name: '白', value: '#FFFFFF' }, { name: '黄', value: '#FACC15' },
+                { name: '红', value: '#EF4444' }, { name: '蓝', value: '#3B82F6' },
+                { name: '绿', value: '#22C55E' }, { name: '黑', value: '#000000' }
+            ];
+
+            const hotspotStyles = [
+                { id: 'dot', name: '呼吸圆点', icon: Icons.Target },
+                { id: 'pin', name: '定位图标', icon: Icons.MapPin },
+                { id: 'star', name: '五角星', icon: Icons.Star },
+                { id: 'thumbsUp', name: '点赞', icon: Icons.ThumbsUp },
+                { id: 'thumbsDown', name: '踩', icon: Icons.ThumbsDown },
+            ];
+
+            const [renderQueue, setRenderQueue] = useState([]); 
+            const audioRef = useRef(null);
+            const slideIntervalRef = useRef(null);
+            const containerRef = useRef(null);
+            const zoomContainerRef = useRef(null); // 引用缩放容器
+
+            useEffect(() => {
+                if (images.length === 0) return;
+                const newItem = {
+                    id: images[currentIndex].id,
+                    url: images[currentIndex].url,
+                    type: images[currentIndex].type,
+                    name: images[currentIndex].name,
+                    index: currentIndex,
+                    key: `${currentIndex}-${Date.now()}` 
+                };
+                setRenderQueue(prev => {
+                    const queue = [...prev, newItem];
+                    if (queue.length > 2) return queue.slice(queue.length - 2);
+                    return queue;
+                });
+                // 每次翻页重置缩放
+                setZoomState({ scale: 1, x: 0, y: 0 });
+            }, [currentIndex, images]);
+
+            useEffect(() => {
+                const handleFullscreenChange = () => {
+                    const isFull = !!document.fullscreenElement;
+                    setIsFullscreen(isFull);
+                    if (!isFull) { setIsPresentationMode(false); setIsPlaying(false); }
+                };
+                document.addEventListener('fullscreenchange', handleFullscreenChange);
+                return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            }, []);
+
+            // --- 缩放逻辑 ---
+            const handleWheel = (e) => {
+                // 如果没有图片，不处理
+                if(images.length === 0) return;
+                
+                // 阻止默认滚动行为
+                // e.preventDefault(); (React事件中无法直接阻止Passive event, 需在Ref中处理或仅接受逻辑)
+
+                const delta = -e.deltaY * 0.001; 
+                const newScale = Math.max(1, Math.min(5, zoomState.scale + delta)); // 限制缩放 1x - 5x
+
+                setZoomState(prev => ({
+                    ...prev,
+                    scale: newScale,
+                    // 如果缩放回1，重置位置
+                    x: newScale === 1 ? 0 : prev.x, 
+                    y: newScale === 1 ? 0 : prev.y
+                }));
+            };
+
+            const resetZoom = (e) => {
+                e && e.stopPropagation();
+                setZoomState({ scale: 1, x: 0, y: 0 });
+            };
+
+            // --- 画布漫游 (Pan) 逻辑 ---
+            const handleCanvasMouseDown = (e, slideId) => {
+                // 1. 如果是交互点模式，添加点
+                if (activeTool === 'hotspot') {
+                    e.preventDefault();
+                    // 计算点击位置在 zoom-container 内部的坐标
+                    const rect = e.currentTarget.getBoundingClientRect(); 
+                    // 这里要非常小心，因为 currentTarget 已经被 transform 缩放了
+                    // 我们需要获取点击点相对于 缩放后容器左上角 的位置，然后除以宽高
+                    
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    
+                    const xPercent = ((clientX - rect.left) / rect.width) * 100;
+                    const yPercent = ((clientY - rect.top) / rect.height) * 100;
+
+                    const newHotspot = {
+                        type: 'hotspot',
+                        x: xPercent,
+                        y: yPercent,
+                        color: brushColor, // 兼容旧属性
+                        ...hotspotConfig
+                    };
+                    setAnnotations(prev => ({ ...prev, [slideId]: [...(prev[slideId] || []), newHotspot] }));
+                    return; 
+                }
+
+                // 2. 如果放大倍数 > 1 且没有使用画笔工具，或者按住空格键 -> 进入漫游模式
+                if (activeTool === 'none' && zoomState.scale > 1) {
+                    e.preventDefault();
+                    setIsPanning(true);
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    panStartRef.current = { x: clientX - zoomState.x, y: clientY - zoomState.y };
+                    return;
+                }
+
+                // 3. 绘图逻辑
+                if (activeTool !== 'none') {
+                    e.preventDefault();
+                    const { x, y } = getCoordinates(e);
+                    if (activeTool === 'pen') setCurrentDrawing({ type: 'pen', color: brushColor, points: [{ x, y }] });
+                    else if (activeTool === 'arrow') setCurrentDrawing({ type: 'arrow', color: brushColor, start: { x, y }, end: { x, y } });
+                    else if (activeTool === 'rect') setCurrentDrawing({ type: 'rect', color: brushColor, start: { x, y }, end: { x, y } });
+                }
+            };
+
+            const handleCanvasMouseMove = (e) => {
+                // 漫游
+                if (isPanning) {
+                    e.preventDefault();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    
+                    const newX = clientX - panStartRef.current.x;
+                    const newY = clientY - panStartRef.current.y;
+                    
+                    // 简单的边界限制（可选，这里允许自由拖动）
+                    setZoomState(prev => ({ ...prev, x: newX, y: newY }));
+                    return;
+                }
+
+                // 绘图
+                if (!currentDrawing) return;
+                e.preventDefault();
+                const { x, y } = getCoordinates(e);
+
+                if (currentDrawing.type === 'pen') setCurrentDrawing(prev => ({ ...prev, points: [...prev.points, { x, y }] }));
+                else setCurrentDrawing(prev => ({ ...prev, end: { x, y } }));
+            };
+
+            const handleCanvasMouseUp = (slideId) => {
+                if (isPanning) {
+                    setIsPanning(false);
+                    return;
+                }
+                if (!currentDrawing) return;
+                setAnnotations(prev => ({ ...prev, [slideId]: [...(prev[slideId] || []), currentDrawing] }));
+                setCurrentDrawing(null);
+            };
+
+            const getCoordinates = (e) => {
+                const svg = e.currentTarget; // zoom-container
+                const rect = svg.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                // 注意：因为 SVG 在 zoom-container 内部，它是随容器缩放的。
+                // 这里的坐标是相对于缩放后的 SVG 左上角的像素值。
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            };
+
+            const updateHotspotPosition = useCallback((slideId, index, newPos) => {
+                // newPos 是子组件传上来的本地位置，此时才更新全局 State
+                setAnnotations(prev => {
+                    const list = [...(prev[slideId] || [])];
+                    if (list[index]) {
+                        list[index] = { ...list[index], ...newPos };
+                    }
+                    return { ...prev, [slideId]: list };
+                });
+            }, []);
+
+            // 新增：删除指定索引的标注/交互点
+            const deleteAnnotationByIndex = useCallback((slideId, index) => {
+                setAnnotations(prev => {
+                    const list = [...(prev[slideId] || [])];
+                    if (index >= 0 && index < list.length) {
+                        list.splice(index, 1);
+                    }
+                    return { ...prev, [slideId]: list };
+                });
+            }, []);
+
+            // 渲染绘图层
+            const AnnotationLayer = ({ slideId }) => {
+                const items = (annotations[slideId] || []).filter(a => a.type !== 'hotspot');
+                const isDrawingOnThisSlide = images[currentIndex]?.id === slideId;
+                
+                // 动态计算光标样式
+                let cursorClass = 'pointer-none';
+                if (activeTool === 'hotspot') cursorClass = 'cursor-crosshair'; // 添加点
+                else if (activeTool !== 'none') cursorClass = 'cursor-pen'; // 绘图
+                else if (zoomState.scale > 1) cursorClass = isPanning ? 'cursor-grabbing-canvas' : 'cursor-grab-canvas'; // 漫游
+
+                return (
+                    <svg 
+                        className={`annotation-layer ${cursorClass}`}
+                        style={{ pointerEvents: activeTool !== 'none' || zoomState.scale > 1 ? 'auto' : 'none' }}
+                        onMouseDown={(e) => handleCanvasMouseDown(e, slideId)}
+                        onMouseMove={handleCanvasMouseMove}
+                        onMouseUp={() => handleCanvasMouseUp(slideId)}
+                        onMouseLeave={() => { setIsPanning(false); setCurrentDrawing(null); }}
+                        onTouchStart={(e) => handleCanvasMouseDown(e, slideId)}
+                        onTouchMove={handleCanvasMouseMove}
+                        onTouchEnd={() => handleCanvasMouseUp(slideId)}
+                    >
+                        <defs>
+                            {colors.map(c => (
+                                <marker key={c.value} id={`arrowhead-${c.value}`} markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill={c.value} />
+                                </marker>
+                            ))}
+                        </defs>
+                        {items.map((ann, i) => (
+                            <g key={i}>
+                                {ann.type === 'pen' && <polyline points={ann.points.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke={ann.color || '#EF4444'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />}
+                                {ann.type === 'arrow' && <line x1={ann.start.x} y1={ann.start.y} x2={ann.end.x} y2={ann.end.y} stroke={ann.color || '#EF4444'} strokeWidth="3" markerEnd={`url(#arrowhead-${ann.color || '#EF4444'})`} />}
+                                {ann.type === 'rect' && <rect x={Math.min(ann.start.x, ann.end.x)} y={Math.min(ann.start.y, ann.end.y)} width={Math.abs(ann.end.x - ann.start.x)} height={Math.abs(ann.end.y - ann.start.y)} rx="8" ry="8" fill="none" stroke={ann.color || '#EF4444'} strokeWidth="3" />}
+                            </g>
+                        ))}
+                        {isDrawingOnThisSlide && currentDrawing && (
+                            <g>
+                                {currentDrawing.type === 'pen' && <polyline points={currentDrawing.points.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke={currentDrawing.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />}
+                                {currentDrawing.type === 'arrow' && <line x1={currentDrawing.start.x} y1={currentDrawing.start.y} x2={currentDrawing.end.x} y2={currentDrawing.end.y} stroke={currentDrawing.color} strokeWidth="3" markerEnd={`url(#arrowhead-${currentDrawing.color})`} />}
+                                {currentDrawing.type === 'rect' && <rect x={Math.min(currentDrawing.start.x, currentDrawing.end.x)} y={Math.min(currentDrawing.start.y, currentDrawing.end.y)} width={Math.abs(currentDrawing.end.x - currentDrawing.start.x)} height={Math.abs(currentDrawing.end.y - currentDrawing.start.y)} rx="8" ry="8" fill="none" stroke={currentDrawing.color} strokeWidth="3" />}
+                            </g>
+                        )}
+                    </svg>
+                );
+            };
+
+            const HotspotLayer = ({ slideId }) => {
+                const allAnnotations = annotations[slideId] || [];
+                const hotspotsWithIndex = allAnnotations
+                    .map((ann, idx) => ({ ...ann, originalIndex: idx }))
+                    .filter(a => a.type === 'hotspot');
+                
+                return (
+                    <div className="hotspot-layer">
+                        {hotspotsWithIndex.map((hs) => (
+                            <DraggableHotspot 
+                                key={`${slideId}-${hs.originalIndex}`}
+                                data={hs}
+                                index={hs.originalIndex}
+                                onUpdate={(idx, pos) => updateHotspotPosition(slideId, idx, pos)}
+                                isPresentationMode={isPresentationMode}
+                                onDelete={() => deleteAnnotationByIndex(slideId, hs.originalIndex)}
+                            />
+                        ))}
+                    </div>
+                );
+            };
+
+            // ... (保留文件处理、播放控制等原有函数，未修改) ...
+            const toggleFullscreen = () => {
+                if (!document.fullscreenElement) { containerRef.current.requestFullscreen().catch(err => console.error(err)); } else { document.exitFullscreen(); }
+            };
+            const handleFileUpload = (e) => {
+                const files = Array.from(e.target.files);
+                const newItems = files.map(file => ({ id: Math.random().toString(36).substr(2, 9), url: URL.createObjectURL(file), name: file.name, type: file.type.startsWith('video') ? 'video' : 'image' }));
+                setImages(prev => { const updated = [...prev, ...newItems]; if (prev.length === 0 && updated.length > 0) setRenderQueue([{ id: updated[0].id, url: updated[0].url, type: updated[0].type, name: updated[0].name, index: 0, key: 'init' }]); return updated; });
+            };
+            const handleAudioUpload = (e) => { const file = e.target.files[0]; if (file) { setAudioSrc(URL.createObjectURL(file)); if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; } setIsAudioPlaying(false); } };
+            const saveProject = async () => { /* 省略，保持原样 */ 
+                 if (images.length === 0) return;
+                setIsLoading(true);
+                try {
+                    const processedImages = await Promise.all(images.map(async (item) => {
+                        const response = await fetch(item.url);
+                        const blob = await response.blob();
+                        return new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve({ id: item.id, name: item.name, type: item.type, data: reader.result });
+                            reader.readAsDataURL(blob);
+                        });
+                    }));
+                    let audioBase64 = null;
+                    if (audioSrc) {
+                        const response = await fetch(audioSrc);
+                        const blob = await response.blob();
+                        audioBase64 = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+                    }
+                    const projectData = { version: "1.7", createdAt: new Date().toISOString(), images: processedImages, audio: audioBase64, settings: { duration, effect }, annotations: annotations };
+                    const blob = new Blob([JSON.stringify(projectData)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `橙意课件工程_v1.7_${new Date().toLocaleDateString()}.json`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                } catch (error) { alert("保存失败"); } finally { setIsLoading(false); }
+            };
+            const loadProject = (e) => { /* 省略，保持原样 */ 
+                 const file = e.target.files[0];
+                if (!file) return;
+                setIsLoading(true);
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.images) {
+                            const loadedItems = data.images.map(item => ({ id: item.id || Math.random().toString(36).substr(2, 9), name: item.name, url: item.data, type: item.type || 'image' }));
+                            setImages(loadedItems);
+                            if(loadedItems.length > 0) setRenderQueue([{ id: loadedItems[0].id, url: loadedItems[0].url, type: loadedItems[0].type, name: loadedItems[0].name, index: 0, key: 'init' }]);
+                        }
+                        if (data.audio) setAudioSrc(data.audio);
+                        if (data.settings) { setDuration(data.settings.duration || 3000); setEffect(data.settings.effect || 'fade'); }
+                        if (data.annotations) setAnnotations(data.annotations);
+                        setCurrentIndex(0);
+                        setIsPlaying(false);
+                        setZoomState({ scale: 1, x: 0, y: 0 }); // 重置缩放
+                    } catch (error) { alert("文件损坏"); } finally { setIsLoading(false); }
+                };
+                reader.readAsText(file);
+                e.target.value = null; 
+            };
+            const exportToPDF = async () => { /* 省略，保持原样 */ 
+                if (images.length === 0) return;
+                setIsLoading(true);
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [297, 167] });
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const pageHeight = doc.internal.pageSize.getHeight();
+
+                    for (let i = 0; i < images.length; i++) {
+                        if (i > 0) doc.addPage([297, 167]);
+                        const item = images[i];
+                        if (item.type === 'video') {
+                            doc.setFillColor(30, 30, 30);
+                            doc.rect(0, 0, pageWidth, pageHeight, 'F');
+                            doc.setTextColor(255, 255, 255);
+                            doc.setFontSize(24);
+                            doc.text("视频资源: " + item.name, pageWidth / 2, pageHeight / 2, { align: 'center' });
+                        } else {
+                            const imgElement = await new Promise((resolve, reject) => {
+                                const imgObj = new Image();
+                                imgObj.onload = () => resolve(imgObj);
+                                imgObj.onerror = reject;
+                                imgObj.src = item.url;
+                            });
+                            const imgRatio = imgElement.width / imgElement.height;
+                            const pageRatio = pageWidth / pageHeight;
+                            let finalWidth, finalHeight;
+                            if (imgRatio > pageRatio) { finalWidth = pageWidth; finalHeight = pageWidth / imgRatio; } else { finalHeight = pageHeight; finalWidth = pageHeight * imgRatio; }
+                            const x = (pageWidth - finalWidth) / 2;
+                            const y = (pageHeight - finalHeight) / 2;
+                            doc.addImage(imgElement, 'JPEG', x, y, finalWidth, finalHeight);
+                        }
+                    }
+                    doc.save(`橙意课件导出_16-9_${new Date().toLocaleDateString()}.pdf`);
+                } catch (error) { console.error("PDF Export failed:", error); alert("导出PDF失败，请重试"); } finally { setIsLoading(false); }
+            };
+            const handleDragStart = (e, index) => { setDraggedItemIndex(index); e.dataTransfer.effectAllowed = "move"; };
+            const handleDragOver = (e, index) => { e.preventDefault(); if (draggedItemIndex === null || draggedItemIndex === index) return; const newImages = [...images]; const draggedItem = newImages[draggedItemIndex]; newImages.splice(draggedItemIndex, 1); newImages.splice(index, 0, draggedItem); setImages(newImages); setDraggedItemIndex(index); if (currentIndex === draggedItemIndex) setCurrentIndex(index); else if (currentIndex === index) setCurrentIndex(draggedItemIndex); };
+            const handleDragEnd = () => { setDraggedItemIndex(null); };
+            const togglePlay = () => { if (images.length === 0) return; const willPlay = !isPlaying; setIsPlaying(willPlay); if (willPlay) { if (currentIndex === images.length - 1) setCurrentIndex(0); handleAudioPlay(true); } else { handleAudioPlay(false); } };
+            const startFullscreenPresentation = async (fromStart = false) => { if (images.length === 0) return; if (fromStart) setCurrentIndex(0); setIsPresentationMode(true); setIsPlaying(false); handleAudioPlay(false); if (containerRef.current && !document.fullscreenElement) { await containerRef.current.requestFullscreen(); } };
+            const handleAudioPlay = (shouldPlay) => { if (audioSrc && audioRef.current) { shouldPlay ? audioRef.current.play().catch(()=>{}) : audioRef.current.pause(); setIsAudioPlaying(shouldPlay); } };
+            const toggleAudioOnly = () => { if (!audioRef.current || !audioSrc) return; isAudioPlaying ? (audioRef.current.pause(), setIsAudioPlaying(false)) : (audioRef.current.play(), setIsAudioPlaying(true)); };
+            useEffect(() => { if (isPlaying) { slideIntervalRef.current = setInterval(() => { setCurrentIndex(prev => prev >= images.length - 1 ? 0 : prev + 1); }, duration); } else { clearInterval(slideIntervalRef.current); } return () => clearInterval(slideIntervalRef.current); }, [isPlaying, images.length, duration]);
+            useEffect(() => { const handleKeyDown = (e) => { if (images.length === 0) return; switch (e.key) { case 'ArrowLeft': setCurrentIndex(prev => (prev > 0 ? prev - 1 : images.length - 1)); break; case 'ArrowRight': setCurrentIndex(prev => (prev < images.length - 1 ? prev + 1 : 0)); break; case ' ': e.preventDefault(); togglePlay(); break; } }; window.addEventListener('keydown', handleKeyDown); return () => window.removeEventListener('keydown', handleKeyDown); }, [images.length, isPlaying, audioSrc]);
+            const deleteImage = (e, index) => { e.stopPropagation(); const newImages = images.filter((_, i) => i !== index); setImages(newImages); if (currentIndex >= newImages.length) setCurrentIndex(Math.max(0, newImages.length - 1)); if (newImages.length === 0) setIsPlaying(false); };
+
+            const undoAnnotation = () => { const slideId = images[currentIndex]?.id; if (!slideId) return; setAnnotations(prev => { const currentList = prev[slideId] || []; if (currentList.length === 0) return prev; return { ...prev, [slideId]: currentList.slice(0, -1) }; }); };
+            const clearAnnotations = () => { const slideId = images[currentIndex]?.id; if (!slideId) return; setAnnotations(prev => ({ ...prev, [slideId]: [] })); setActiveTool('none'); setShowHotspotConfig(false); };
+
+
+            return (
+                <div ref={containerRef} className={`flex flex-col h-screen text-white overflow-hidden font-sans select-none transition-colors duration-300 ${isPresentationMode ? 'bg-black' : 'bg-gray-900'}`}>
+                    {!isPresentationMode && (
+                        <header className="flex items-center bg-gray-800 border-b border-gray-700 shrink-0 z-10 shadow-lg">
+                            <div className="w-64 flex items-center px-4 py-3 border-r border-gray-700 shrink-0">
+                                <span className="text-2xl mr-2 shrink-0">🍊</span>
+                                <h1 className="text-lg font-bold tracking-wide truncate text-orange-100 hidden md:block">橙意课件在线演示器</h1>
+                            </div>
+                            <div className="flex items-center flex-1 px-4 py-3 min-w-0">
+                                <div className="flex items-center space-x-2">
+                                    <button onClick={saveProject} disabled={isLoading || images.length === 0} className="flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 rounded text-xs font-medium transition-colors"><Icons.Save className="w-3.5 h-3.5 mr-1.5" />{isLoading ? '...' : '保存'}</button>
+                                    <label className="flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 rounded text-xs font-medium cursor-pointer transition-colors"><Icons.FolderOpen className="w-3.5 h-3.5 mr-1.5" />导入<input type="file" accept=".json" className="hidden" onChange={loadProject} disabled={isLoading} /></label>
+                                    <button onClick={exportToPDF} disabled={isLoading || images.length === 0} className="flex items-center px-3 py-1.5 bg-orange-600 hover:bg-orange-500 disabled:opacity-50 rounded text-xs font-medium transition-colors ml-1" title="导出为PDF文档"><Icons.Pdf className="w-3.5 h-3.5 mr-1.5" />导出PDF</button>
+                                </div>
+                                <a href="http://app.chengzijiaoyujishu.com" target="_blank" rel="noopener noreferrer" className="hidden xl:flex items-center text-xs text-gray-400 hover:text-orange-400 transition-colors ml-4 border-l border-gray-700 pl-4 group whitespace-nowrap"><span className="mr-1">本工具为橙子老师创意制作 | 更多好用程序都在橙序市场 | 点击直达</span><Icons.ExternalLink className="w-3 h-3 opacity-50 group-hover:opacity-100" /></a>
+                            </div>
+                            <div className="flex items-center space-x-3 px-4 py-3 shrink-0">
+                                <label className="flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-500 rounded-md cursor-pointer transition-colors text-sm font-medium shadow-md"><Icons.Upload className="w-4 h-4 mr-2" /><span className="hidden sm:inline">批量上传</span><input type="file" multiple accept="image/*,video/*" className="hidden" onChange={handleFileUpload} /></label>
+                                <label className={`flex items-center px-3 py-2 border rounded-md cursor-pointer transition-colors text-sm font-medium relative group shadow-md ${audioSrc ? 'bg-gray-700 border-purple-500' : 'bg-gray-700 hover:bg-gray-600 border-gray-600'}`}><Icons.Music className={`w-4 h-4 mr-2 ${audioSrc ? 'text-purple-400' : 'text-gray-400'}`} /><span className="hidden sm:inline">上传配乐</span><input type="file" accept="audio/*" className="hidden" onChange={handleAudioUpload} /></label>
+                                {audioSrc && (<button onClick={toggleAudioOnly} className={`p-2 rounded-full hover:bg-gray-700 transition-colors ${isAudioPlaying ? 'text-green-400' : 'text-gray-400'}`}>{isAudioPlaying ? <span className="animate-pulse">🎵</span> : <Icons.Music className="w-5 h-5" />}</button>)}
+                                <div className="w-px h-6 bg-gray-600 mx-2 hidden md:block"></div>
+                                <button onClick={toggleFullscreen} className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-white" title={isFullscreen ? "退出全屏" : "窗口全屏"}>
+                                    {isFullscreen ? <Icons.Minimize2 className="w-5 h-5" /> : <Icons.Maximize2 className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </header>
+                    )}
+
+                    <div className="flex flex-1 overflow-hidden">
+                        {!isPresentationMode && (
+                            <div className="w-64 bg-gray-850 border-r border-gray-700 flex flex-col shrink-0 overflow-y-auto custom-scrollbar bg-[#1a1d24]">
+                                <div className="p-3 text-xs text-gray-500 uppercase font-semibold tracking-wider text-center sticky top-0 bg-[#1a1d24] z-10 shadow-sm">播放队列 ({images.length})</div>
+                                <div className="flex-1 px-2 pb-4 space-y-2">
+                                    {images.map((item, index) => (
+                                        <div key={item.id} draggable onDragStart={(e) => handleDragStart(e, index)} onDragOver={(e) => handleDragOver(e, index)} onDragEnd={handleDragEnd} onClick={() => setCurrentIndex(index)} className={`relative group flex items-center p-2 rounded-lg cursor-pointer border-2 transition-all ${currentIndex === index ? 'border-orange-500 bg-gray-800 shadow-lg' : 'border-transparent hover:bg-gray-800'} ${draggedItemIndex === index ? 'opacity-40 border-dashed border-yellow-400 scale-95' : ''}`}>
+                                            <div className="mr-2 cursor-grab text-gray-600 hover:text-gray-300"><Icons.GripVertical size={16} /></div>
+                                            <div className="text-gray-500 text-xs font-mono mr-2 w-4 text-right">{index + 1}</div>
+                                            <div className="w-16 h-10 bg-gray-900 rounded overflow-hidden shrink-0 border border-gray-700 relative">
+                                                {item.type === 'video' ? <video src={item.url} className="w-full h-full object-cover" muted /> : <img src={item.url} alt="thumb" className="w-full h-full object-cover" />}
+                                            </div>
+                                            <div className="ml-2 truncate text-xs text-gray-400 flex-1">{item.name}</div>
+                                            <button onClick={(e) => deleteImage(e, index)} className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 bg-gray-800 text-gray-500 hover:text-red-400 rounded opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"><Icons.Trash2 size={14} /></button>
+                                        </div>
+                                    ))}
+                                    <label className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-dashed border-gray-700 hover:border-gray-500 hover:bg-gray-800 cursor-pointer transition-all group text-gray-500 hover:text-gray-300 mt-2">
+                                        <Icons.Plus className="w-8 h-8 mb-1 opacity-50 group-hover:opacity-100 transition-opacity" />
+                                        <span className="text-xs font-medium">添加新资源</span>
+                                        <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={handleFileUpload} />
+                                    </label>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex-1 flex flex-col min-w-0 relative bg-[#121212]">
+                            {/* --- 核心动画区域 --- */}
+                            <div className={`flex-1 overflow-hidden w-full slide-stage ${isPresentationMode ? 'bg-black' : 'p-4'}`} onWheel={handleWheel}>
+                                {images.length > 0 ? (
+                                    renderQueue.map((item, index) => {
+                                        let animationClass = '';
+                                        if (renderQueue.length === 2) {
+                                            if (index === 0) animationClass = `${effect}-exit`;
+                                            if (index === 1) animationClass = `${effect}-enter`;
+                                        }
+                                        return (
+                                            <div key={item.key} className={`slide-wrapper ${animationClass}`} style={isPresentationMode ? {width: '100%', height: '100%'} : {}}>
+                                                {/* 缩放容器：包裹多媒体、画笔层和热点层 */}
+                                                <div 
+                                                    className="zoom-container"
+                                                    style={{ transform: `scale(${zoomState.scale}) translate(${zoomState.x}px, ${zoomState.y}px)` }}
+                                                >
+                                                    {item.type === 'video' ? (
+                                                        <video src={item.url} className="slide-media" style={isPresentationMode ? {width: '100%', height: '100%'} : {}} controls />
+                                                    ) : (
+                                                        <img src={item.url} alt="Slide" className="slide-media" style={isPresentationMode ? {width: '100%', height: '100%'} : {}} />
+                                                    )}
+                                                    <AnnotationLayer slideId={item.id} />
+                                                    <HotspotLayer slideId={item.id} />
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center text-gray-600 w-full h-full">
+                                        <label className="p-12 border-2 border-dashed border-gray-800 rounded-xl flex flex-col items-center bg-gray-900/50 cursor-pointer hover:border-gray-600 transition-colors">
+                                            <div className="flex space-x-4 mb-4 opacity-20"><Icons.Image size={64} strokeWidth={1} /><Icons.Video size={64} strokeWidth={1} /></div>
+                                            <p className="text-xl font-light text-gray-500">请点击上传图片或视频</p>
+                                            <input type="file" multiple accept="image/*,video/*" className="hidden" onChange={handleFileUpload} />
+                                        </label>
+                                    </div>
+                                )}
+                                
+                                {/* 缩放复原按钮 */}
+                                {images.length > 0 && zoomState.scale !== 1 && (
+                                    <button 
+                                        onClick={resetZoom}
+                                        className="absolute left-6 bottom-6 p-2 bg-gray-800/80 hover:bg-gray-700 text-white rounded-lg shadow-lg flex items-center gap-2 text-xs transition-all z-50 backdrop-blur-sm border border-gray-600"
+                                    >
+                                        <Icons.RefreshCw className="w-4 h-4" />
+                                        <span>复原 ({Math.round(zoomState.scale * 100)}%)</span>
+                                    </button>
+                                )}
+
+                                {images.length > 0 && (
+                                    <>
+                                        <button onClick={() => setCurrentIndex(i => i > 0 ? i - 1 : images.length - 1)} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-gray-900/30 hover:bg-gray-900/80 text-white rounded-full backdrop-blur-sm transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 z-50"><Icons.ChevronLeft size={48} /></button>
+                                        <button onClick={() => setCurrentIndex(i => i < images.length - 1 ? i + 1 : 0)} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-gray-900/30 hover:bg-gray-900/80 text-white rounded-full backdrop-blur-sm transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 z-50"><Icons.ChevronRight size={48} /></button>
+                                    </>
+                                )}
+                            </div>
+
+                            {!isPresentationMode && (
+                                <div className="h-16 bg-gray-800 border-t border-gray-700 flex items-center justify-between px-6 text-sm shrink-0 shadow-lg z-20">
+                                    <div className="flex flex-col justify-center overflow-hidden max-w-[200px]">
+                                        <span className="font-medium text-gray-300 truncate">{images.length > 0 ? images[currentIndex].name : '等待上传...'}</span>
+                                        <span className="text-xs text-gray-500 font-mono mt-0.5">{images.length > 0 ? `${currentIndex + 1} / ${images.length}` : '0 / 0'}</span>
+                                    </div>
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
+                                         <button onClick={togglePlay} disabled={images.length === 0} className={`flex items-center px-6 py-2 rounded-full font-medium transition-all ${isPlaying ? 'bg-red-500/20 text-red-400 border border-red-500/50 hover:bg-red-500 hover:text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'}`}>
+                                            {isPlaying ? <Icons.Pause className="w-4 h-4 mr-2" /> : <Icons.Play className="w-4 h-4 mr-2" />}<span className="text-sm">{isPlaying ? '停止' : '自动播放'}</span>
+                                        </button>
+                                        
+                                        <div className="flex items-center space-x-2 bg-gray-900/50 p-1.5 rounded-lg border border-gray-700">
+                                            <div className="flex items-center space-x-1 px-2 border-r border-gray-700">
+                                                <Icons.Clock className="w-3 h-3 text-gray-400" />
+                                                <select value={duration} onChange={(e) => setDuration(Number(e.target.value))} className="bg-transparent text-xs text-gray-300 focus:outline-none cursor-pointer"><option value="2000">2秒</option><option value="3000">3秒</option><option value="5000">5秒</option><option value="8000">8秒</option><option value="10000">10秒</option></select>
+                                            </div>
+                                            <div className="flex items-center space-x-1 px-2">
+                                                <Icons.Sparkles className="w-3 h-3 text-gray-400" />
+                                                <select value={effect} onChange={(e) => setEffect(e.target.value)} className="bg-transparent text-xs text-gray-300 focus:outline-none cursor-pointer w-20"><option value="fade">淡入淡出</option><option value="slideUp">向上推入</option><option value="slideLeft">向左推入</option><option value="flip">拟真翻页</option></select>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center space-x-1 bg-gray-900/50 p-1.5 rounded-lg border border-gray-700 relative">
+                                            <div className="relative">
+                                                <button onClick={() => {setShowColorPicker(!showColorPicker); setShowHotspotConfig(false);}} className="p-1 rounded hover:bg-gray-700 transition-colors flex items-center justify-center" title="选择画笔颜色">
+                                                    <div className="w-4 h-4 rounded-full border border-gray-400" style={{ backgroundColor: brushColor }}></div>
+                                                </button>
+                                                {showColorPicker && (
+                                                    <div className="absolute bottom-full left-0 mb-2 p-2 bg-gray-800 border border-gray-700 rounded-lg shadow-xl flex flex-col gap-2 z-50">
+                                                        {colors.map(c => (
+                                                            <button key={c.value} className={`w-5 h-5 rounded-full border ${brushColor === c.value ? 'border-white scale-110' : 'border-transparent hover:scale-110'}`} style={{ backgroundColor: c.value }} onClick={() => { setBrushColor(c.value); setShowColorPicker(false); }} title={c.name} />
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <button onClick={() => {setActiveTool(activeTool === 'pen' ? 'none' : 'pen'); setShowHotspotConfig(false);}} className={`p-1 rounded hover:bg-gray-700 transition-colors ${activeTool === 'pen' ? 'tool-active' : 'text-gray-400'}`} title="画笔"><Icons.Pen className="w-4 h-4" /></button>
+                                            <button onClick={() => {setActiveTool(activeTool === 'arrow' ? 'none' : 'arrow'); setShowHotspotConfig(false);}} className={`p-1 rounded hover:bg-gray-700 transition-colors ${activeTool === 'arrow' ? 'tool-active' : 'text-gray-400'}`} title="箭头"><Icons.ArrowUpRight className="w-4 h-4" /></button>
+                                            <button onClick={() => {setActiveTool(activeTool === 'rect' ? 'none' : 'rect'); setShowHotspotConfig(false);}} className={`p-1 rounded hover:bg-gray-700 transition-colors ${activeTool === 'rect' ? 'tool-active' : 'text-gray-400'}`} title="矩形"><Icons.Square className="w-4 h-4" /></button>
+                                            
+                                            {/* 交互点按钮 */}
+                                            <div className="relative">
+                                                <button 
+                                                    onClick={() => {
+                                                        const isActive = activeTool === 'hotspot';
+                                                        setActiveTool(isActive ? 'none' : 'hotspot');
+                                                        setShowHotspotConfig(!isActive);
+                                                        setShowColorPicker(false);
+                                                    }} 
+                                                    className={`p-1 rounded hover:bg-gray-700 transition-colors ${activeTool === 'hotspot' ? 'hotspot-tool-active' : 'text-gray-400'}`} 
+                                                    title="添加交互点"
+                                                >
+                                                    <Icons.Target className="w-4 h-4" />
+                                                </button>
+
+                                                {/* 交互点设置面板 */}
+                                                {showHotspotConfig && activeTool === 'hotspot' && (
+                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-72 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl p-3 z-50 flex flex-col gap-3">
+                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider flex justify-between">
+                                                            <span>交互点设置</span>
+                                                            <span className="text-[10px] text-gray-500 font-normal">点击画布添加</span>
+                                                        </div>
+                                                        <input 
+                                                            type="text" 
+                                                            value={hotspotConfig.text} 
+                                                            onChange={(e) => setHotspotConfig({...hotspotConfig, text: e.target.value})}
+                                                            placeholder="输入弹出的文字..." 
+                                                            className="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                                                        />
+                                                        
+                                                        {/* 图标类型 */}
+                                                        <div className="flex justify-between items-center gap-1 bg-gray-900 p-1 rounded border border-gray-700">
+                                                            {hotspotStyles.map(style => (
+                                                                <button 
+                                                                    key={style.id}
+                                                                    onClick={() => setHotspotConfig({...hotspotConfig, style: style.id})}
+                                                                    className={`p-1.5 rounded hover:bg-gray-700 transition-colors ${hotspotConfig.style === style.id ? 'bg-blue-600 text-white' : 'text-gray-400'}`}
+                                                                    title={style.name}
+                                                                >
+                                                                    <style.icon className="w-4 h-4" />
+                                                                </button>
+                                                            ))}
+                                                        </div>
+
+                                                        {/* 大小和图标颜色 */}
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex items-center gap-2 bg-gray-900 border border-gray-700 rounded px-2 py-1 flex-1">
+                                                                <span className="text-[10px] text-gray-500 whitespace-nowrap">大小</span>
+                                                                <input 
+                                                                    type="range" min="0.5" max="2" step="0.1"
+                                                                    value={hotspotConfig.iconSize} 
+                                                                    onChange={(e) => setHotspotConfig({...hotspotConfig, iconSize: parseFloat(e.target.value)})}
+                                                                    className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                                                                />
+                                                            </div>
+                                                            <div className="flex items-center gap-1 bg-gray-900 border border-gray-700 rounded px-2 py-1">
+                                                                <span className="text-[10px] text-gray-500">色</span>
+                                                                <input 
+                                                                    type="color" 
+                                                                    value={hotspotConfig.iconColor} 
+                                                                    onChange={(e) => setHotspotConfig({...hotspotConfig, iconColor: e.target.value})}
+                                                                    className="w-4 h-4 bg-transparent border-none cursor-pointer"
+                                                                    title="图标颜色"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* 文字大小和颜色 */}
+                                                        <div className="flex gap-2">
+                                                            <select 
+                                                                value={hotspotConfig.fontSize} 
+                                                                onChange={(e) => setHotspotConfig({...hotspotConfig, fontSize: e.target.value})}
+                                                                className="bg-gray-900 text-xs border border-gray-700 rounded px-1 py-1 flex-1 text-gray-300"
+                                                            >
+                                                                <option value="12px">小号字</option>
+                                                                <option value="14px">中号字</option>
+                                                                <option value="18px">大号字</option>
+                                                                <option value="24px">超大字</option>
+                                                            </select>
+                                                            <div className="flex items-center gap-1 bg-gray-900 border border-gray-700 rounded px-2">
+                                                                <span className="text-[10px] text-gray-500">字色</span>
+                                                                <input 
+                                                                    type="color" 
+                                                                    value={hotspotConfig.textColor} 
+                                                                    onChange={(e) => setHotspotConfig({...hotspotConfig, textColor: e.target.value})}
+                                                                    className="w-4 h-4 bg-transparent border-none cursor-pointer"
+                                                                    title="文字颜色"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="w-px h-4 bg-gray-700 mx-1"></div>
+                                            <button onClick={undoAnnotation} className="p-1 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition-colors" title="撤销"><Icons.RotateCcw className="w-4 h-4" /></button>
+                                            <button onClick={clearAnnotations} className="p-1 rounded hover:bg-gray-700 text-gray-400 hover:text-red-400 transition-colors" title="清除所有"><Icons.Eraser className="w-4 h-4" /></button>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <button onClick={() => startFullscreenPresentation(false)} disabled={images.length === 0} className="flex items-center px-3 py-2 bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:hover:bg-orange-600 text-white rounded-md transition-colors shadow-md group"><Icons.Presentation className="w-4 h-4 mr-2" /><span className="font-bold text-xs">当前放映</span></button>
+                                        <button onClick={() => startFullscreenPresentation(true)} disabled={images.length === 0} className="flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 text-white rounded-md transition-colors shadow-md"><Icons.Play className="w-4 h-4 mr-2 fill-current" /><span className="font-bold text-xs">从头放映</span></button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <audio ref={audioRef} src={audioSrc || ""} loop onEnded={() => setIsAudioPlaying(false)} onPause={() => setIsAudioPlaying(false)} onPlay={() => setIsAudioPlaying(true)} />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

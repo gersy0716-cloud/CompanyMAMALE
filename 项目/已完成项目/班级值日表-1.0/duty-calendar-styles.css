@@ -1,0 +1,83 @@
+/* ========== 值日表日历视图样式 ========== */
+
+/* 节假日标红 */
+.day-cell.holiday {
+    color: #E74C3C;
+    font-weight: 600;
+}
+
+.day-cell.holiday.has-duty {
+    background: linear-gradient(135deg, #FFE5E5 0%, #FFD5D5 100%);
+    border-color: #E74C3C;
+}
+
+/* 日历单元格带值日标记 */
+.day-cell.has-duty {
+    position: relative;
+}
+
+.day-cell.has-duty::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #d4a574;
+    border-radius: 50%;
+}
+
+/* 值日详情悬浮提示 */
+.duty-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(212, 165, 116, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 200px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.day-cell:hover .duty-tooltip {
+    opacity: 1;
+}
+
+.duty-tooltip-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d4a574;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+.duty-tooltip-members {
+    font-size: 12px;
+    color: #5E4A3A;
+    line-height: 1.6;
+}
+
+.duty-tooltip-members strong {
+    color: #8b7355;
+}
+
+/* 箭头 */
+.duty-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.98);
+}

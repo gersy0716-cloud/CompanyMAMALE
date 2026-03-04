@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师中心 - 码码乐AI智能体工具集</title>
+    <meta name="description" content="教师中心是码码乐AI智能体工具集合平台，按教师工作场景分类展示各类AI工具，帮助教师快速找到并使用所需的智能体。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- 背景氛围光斑 -->
+    <div class="ambient-orbs">
+        <div class="orb orb-purple"></div>
+        <div class="orb orb-cyan"></div>
+        <div class="orb orb-pink"></div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <svg class="brand-logo" viewBox="0 0 40 40" fill="none">
+                    <!-- 书本底座 -->
+                    <path d="M8 28c0 2.2 1.8 4 4 4h16c2.2 0 4-1.8 4-4V12c0-2.2-1.8-4-4-4H12c-2.2 0-4 1.8-4 4v16z"
+                        fill="url(#brandGradient)" opacity="0.1" />
+                    <path d="M12 28h16c2.2 0 4-1.8 4-4V12c0-2.2-1.8-4-4-4" stroke="url(#brandGradient)"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 28c-2.2 0-4-1.8-4-4V8c0 2.2 1.8 4 4 4h16" stroke="url(#brandGradient)"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <!-- 羽毛笔装饰 -->
+                    <path d="M22 14l6-6m-6 6l-3 3-1 5 5-1 3-3m-4-2l2 2" stroke="url(#brandAccent)" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <defs>
+                        <linearGradient id="brandGradient" x1="0" y1="0" x2="40" y2="40">
+                            <stop stop-color="#9281FF" />
+                            <stop offset="1" stop-color="#667eea" />
+                        </linearGradient>
+                        <linearGradient id="brandAccent" x1="0" y1="0" x2="40" y2="40">
+                            <stop stop-color="#f093fb" />
+                            <stop offset="1" stop-color="#F5576C" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="brand-text">教师中心</span>
+            </div>
+
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" class="search-input" id="globalSearch" placeholder="搜索工具..." autocomplete="off">
+            </div>
+
+            <!-- 快速导航 -->
+            <nav class="quick-nav">
+                <a href="#ai-teaching" class="nav-link">AI教学</a>
+                <a href="#office-writing" class="nav-link">办公</a>
+                <a href="#class-management" class="nav-link">班级</a>
+                <a href="#lesson-prep" class="nav-link">备课</a>
+                <a href="#grade-management" class="nav-link">成绩</a>
+                <a href="#classroom-tools" class="nav-link">课堂</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        <!-- 最近使用区域 -->
+        <section class="recent-section" id="recentSection" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    最近使用
+                </h2>
+                <button class="clear-history-btn" id="clearHistoryBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                    清除历史
+                </button>
+            </div>
+            <div class="recent-tools" id="recentTools"></div>
+        </section>
+
+        <!-- 板块容器 -->
+        <div class="blocks-container" id="blocksContainer"></div>
+    </main>
+
+    <!-- AI助手悬浮按钮 -->
+    <div class="ai-assistant-fab" id="aiAssistantFab">
+        <div class="fab-pulse"></div>
+        <img class="fab-icon" src="https://app.520ai.cc/plat/public/teacherCentered/png/robot-D5lBLc_d.png" alt="AI助手">
+        <div class="fab-tooltip">有什么可以帮您？</div>
+    </div>
+
+    <!-- AI助手对话框 -->
+    <div class="ai-dialog-overlay" id="aiDialogOverlay">
+        <div class="ai-dialog" id="aiDialog">
+            <div class="ai-dialog-header">
+                <div class="ai-dialog-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" fill="url(#aiGradient2)" />
+                        <circle cx="9" cy="10" r="1.5" fill="#fff" />
+                        <circle cx="15" cy="10" r="1.5" fill="#fff" />
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
+                        <defs>
+                            <linearGradient id="aiGradient2" x1="2" y1="2" x2="22" y2="22">
+                                <stop stop-color="#9281FF" />
+                                <stop offset="1" stop-color="#f093fb" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    AI 助手
+                </div>
+                <button class="ai-dialog-close" id="aiDialogClose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="ai-dialog-messages" id="aiMessages">
+                <div class="ai-message ai-message-bot">
+                    <div class="message-avatar">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" fill="url(#msgGradient)" />
+                            <circle cx="9" cy="10" r="1" fill="#fff" />
+                            <circle cx="15" cy="10" r="1" fill="#fff" />
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="msgGradient" x1="2" y1="2" x2="22" y2="22">
+                                    <stop stop-color="#9281FF" />
+                                    <stop offset="1" stop-color="#f093fb" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <p>你好！我是教师中心的 AI 助手 👋</p>
+                        <p>告诉我你想要完成什么任务，我来帮你找到最合适的工具！</p>
+                    </div>
+                </div>
+            </div>
+            <div class="ai-dialog-input">
+                <input type="text" id="aiInput" placeholder="描述你的需求..." autocomplete="off">
+                <button class="ai-send-btn" id="aiSendBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工具预览卡片 -->
+    <div class="tool-preview-card" id="toolPreviewCard">
+        <div class="preview-image-container">
+            <img class="preview-image" id="previewImage" src="" alt="">
+            <div class="preview-placeholder" id="previewPlaceholder">
+                <div class="placeholder-icon"></div>
+            </div>
+        </div>
+        <div class="preview-info">
+            <h4 class="preview-title" id="previewTitle"></h4>
+            <p class="preview-desc" id="previewDesc"></p>
+            <div class="preview-stats">
+                <span class="preview-usage" id="previewUsage"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="colorExtractor.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

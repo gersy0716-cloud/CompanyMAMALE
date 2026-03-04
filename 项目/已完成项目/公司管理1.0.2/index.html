@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>码码乐</title>
+    <meta name="description" content="码码乐内部协作平台 — 任务管理、项目讨论、Claude Code、Skill">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/tasks.css">
+    <link rel="stylesheet" href="css/lightbox.css">
+    <link rel="stylesheet" href="css/accounts.css">
+    <link rel="stylesheet" href="css/announcements.css">
+    <link rel="stylesheet" href="css/skills.css">
+    <link rel="stylesheet" href="css/discussions.css">
+    <link rel="stylesheet" href="css/claude-code.css">
+    <link rel="stylesheet" href="css/messages.css">
+    <link rel="stylesheet" href="css/versions.css">
+</head>
+
+<body>
+
+    <!-- ==================== 登录页 ==================== -->
+    <div id="auth-page">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <h1>码码乐</h1>
+                <p>内部协作管理平台</p>
+            </div>
+
+            <!-- 登录表单 -->
+            <div id="login-form">
+                <div class="form-group">
+                    <label for="login-username">用户名</label>
+                    <input type="text" id="login-username" placeholder="请输入用户名" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <input type="password" id="login-password" placeholder="请输入密码" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="remember-me" checked>
+                        <span>记住登录</span>
+                    </label>
+                </div>
+                <button class="btn btn-primary btn-lg" style="width:100%" onclick="Auth.login()">登 录</button>
+                <p class="auth-switch">还没有账号？<a onclick="Auth.showRegister()">立即注册</a></p>
+            </div>
+
+            <!-- 注册表单 -->
+            <div id="register-form" style="display:none;">
+                <div class="form-group">
+                    <label for="reg-realname">真实姓名</label>
+                    <input type="text" id="reg-realname" placeholder="请输入你的真实姓名">
+                </div>
+                <div class="form-group">
+                    <label for="reg-username">用户名</label>
+                    <input type="text" id="reg-username" placeholder="设置登录用户名" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">密码</label>
+                    <input type="password" id="reg-password" placeholder="设置登录密码" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password-confirm">确认密码</label>
+                    <input type="password" id="reg-password-confirm" placeholder="再次输入密码" autocomplete="new-password">
+                </div>
+                <button class="btn btn-primary btn-lg" style="width:100%" onclick="Auth.register()">注 册</button>
+                <p class="auth-switch">已有账号？<a onclick="Auth.showLogin()">返回登录</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 主应用 ==================== -->
+    <div id="main-app" class="app-layout" style="display:none;">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <span class="sidebar-title">码码乐</span>
+            </div>
+
+            <div class="sidebar-nav">
+                <!-- 工作 -->
+                <div class="nav-section">
+                    <div class="nav-section-title">工作</div>
+                    <a class="nav-item active" data-page="tasks-personal" onclick="App.navigate('tasks-personal')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        <span>我的任务</span>
+                    </a>
+                    <a class="nav-item" data-page="tasks-global" onclick="App.navigate('tasks-global')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4" />
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                        </svg>
+                        <span>全部任务</span>
+                    </a>
+                    <a class="nav-item" data-page="messages" onclick="App.navigate('messages')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                            <polyline points="22,6 12,13 2,6" />
+                        </svg>
+                        <span>消息</span>
+                        <span id="msg-badge" class="nav-badge" style="display:none;">0</span>
+                    </a>
+                </div>
+
+                <!-- 协作 -->
+                <div class="nav-section">
+                    <div class="nav-section-title">协作</div>
+                    <a class="nav-item" data-page="discussions" onclick="App.navigate('discussions')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                        </svg>
+                        <span>项目讨论</span>
+                    </a>
+                    <a class="nav-item" data-page="announcements" onclick="App.navigate('announcements')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 01-3.46 0" />
+                        </svg>
+                        <span>公告</span>
+                    </a>
+                </div>
+
+                <!-- 工具 -->
+                <div class="nav-section">
+                    <div class="nav-section-title">工具</div>
+                    <a class="nav-item" data-page="claude-code" onclick="App.navigate('claude-code')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                        <span>Claude Code</span>
+                    </a>
+                    <a class="nav-item" data-page="accounts" onclick="App.navigate('accounts')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                        </svg>
+                        <span>账号管理</span>
+                    </a>
+                    <a class="nav-item" data-page="skills" onclick="App.navigate('skills')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                        </svg>
+                        <span>Skill</span>
+                    </a>
+                    <a class="nav-item" data-page="github-projects" onclick="App.navigate('github-projects')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                            </path>
+                        </svg>
+                        <span>GitHub项目</span>
+                    </a>
+                    <a class="nav-item" data-page="versions" onclick="App.navigate('versions')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <span>版本更新</span>
+                        <span id="version-badge" class="nav-badge" style="display:none; background:#ef4444;">新</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 用户区 -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="sidebar-avatar">U</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="sidebar-username">用户</div>
+
+                    </div>
+                    <div class="sidebar-logout" onclick="Auth.logout()" title="退出登录">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 内容区 -->
+        <div class="main-content">
+            <div class="page-wrapper">
+
+                <!-- ===== 全部任务 ===== -->
+                <div id="page-tasks-global" class="page-content">
+                    <div class="page-header">
+                        <div>
+                            <h2 class="page-title">全部任务</h2>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <select id="global-user-filter" onchange="TaskGlobal.filterByUser(this.value)"
+                                style="height:36px; border-radius:8px; border:1px solid #e2e8f0; padding:0 12px; font-size:13px; color:#475569; background:#fff; cursor:pointer;">
+                                <option value="all">全部成员</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="TaskGlobal.showAddModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                新建任务
+                            </button>
+                        </div>
+                    </div>
+                    <div class="filter-bar">
+                        <button class="filter-tab active" data-status="all"
+                            onclick="TaskGlobal.filterByStatus('all')">全部</button>
+                        <button class="filter-tab" data-status="待接取"
+                            onclick="TaskGlobal.filterByStatus('待接取')">待接取</button>
+                        <button class="filter-tab" data-status="进行中"
+                            onclick="TaskGlobal.filterByStatus('进行中')">进行中</button>
+                        <button class="filter-tab" data-status="待验收"
+                            onclick="TaskGlobal.filterByStatus('待验收')">待验收</button>
+                        <button class="filter-tab" data-status="已完成"
+                            onclick="TaskGlobal.filterByStatus('已完成')">已完成</button>
+                    </div>
+                    <div id="tasks-global-list" class="task-list-container">
+                        <div class="empty-state">
+                            <p>暂无任务</p>
+                            <span>点击「新建任务」创建第一个任务</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 我的任务 ===== -->
+                <div id="page-tasks-personal" class="page-content active">
+                    <div class="page-header">
+                        <h2 class="page-title">我的任务</h2>
+                    </div>
+                    <div class="filter-bar">
+                        <button class="filter-tab active" data-type="all"
+                            onclick="TaskGlobal.filterPersonalByType('all')">全部</button>
+                        <button class="filter-tab" data-type="主线"
+                            onclick="TaskGlobal.filterPersonalByType('主线')">主线任务</button>
+                        <button class="filter-tab" data-type="支线"
+                            onclick="TaskGlobal.filterPersonalByType('支线')">支线任务</button>
+                    </div>
+                    <div id="tasks-personal-list" class="task-list">
+                        <div class="empty-state">
+                            <p>暂无任务</p>
+                            <span>前往「全部任务」接取任务</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 项目讨论 ===== -->
+                <div id="page-discussions" class="page-content">
+                    <div class="page-header">
+                        <div>
+                            <h2 class="page-title">项目讨论</h2>
+                            <p class="page-desc">分享想法，协作交流</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="Discussions.showCreateModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            发起讨论
+                        </button>
+                    </div>
+                    <div id="discussion-list" class="skill-grid">
+                        <div class="empty-state">
+                            <p>暂无讨论</p>
+                            <span>点击「发起讨论」发布第一个话题</span>
+                        </div>
+                    </div>
+                    <!-- 讨论详情面板 -->
+                    <div id="discussion-detail-panel" style="display:none;"></div>
+                </div>
+
+                <!-- ===== 公告 ===== -->
+                <div id="page-announcements" class="page-content">
+                    <div class="page-header">
+                        <h2 class="page-title">公告</h2>
+                        <button class="btn btn-primary" onclick="Announcements.showCreateModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            发布公告
+                        </button>
+                    </div>
+                    <div id="announcement-list" class="announcement-list">
+                        <div class="empty-state">
+                            <p>暂无公告</p>
+                            <span>点击「发布公告」发布第一条公告</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Claude Code ===== -->
+                <div id="page-claude-code" class="page-content">
+                    <div class="page-header">
+                        <div>
+                            <h2 class="page-title">Claude Code</h2>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-secondary" id="cc-refresh-btn" onclick="ClaudeCode.loadAccounts()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10" />
+                                    <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
+                                </svg>
+                                刷新
+                            </button>
+                            <button class="btn btn-secondary" id="cc-admin-btn" onclick="ClaudeCode.toggleAdminMode()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path
+                                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                </svg>
+                                管理
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 管理工具栏（默认隐藏） -->
+                    <div id="cc-admin-toolbar" style="display:none; margin-bottom: var(--space-5);">
+                        <div style="display:flex; gap:var(--space-3); align-items:center;">
+                            <button class="btn btn-primary btn-sm" onclick="ClaudeCode.showAddAccountModal()">
+                                + 新增账号
+                            </button>
+                            <span style="flex:1"></span>
+                            <button class="btn btn-secondary btn-sm" onclick="ClaudeCode.exitAdminMode()">
+                                退出管理
+                            </button>
+                        </div>
+                    </div>
+                    <div id="cc-status" style="margin-bottom: var(--space-5);"></div>
+                    <div id="cc-account-list" class="cc-account-list">
+                        <div class="empty-state">
+                            <p>加载中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 账号管理 ===== -->
+                <div id="page-accounts" class="page-content">
+                    <div class="page-header">
+                        <h2 class="page-title">账号管理</h2>
+                        <div class="page-actions" style="gap:12px;">
+                            <button class="btn btn-secondary" onclick="Accounts.showManageCategories()"
+                                style="height:40px; border-radius:12px; font-weight:700;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
+                                </svg>
+                                分类管理
+                            </button>
+                            <button class="btn btn-primary" onclick="Accounts.showAddModal()"
+                                style="height:40px; border-radius:12px; font-weight:700;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                添加账号
+                            </button>
+                        </div>
+                    </div>
+                    <div id="account-table-wrap">
+                        <!-- 动态渲染账号卡片或分类列表 -->
+                    </div>
+                </div>
+
+                <!-- ===== Skill 商店 ===== -->
+                <div id="page-skills" class="page-content">
+                    <div class="page-header">
+                        <h2 class="page-title">Skill</h2>
+                        <div class="page-actions">
+
+                            <button class="btn btn-primary" onclick="Skills.showUploadModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                上传 Skill
+                            </button>
+                        </div>
+                    </div>
+                    <div class="skill-search-bar">
+                        <div class="search-input">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" id="skill-search-input" placeholder="搜索 Skill..."
+                                oninput="Skills.search(this.value)">
+                        </div>
+                        <div id="skill-tag-filter" class="tag-filter-bar"></div>
+                    </div>
+                    <div id="skill-list" class="skill-grid">
+                        <div class="empty-state">
+                            <p>暂无 Skill</p>
+                            <span>点击「上传 Skill」分享你的第一个 Skill</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== GitHub项目 ===== -->
+                <div id="page-github-projects" class="page-content">
+                    <div class="page-header">
+                        <h2 class="page-title">GitHub项目</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" onclick="GitHubProjects.showUploadModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                分享项目
+                            </button>
+                        </div>
+                    </div>
+                    <div class="skill-search-bar">
+                        <div class="search-input">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" id="github-search-input" placeholder="搜索项目..."
+                                oninput="GitHubProjects.search(this.value)">
+                        </div>
+                        <div id="github-tag-filter" class="tag-filter-bar"></div>
+                    </div>
+                    <div id="github-projects-list" class="skill-grid">
+                        <div class="empty-state">
+                            <p>加载中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 消息 ===== -->
+                <div id="page-messages" class="page-content">
+                    <div class="page-header">
+                        <div>
+                            <h2 class="page-title">消息 <span id="msg-unread-count"
+                                    style="font-size:13px; color:#94a3b8; font-weight:500;"></span></h2>
+                        </div>
+                        <div class="msg-actions">
+                            <button class="btn btn-secondary" onclick="Messages.markAllAsRead()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="9 11 12 14 22 4" />
+                                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                                </svg>
+                                全部已读
+                            </button>
+                        </div>
+                    </div>
+                    <div class="filter-bar">
+                        <button class="filter-tab active" data-filter="all"
+                            onclick="Messages.filterBy('all')">全部</button>
+                        <button class="filter-tab" data-filter="unread"
+                            onclick="Messages.filterBy('unread')">未读</button>
+                        <button class="filter-tab" data-filter="read" onclick="Messages.filterBy('read')">已读</button>
+                    </div>
+                    <div id="messages-list">
+                        <div class="empty-state">
+                            <p>暂无消息</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 版本更新 ===== -->
+                <div id="page-versions" class="page-content">
+                    <div class="page-header" style="margin-bottom: 24px;">
+                        <div>
+                            <h2 class="page-title">系统版本管理</h2>
+                            <p class="page-desc">管理员专用发布与历史追踪</p>
+                        </div>
+                    </div>
+                    <div id="version-list">
+                        <div class="empty-state">
+                            <p>暂无版本记录</p>
+                            <span>点击「发布新版本」上传第一个版本</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 全局 Modal ==================== -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modal-title">标题</h3>
+                <div class="modal-close" onclick="Modal.close()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </div>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+            <div id="modal-footer" class="modal-footer"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/components/file-upload-helper.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/tasks/task-global.js"></script>
+    <script src="js/tasks/task-personal.js"></script>
+    <script src="js/components/image-lightbox.js"></script>
+    <script src="js/tasks/task-detail.js"></script>
+    <script src="js/accounts/accounts.js"></script>
+    <script src="js/announcements/announcements.js"></script>
+    <script src="js/skills/skill-store.js"></script>
+    <script src="js/skills/skill-guide.js"></script>
+    <script src="js/discussions/discussions.js"></script>
+    <script src="js/claude-code/claude-code.js"></script>
+    <script src="js/github/github-projects.js"></script>
+    <script src="js/messages/messages.js"></script>
+    <script src="js/versions/versions.js"></script>
+
+</body>
+
+</html>
