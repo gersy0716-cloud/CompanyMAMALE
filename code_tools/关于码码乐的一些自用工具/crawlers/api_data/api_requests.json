@@ -1,0 +1,162 @@
+[
+  {
+    "url": "https://api.mamale.vip/api/tenants/domain?domain=www.520ai.cc",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/tenantSetting/publicExam",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/tenantSetting/publicStudent",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/app/programMatchSetting/registerSet",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/app/aiMenu/public?pageIndex=1&pageSize=1000&TargetType=0",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://api.mamale.vip/api/app/exam/pCurrentDateTime",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/app/resultSetting",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/tenantSetting/public",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/app/aiApplicationCategory/public?Sorting=sortId%20desc&pageIndex=1&pageSize=100&status=1",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/app/aiApplication/public?Sorting=sortId%20desc&pageIndex=1&pageSize=12&title=&SearchType=1&status=1",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/tenantSetting/public",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  },
+  {
+    "url": "https://3w-api.mamale.vip/api/app/aiApplication/public?Sorting=sortId%20desc&pageIndex=2&pageSize=12&title=&SearchType=1&status=1",
+    "method": "GET",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "origin": "https://www.520ai.cc",
+      "referer": "https://www.520ai.cc/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    }
+  }
+]

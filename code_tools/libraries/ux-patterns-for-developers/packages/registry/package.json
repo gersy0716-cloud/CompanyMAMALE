@@ -1,0 +1,55 @@
+{
+	"name": "@ux-patterns/registry",
+	"version": "0.1.0",
+	"description": "UX Patterns component registry system",
+	"type": "module",
+	"exports": {
+		"./.generated": "./.generated/index.tsx",
+		"./lib/registry-generator": "./lib/registry-generator.js"
+	},
+	"scripts": {
+		"dev": "nodemon --watch registry/default --ext tsx,ts,jsx,js --ignore 'registry/default/**/*.d.ts' --ignore '.generated/**' --ignore 'public/**' --exec 'npm run registry:generate'",
+		"check:type": "tsc --noEmit",
+		"registry:generate": "npx tsx scripts/build-registry.ts && shadcn build ../../apps/kit/public/r/registry.json --output ../../apps/kit/public/r",
+		"check": "tsc --noEmit",
+		"registry:build": "shadcn build",
+		"test": "vitest",
+		"test:ui": "vitest --ui",
+		"test:run": "vitest run",
+		"test:coverage": "vitest run --coverage"
+	},
+	"dependencies": {
+		"@radix-ui/react-slot": "^1.2.4",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.562.0",
+		"motion": "^12.25.0",
+		"react": "^19.2.3",
+		"react-dom": "^19.2.3",
+		"tailwind-merge": "^3.4.0"
+	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.1",
+		"@testing-library/user-event": "^14.6.1",
+		"@thedaviddias/config-typescript": "workspace:*",
+		"@types/node": "25.0.5",
+		"@types/react": "^19.2.7",
+		"@types/react-dom": "^19.2.3",
+		"@vitest/coverage-v8": "^4.0.16",
+		"@vitest/ui": "^4.0.16",
+		"chokidar": "^5.0.0",
+		"jsdom": "^27.4.0",
+		"nodemon": "^3.1.11",
+		"rimraf": "^6.1.2",
+		"shadcn": "^3.6.3",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.16",
+		"vitest-axe": "1.0.0-pre.5",
+		"zod": "^4.3.5"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

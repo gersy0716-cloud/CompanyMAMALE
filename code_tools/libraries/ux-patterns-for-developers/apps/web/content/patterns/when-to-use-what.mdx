@@ -1,0 +1,86 @@
+---
+title: "When to Use What?"
+description: "Guide for choosing the right UI pattern for your needs"
+icon: Table
+---
+
+This guide helps you choose the most appropriate UI pattern for your needs.
+
+Each pattern includes:
+
+- ✅ Best use cases
+- ❌ When to avoid
+- 🎯 Key features
+- 🔄 Related patterns
+
+## Selection Patterns (Less than 5 options)
+
+| Pattern                              | Best For                                       | Avoid When                             | Key Features     | Related                                            |
+| ------------------------------------ | ---------------------------------------------- | -------------------------------------- | ---------------- | -------------------------------------------------- |
+| [Radio](/patterns/forms/radio)       | ✅ Single choice<br/>✅ Visible options        | ❌ Many options<br/>❌ Multiple needed | ✅ Clear choices | [Dropdown](/patterns/forms/selection-input)        |
+| [Checkbox](/patterns/forms/checkbox) | ✅ Multiple choices<br/>✅ Independent options | ❌ Single choice<br/>❌ Many options   | ✅ Toggle states | [Multi-select](/patterns/forms/multi-select-input) |
+| [Toggle](/patterns/forms/toggle)     | ✅ Binary settings<br/>✅ Immediate effect     | ❌ Multiple states                     | ✅ Quick switch  | [Checkbox](/patterns/forms/checkbox)               |
+
+## Selection Patterns (5 or more options)
+
+| Pattern                                            | Best For                             | Avoid When            | Key Features       | Related                                      |
+| -------------------------------------------------- | ------------------------------------ | --------------------- | ------------------ | -------------------------------------------- |
+| [Dropdown](/patterns/forms/selection-input)        | ✅ Limited space<br/>✅ 5-15 options | ❌ Multiple selection | ✅ Compact         | [Radio](/patterns/forms/radio)               |
+| [Autocomplete](/patterns/forms/autocomplete)       | ✅ Many options<br/>✅ Search needed | ❌ Few options        | ✅ Search & filter | [Search Field](/patterns/forms/search-field) |
+| [Multi-select](/patterns/forms/multi-select-input) | ✅ Multiple items<br/>✅ Tags needed | ❌ Single choice      | ✅ Bulk selection  | [Checkbox](/patterns/forms/checkbox)         |
+
+## Text Input Patterns
+
+| Pattern                                       | Best For                              | Avoid When      | Key Features    | Related                                         |
+| --------------------------------------------- | ------------------------------------- | --------------- | --------------- | ----------------------------------------------- |
+| [Text Field](/patterns/forms/text-field)      | ✅ Short text<br/>✅ Single line      | ❌ Long content | ✅ Simple input | [Rich Text](/patterns/forms/rich-text-editor)   |
+| [Rich Text](/patterns/forms/rich-text-editor) | ✅ Formatted text<br/>✅ Long content | ❌ Simple text  | ✅ Formatting   | [Text Field](/patterns/forms/text-field)        |
+| [Password](/patterns/forms/password)          | ✅ Secure entry<br/>✅ Credentials    | ❌ Public data  | ✅ Masked input | [Code Input](/patterns/forms/code-confirmation) |
+| [Search Field](/patterns/forms/search-field)  | ✅ Content search<br/>✅ Filtering    | ❌ Exact match  | ✅ Quick search | [Autocomplete](/patterns/forms/autocomplete)    |
+
+## Specialized Input Patterns
+
+| Pattern                                         | Best For                               | Avoid When         | Key Features     | Related                                                     |
+| ----------------------------------------------- | -------------------------------------- | ------------------ | ---------------- | ----------------------------------------------------------- |
+| [Currency](/patterns/forms/currency-input)      | ✅ Money values<br/>✅ Formatting      | ❌ Plain numbers   | ✅ Auto-format   | [Text Field](/patterns/forms/text-field)                    |
+| [Phone](/patterns/forms/phone-number)           | ✅ Phone numbers<br/>✅ Formatting     | ❌ Plain text      | ✅ Validation    | [Text Field](/patterns/forms/text-field)                    |
+| [Color Picker](/patterns/forms/color-picker)    | ✅ Color selection<br/>✅ Visual input | ❌ Text input      | ✅ Visual picker | [Dropdown](/patterns/forms/selection-input)                 |
+| [Rating](/patterns/forms/rating-input)          | ✅ User ratings<br/>✅ Quick input     | ❌ Precise numbers | ✅ Star scale    | [Radio](/patterns/forms/radio)                              |
+| [Code Input](/patterns/forms/code-confirmation) | ✅ 2FA/OTP<br/>✅ Verification         | ❌ Regular input   | ✅ Auto-advance  | [Password](/patterns/forms/password)                        |
+| [File Input](/patterns/forms/file-input)        | ✅ File uploads<br/>✅ Multiple files  | ❌ Text input      | ✅ File select   | [Drag and Drop](/patterns/content-management/drag-and-drop) |
+
+## Date & Time Patterns
+
+| Pattern                                    | Best For                                   | Avoid When       | Key Features    | Related                                    |
+| ------------------------------------------ | ------------------------------------------ | ---------------- | --------------- | ------------------------------------------ |
+| [Date Input](/patterns/forms/date-input)   | ✅ Basic date entry<br/>✅ Known format    | ❌ Visual needed | ✅ Direct entry | [Date Picker](/patterns/forms/date-picker) |
+| [Date Picker](/patterns/forms/date-picker) | ✅ Visual dates<br/>✅ Calendar needed     | ❌ Quick entry   | ✅ Calendar UI  | [Date Range](/patterns/forms/date-range)   |
+| [Date Range](/patterns/forms/date-range)   | ✅ Period selection<br/>✅ Start/end dates | ❌ Single date   | ✅ Range select | [Date Picker](/patterns/forms/date-picker) |
+
+## Content Management Patterns
+
+| Pattern                                                     | Best For                                    | Avoid When           | Key Features              | Related                                                 |
+| ----------------------------------------------------------- | ------------------------------------------- | -------------------- | ------------------------- | ------------------------------------------------------- |
+| [Accordion](/patterns/content-management/accordion)         | ✅ Collapsible sections<br/>✅ Space saving | ❌ Always visible    | ✅ Progressive disclosure | [Modal](/patterns/content-management/modal)             |
+| [Modal](/patterns/content-management/modal)                 | ✅ Focused tasks<br/>✅ Important actions   | ❌ Frequent access   | ✅ Focus trap             | [Tooltip](/patterns/content-management/tooltip)         |
+| [Carousel](/patterns/content-management/carousel)           | ✅ Multiple items<br/>✅ Limited space      | ❌ Comparison needed | ✅ Progressive reveal     | [Infinite Scroll](/patterns/navigation/infinite-scroll) |
+| [Tooltip](/patterns/content-management/tooltip)             | ✅ Extra info<br/>✅ Quick help             | ❌ Critical info     | ✅ Context help           | [Modal](/patterns/content-management/modal)             |
+| [Drag and Drop](/patterns/content-management/drag-and-drop) | ✅ Reordering<br/>✅ Visual sorting         | ❌ Simple selection  | ✅ Direct manipulation    | [Selection Input](/patterns/forms/selection-input)      |
+
+## Navigation Patterns
+
+| Pattern                                                 | Best For                                                    | Avoid When                                       | Key Features                                   | Related                                                                                                   |
+| ------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [Back to Top](/patterns/navigation/back-to-top)         | ✅ Long pages<br/>✅ Quick return                           | ❌ Short content<br/>❌ Mobile-first designs     | ✅ Quick navigation<br/>✅ One-click access    | [Infinite Scroll](/patterns/navigation/infinite-scroll)                                                   |
+| [Breadcrumb](/patterns/navigation/breadcrumb)           | ✅ Deep hierarchies<br/>✅ Complex sites<br/>✅ E-commerce  | ❌ Flat structures<br/>❌ Single-level sites     | ✅ Location awareness<br/>✅ Easy backtracking | [Navigation Menu](/patterns/navigation/navigation-menu)                                                   |
+| [Infinite Scroll](/patterns/navigation/infinite-scroll) | ✅ Content feeds<br/>✅ Continuous flow<br/>✅ Social media | ❌ Structured content<br/>❌ Goal-oriented tasks | ✅ Auto-loading<br/>✅ Seamless browsing       | [Pagination](/patterns/navigation/pagination)<br/>[Load More](/patterns/navigation/load-more)             |
+| [Load More](/patterns/navigation/load-more)             | ✅ Content exploration<br/>✅ User control                  | ❌ Large datasets<br/>❌ Sequential content      | ✅ Manual loading<br/>✅ Performance friendly  | [Infinite Scroll](/patterns/navigation/infinite-scroll)<br/>[Pagination](/patterns/navigation/pagination) |
+| [Pagination](/patterns/navigation/pagination)           | ✅ Large datasets<br/>✅ Structured content                 | ❌ Short lists<br/>❌ Continuous reading         | ✅ Clear boundaries<br/>✅ Better orientation  | [Load More](/patterns/navigation/load-more)<br/>[Infinite Scroll](/patterns/navigation/infinite-scroll)   |
+| [Hamburger Menu](/patterns/navigation/hambuger-menu)    | ✅ Mobile interfaces<br/>✅ Space-saving                    | ❌ Desktop-first<br/>❌ Critical navigation      | ✅ Compact<br/>✅ Expandable                   | [Navigation Menu](/patterns/navigation/navigation-menu)<br/>[Sidebar](/patterns/navigation/sidebar)       |
+| [Megamenu](/patterns/navigation/megamenu)               | ✅ Large sites<br/>✅ Complex hierarchies                   | ❌ Simple navigation<br/>❌ Mobile interfaces    | ✅ Rich content<br/>✅ Category overview       | [Navigation Menu](/patterns/navigation/navigation-menu)                                                   |
+| [Navigation Menu](/patterns/navigation/navigation-menu) | ✅ Primary navigation<br/>✅ Site structure                 | ❌ Deep hierarchies<br/>❌ Complex categories    | ✅ Clear structure<br/>✅ Easy access          | [Megamenu](/patterns/navigation/megamenu)                                                                 |
+| [Sidebar](/patterns/navigation/sidebar)                 | ✅ Dashboard layouts<br/>✅ App interfaces                  | ❌ Content-heavy sites<br/>❌ Mobile-first       | ✅ Persistent nav<br/>✅ Context retention     | [Navigation Menu](/patterns/navigation/navigation-menu)                                                   |
+| [Tabs](/patterns/navigation/tabs)                       | ✅ Related content<br/>✅ Switching views                   | ❌ Deep hierarchies<br/>❌ Many sections         | ✅ Content grouping<br/>✅ Quick switching     | [Navigation Menu](/patterns/navigation/navigation-menu)                                                   |
+|  |
+
+For implementation details and best practices, visit our [Getting Started](/patterns/getting-started) guide.

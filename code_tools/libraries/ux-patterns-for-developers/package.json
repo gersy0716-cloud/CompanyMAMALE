@@ -1,0 +1,38 @@
+{
+	"name": "ux-patterns-for-developers",
+	"license": "Dual MIT and Commercial",
+	"author": "David Dias",
+	"private": true,
+	"scripts": {
+		"dev": "turbo run dev --filter=!kit --filter=!gallery",
+		"build": "turbo run build --filter=!kit --filter=!gallery",
+		"lint": "turbo run lint --filter=!kit --filter=!gallery",
+		"check": "turbo run check --filter=!kit --filter=!gallery",
+		"check:type": "turbo run check:type --filter=!kit --filter=!gallery",
+		"format": "turbo run format --filter=!kit --filter=!gallery",
+		"check:links": "lychee --config ./lychee.toml --verbose .",
+		"clean": "git clean -xdf node_modules out .next",
+		"postinstall": "manypkg fix",
+		"test": "turbo run test --filter=!kit --filter=!gallery",
+		"release": "auto shipit",
+		"release:first": "auto shipit --prerelease",
+		"release:verbose": "auto shipit -v",
+		"release:version": "auto version -v",
+		"syncpack:fix": "pnpm dlx syncpack fix-mismatches",
+		"syncpack:list": "pnpm dlx syncpack list-mismatches",
+		"registry:generate": "pnpm --filter @ux-patterns/registry registry:generate",
+		"registry:build": "pnpm --filter @ux-patterns/registry registry:build",
+		"registry:index": "node scripts/build-registry.js",
+		"registry:watch": "pnpm --filter @ux-patterns/registry dev"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.11",
+		"@manypkg/cli": "^0.25.1",
+		"nodemon": "^3.1.11",
+		"turbo": "^2.7.3"
+	},
+	"packageManager": "pnpm@10.28.0",
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

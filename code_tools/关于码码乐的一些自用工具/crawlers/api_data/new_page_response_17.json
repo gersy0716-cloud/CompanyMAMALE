@@ -1,0 +1,55 @@
+{
+  "extraProperties": {
+    "AiKey": "",
+    "apiKey": "",
+    "isUploadImage": false,
+    "isUploadFile": true,
+    "url": null,
+    "model": null,
+    "maxTokens": 4096,
+    "temperature": 0,
+    "frequencyPenalty": 0,
+    "presencePenalty": 0,
+    "isNetSearch": false
+  },
+  "aiAppInfo": {
+    "onboardingInfo": {
+      "prologue": "",
+      "suggestedQuestions": []
+    }
+  },
+  "name": "文心一言大模型",
+  "coverImg": "https://s.mamale.vip/2025/01/06/3e17827fe1d88f5aa0953a174d0a3421.jpeg",
+  "brief": "我是无所不能的智能聊天机器人，你可以问我任何问题哦。",
+  "apiUrl": "http://dify.zonejoin.cn",
+  "aiType": 0,
+  "sortId": 3,
+  "lastModificationTime": "2025-10-20 16:08:26",
+  "creationTime": "2024-09-29 09:55:16",
+  "status": 1,
+  "aiResponseMode": "streaming",
+  "providerName": "Dify",
+  "providerDisplayName": "Didy",
+  "aiSetCategoryId": "6bf207b3-b41a-408c-8d66-3fac62c4579f",
+  "aiSetCategory": {
+    "children": [],
+    "name": "国内大模型",
+    "fullName": "对话-国内大模型",
+    "code": "00001.00011",
+    "level": 2,
+    "sortId": 11,
+    "parentId": "0471ce64-6b89-4148-91a1-426e444d2da3",
+    "lastModificationTime": null,
+    "creationTime": "2025-09-08 20:07:13",
+    "count": 0,
+    "coverImg": "",
+    "aiSets": [],
+    "id": "6bf207b3-b41a-408c-8d66-3fac62c4579f"
+  },
+  "publishType": 0,
+  "appType": 0,
+  "tenantId": null,
+  "videoUrl": null,
+  "schoolTypes": "0",
+  "id": "4c51566a-6507-40cd-bc88-1f6444de8e9a"
+}

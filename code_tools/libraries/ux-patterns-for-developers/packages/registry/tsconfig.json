@@ -1,0 +1,25 @@
+{
+	"extends": "@thedaviddias/config-typescript/react-library.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"types": ["node", "vitest/globals", "@testing-library/jest-dom", "vitest-axe"],
+		"paths": {
+			"@": ["./registry/default"],
+			"@/*": ["./registry/default/*"],
+			"@/registry/*": ["./registry/default/*"],
+			"@/components/ui/*": ["./registry/default/ui/*"],
+			"@/ui/*": ["./registry/default/ui/*"],
+			"@/lib/*": ["./registry/default/lib/*"]
+		}
+	},
+	"include": [
+		"registry/**/*",
+		"scripts/**/*",
+		".generated/**/*",
+		"tests/**/*",
+		"test-setup.ts"
+	],
+	"exclude": ["node_modules", "public"]
+}

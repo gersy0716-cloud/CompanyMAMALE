@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI/UX 设计展示 | Ant Design 风格</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="doc-layout">
+        <!-- 左侧目录 -->
+        <aside class="doc-sidebar">
+            <div class="sidebar-header">
+                <h2>UI/UX 设计展示</h2>
+            </div>
+            <nav class="doc-nav">
+                <div class="nav-group">
+                    <div class="nav-group-title">材质效果</div>
+                    <a href="#glass" class="nav-item active">玻璃拟态</a>
+                    <a href="#neumorphic" class="nav-item">新拟态</a>
+                    <a href="#shadows" class="nav-item">环境阴影</a>
+                    <a href="#glow" class="nav-item">边框发光</a>
+                    <a href="#gradient" class="nav-item">渐变背景</a>
+                    <a href="#neon" class="nav-item">霓虹边框</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">布局系统</div>
+                    <a href="#bento" class="nav-item">Bento Grid</a>
+                    <a href="#responsive" class="nav-item">响应式网格</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">动效库</div>
+                    <a href="#hover" class="nav-item">悬浮效果</a>
+                    <a href="#spring" class="nav-item">弹簧动画</a>
+                    <a href="#skeleton" class="nav-item">骨架屏</a>
+                    <a href="#flip3d" class="nav-item">3D翻转</a>
+                    <a href="#typewriter" class="nav-item">打字机</a>
+                    <a href="#parallax" class="nav-item">视差卡片</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">组件样式</div>
+                    <a href="#buttons" class="nav-item">按钮</a>
+                    <a href="#cards" class="nav-item">卡片</a>
+                    <a href="#forms" class="nav-item">表单</a>
+                    <a href="#tags" class="nav-item">标签</a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="doc-content">
+            <!-- 材质效果 -->
+            <section class="doc-section" id="materials">
+                <div class="section-header">
+                    <h1>材质效果</h1>
+                    <p>丰富的视觉材质让界面更有质感和层次</p>
+                </div>
+
+                <!-- 玻璃拟态 -->
+                <article class="demo-card" id="glass">
+                    <div class="demo-preview glass-bg">
+                        <div class="glass-card">
+                            <h4>玻璃卡片</h4>
+                            <p>通透的毛玻璃质感</p>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">玻璃拟态 Glassmorphism</h3>
+                        <p class="demo-desc">半透明背景 + 模糊滤镜 + 微妙边框，营造通透的层次感</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="glass-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="glass-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="glass-code">.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}</pre>
+                </article>
+
+                <!-- 新拟态 -->
+                <article class="demo-card" id="neumorphic">
+                    <div class="demo-preview neumorphic-bg">
+                        <div class="neumorphic-card">凸起效果</div>
+                        <button class="neumorphic-btn">按钮</button>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">新拟态 Neumorphism</h3>
+                        <p class="demo-desc">双向阴影模拟凸起/凹陷效果，柔和的触感设计</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="neumorphic-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="neumorphic-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="neumorphic-code">.neumorphic-card {
+  background: #e8eef0;
+  border-radius: 16px;
+  box-shadow: 
+    6px 6px 12px rgba(0, 0, 0, 0.1),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+.neumorphic-btn:active {
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.1),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}</pre>
+                </article>
+
+                <!-- 环境阴影 -->
+                <article class="demo-card" id="shadows">
+                    <div class="demo-preview">
+                        <div class="shadow-demo-grid">
+                            <div class="shadow-item shadow-sm">小阴影</div>
+                            <div class="shadow-item shadow-md">中阴影</div>
+                            <div class="shadow-item shadow-lg">大阴影</div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">环境阴影 Shadows</h3>
+                        <p class="demo-desc">三级阴影系统，表达不同的层级关系</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="shadow-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="shadow-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="shadow-code">/* 三级阴影 */
+--shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+--shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+--shadow-lg: 0 10px 40px rgba(0,0,0,0.12);</pre>
+                </article>
+
+                <!-- 边框发光 -->
+                <article class="demo-card" id="glow">
+                    <div class="demo-preview dark-bg">
+                        <div class="glow-box glow-static">静态发光</div>
+                        <div class="glow-box glow-animated">动态发光</div>
+                        <div class="glow-box glow-gradient">渐变边框</div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">边框发光 Glow Effects</h3>
+                        <p class="demo-desc">多种发光效果，适合深色背景</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="glow-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="glow-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="glow-code">.glow-static {
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+}
+.glow-animated {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+}</pre>
+                </article>
+
+                <!-- 渐变背景 -->
+                <article class="demo-card" id="gradient">
+                    <div class="demo-preview">
+                        <div class="gradient-demo-grid">
+                            <div class="gradient-box gradient-mono">单色渐变</div>
+                            <div class="gradient-box gradient-multi">多色渐变</div>
+                            <div class="gradient-box gradient-mesh">网格渐变</div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">渐变背景 Gradients</h3>
+                        <p class="demo-desc">丰富的渐变效果，让背景更有层次</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="gradient-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="gradient-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="gradient-code">.gradient-mono {
+  background: linear-gradient(180deg, #e8f5e8 0%, #c8e6c9 100%);
+}
+.gradient-multi {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.gradient-mesh {
+  background: radial-gradient(at 40% 20%, #ff9a9e 0%, transparent 50%),
+              radial-gradient(at 80% 80%, #667eea 0%, transparent 50%);
+}</pre>
+                </article>
+
+                <!-- 霓虹边框 -->
+                <article class="demo-card" id="neon">
+                    <div class="demo-preview dark-bg">
+                        <div class="neon-box neon-blue">蓝色霓虹</div>
+                        <div class="neon-box neon-pink">粉色霓虹</div>
+                        <div class="neon-box neon-green">绿色霓虹</div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">霓虹边框 Neon Borders</h3>
+                        <p class="demo-desc">赛博朋克风格的霓虹发光效果</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="neon-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="neon-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="neon-code">.neon-blue {
+  border: 2px solid #00d9ff;
+  box-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff, inset 0 0 10px rgba(0,217,255,0.2);
+}
+.neon-pink {
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+}</pre>
+                </article>
+            </section>
+
+            <!-- 布局系统 -->
+            <section class="doc-section" id="layouts">
+                <div class="section-header">
+                    <h1>布局系统</h1>
+                    <p>现代化的布局方案，灵活适应各种场景</p>
+                </div>
+
+                <!-- Bento Grid -->
+                <article class="demo-card" id="bento">
+                    <div class="demo-preview">
+                        <div class="bento-grid">
+                            <div class="bento-item bento-lg">大</div>
+                            <div class="bento-item">A</div>
+                            <div class="bento-item">B</div>
+                            <div class="bento-item bento-wide">宽</div>
+                            <div class="bento-item">C</div>
+                            <div class="bento-item">D</div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">Bento Grid 便当布局</h3>
+                        <p class="demo-desc">Apple 风格的模块化卡片布局，灵活组合</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="bento-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="bento-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="bento-code">.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.bento-lg { grid-column: span 2; grid-row: span 2; }
+.bento-wide { grid-column: span 2; }</pre>
+                </article>
+
+                <!-- 响应式网格 -->
+                <article class="demo-card" id="responsive">
+                    <div class="demo-preview">
+                        <div class="responsive-grid">
+                            <div class="grid-item">1</div>
+                            <div class="grid-item">2</div>
+                            <div class="grid-item">3</div>
+                            <div class="grid-item">4</div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">响应式网格 Responsive Grid</h3>
+                        <p class="demo-desc">自适应列数的网格布局</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="responsive-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="responsive-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="responsive-code">.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}</pre>
+                </article>
+            </section>
+
+            <!-- 动效库 -->
+            <section class="doc-section" id="animations">
+                <div class="section-header">
+                    <h1>动效库</h1>
+                    <p>丰富的动画效果，让界面更生动</p>
+                </div>
+
+                <!-- 悬浮效果 -->
+                <article class="demo-card" id="hover">
+                    <div class="demo-preview">
+                        <div class="hover-demo-grid">
+                            <div class="hover-item hover-lift">上浮</div>
+                            <div class="hover-item hover-scale">放大</div>
+                            <div class="hover-item hover-glow">发光</div>
+                            <div class="hover-item hover-border">边框</div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">悬浮效果 Hover Effects</h3>
+                        <p class="demo-desc">鼠标悬浮时的各种交互反馈</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="hover-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="hover-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="hover-code">.hover-lift:hover { transform: translateY(-4px); }
+.hover-scale:hover { transform: scale(1.05); }
+.hover-glow:hover { box-shadow: 0 0 20px rgba(102,126,234,0.4); }
+.hover-border:hover { border-color: #1677ff; }</pre>
+                </article>
+
+                <!-- 弹簧动画 -->
+                <article class="demo-card" id="spring">
+                    <div class="demo-preview">
+                        <button class="spring-btn">点我弹跳</button>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">弹簧动画 Spring Animation</h3>
+                        <p class="demo-desc">使用 cubic-bezier 模拟弹簧物理效果</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="spring-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="spring-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="spring-code">.spring-btn {
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.spring-btn:active {
+  transform: scale(0.9);
+}</pre>
+                </article>
+
+                <!-- 骨架屏 -->
+                <article class="demo-card" id="skeleton">
+                    <div class="demo-preview">
+                        <div class="skeleton-demo">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-content">
+                                <div class="skeleton-line"></div>
+                                <div class="skeleton-line short"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">骨架屏 Skeleton</h3>
+                        <p class="demo-desc">加载占位动画，提升用户体验</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="skeleton-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="skeleton-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="skeleton-code">.skeleton-line {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+@keyframes skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}</pre>
+                </article>
+
+                <!-- 3D翻转 -->
+                <article class="demo-card" id="flip3d">
+                    <div class="demo-preview">
+                        <div class="flip-card">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">正面</div>
+                                <div class="flip-card-back">背面</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">3D翻转卡片 Flip Card</h3>
+                        <p class="demo-desc">悬浮时 3D 翻转效果</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="flip-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="flip-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="flip-code">.flip-card { perspective: 1000px; }
+.flip-card-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+.flip-card-back { transform: rotateY(180deg); }</pre>
+                </article>
+
+                <!-- 打字机 -->
+                <article class="demo-card" id="typewriter">
+                    <div class="demo-preview">
+                        <div class="typewriter">Hello, World!</div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">打字机效果 Typewriter</h3>
+                        <p class="demo-desc">逐字显示的打字动画</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="typewriter-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="typewriter-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="typewriter-code">.typewriter {
+  overflow: hidden;
+  border-right: 2px solid;
+  white-space: nowrap;
+  animation: typing 3s steps(13) infinite, blink 0.5s step-end infinite alternate;
+}
+@keyframes typing { from { width: 0 } to { width: 13ch } }
+@keyframes blink { 50% { border-color: transparent } }</pre>
+                </article>
+
+                <!-- 视差卡片 -->
+                <article class="demo-card" id="parallax">
+                    <div class="demo-preview">
+                        <div class="parallax-card" id="parallaxCard">
+                            <div class="parallax-content">
+                                <h4>3D 视差</h4>
+                                <p>移动鼠标试试</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">3D视差卡片 Parallax Card</h3>
+                        <p class="demo-desc">根据鼠标位置产生 3D 倾斜效果</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="parallax-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="parallax-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="parallax-code">.parallax-card {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+/* JS: 根据鼠标位置计算 rotateX/rotateY */
+card.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;</pre>
+                </article>
+            </section>
+
+            <!-- 组件样式 -->
+            <section class="doc-section" id="components">
+                <div class="section-header">
+                    <h1>组件样式</h1>
+                    <p>常用 UI 组件的多种变体风格</p>
+                </div>
+
+                <!-- 按钮 -->
+                <article class="demo-card" id="buttons">
+                    <div class="demo-preview">
+                        <div class="button-demo-grid">
+                            <button class="demo-btn btn-primary">主要按钮</button>
+                            <button class="demo-btn btn-default">默认按钮</button>
+                            <button class="demo-btn btn-dashed">虚线按钮</button>
+                            <button class="demo-btn btn-text">文字按钮</button>
+                            <button class="demo-btn btn-danger">危险按钮</button>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">按钮 Button</h3>
+                        <p class="demo-desc">多种按钮变体，适应不同场景</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="button-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="button-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="button-code">.btn-primary {
+  background: #1677ff;
+  color: white;
+  border: none;
+}
+.btn-default {
+  background: white;
+  border: 1px solid #d9d9d9;
+}
+.btn-dashed {
+  border: 1px dashed #d9d9d9;
+}</pre>
+                </article>
+
+                <!-- 卡片 -->
+                <article class="demo-card" id="cards">
+                    <div class="demo-preview">
+                        <div class="cards-demo-grid">
+                            <div class="card-demo card-default">
+                                <h4>默认卡片</h4>
+                                <p>基础样式</p>
+                            </div>
+                            <div class="card-demo card-hoverable">
+                                <h4>悬浮卡片</h4>
+                                <p>有悬浮效果</p>
+                            </div>
+                            <div class="card-demo card-glass">
+                                <h4>玻璃卡片</h4>
+                                <p>毛玻璃效果</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">卡片 Card</h3>
+                        <p class="demo-desc">信息容器的多种样式</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="card-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="card-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="card-code">.card-default {
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 24px;
+}
+.card-hoverable:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}</pre>
+                </article>
+
+                <!-- 表单 -->
+                <article class="demo-card" id="forms">
+                    <div class="demo-preview">
+                        <div class="form-demo">
+                            <input type="text" class="demo-input" placeholder="输入框">
+                            <select class="demo-select">
+                                <option>选择框</option>
+                            </select>
+                            <label class="demo-switch"><input type="checkbox" checked><span
+                                    class="slider"></span></label>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">表单元素 Form Elements</h3>
+                        <p class="demo-desc">输入框、选择器、开关等</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="form-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="form-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="form-code">.demo-input {
+  height: 32px;
+  padding: 4px 11px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+.demo-input:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22,119,255,0.1);
+}</pre>
+                </article>
+
+                <!-- 标签 -->
+                <article class="demo-card" id="tags">
+                    <div class="demo-preview">
+                        <div class="tags-demo">
+                            <span class="demo-tag">默认</span>
+                            <span class="demo-tag tag-primary">主色</span>
+                            <span class="demo-tag tag-success">成功</span>
+                            <span class="demo-tag tag-warning">警告</span>
+                            <span class="demo-tag tag-error">错误</span>
+                        </div>
+                    </div>
+                    <div class="demo-meta">
+                        <h3 class="demo-title">标签 Tag</h3>
+                        <p class="demo-desc">用于分类标记的标签组件</p>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="action-btn copy-btn" data-target="tag-code">📋 复制代码</button>
+                        <button class="action-btn toggle-btn" data-target="tag-code">展开代码 ▼</button>
+                    </div>
+                    <pre class="demo-code" id="tag-code">.demo-tag {
+  padding: 0 8px;
+  height: 22px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: #fafafa;
+  border: 1px solid #d9d9d9;
+}
+.tag-success { background: #f6ffed; border-color: #b7eb8f; color: #52c41a; }</pre>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

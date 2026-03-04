@@ -1,0 +1,65 @@
+{
+  "totalCount": 4,
+  "items": [
+    {
+      "children": [],
+      "name": "对话",
+      "fullName": "对话",
+      "code": "00001",
+      "level": 1,
+      "sortId": 1,
+      "parentId": null,
+      "lastModificationTime": "2025-02-06 11:17:24",
+      "creationTime": "2025-01-10 18:56:35",
+      "count": 0,
+      "coverImg": "",
+      "aiSets": [],
+      "id": "0471ce64-6b89-4148-91a1-426e444d2da3"
+    },
+    {
+      "children": [],
+      "name": "智能体",
+      "fullName": "智能体",
+      "code": "00004",
+      "level": 1,
+      "sortId": 4,
+      "parentId": null,
+      "lastModificationTime": "2025-02-06 11:16:40",
+      "creationTime": "2025-02-06 11:11:02",
+      "count": 0,
+      "coverImg": "",
+      "aiSets": [],
+      "id": "76a5600e-3a0e-485f-a6cd-44c98bb1372c"
+    },
+    {
+      "children": [],
+      "name": "AI学科",
+      "fullName": "AI学科",
+      "code": "00002",
+      "level": 1,
+      "sortId": 2,
+      "parentId": null,
+      "lastModificationTime": "2025-01-11 11:45:18",
+      "creationTime": "2025-01-10 18:56:50",
+      "count": 0,
+      "coverImg": "",
+      "aiSets": [],
+      "id": "5a1921da-9901-4af5-8a1e-b0b3e018ba49"
+    },
+    {
+      "children": [],
+      "name": "教师助手",
+      "fullName": "教师助手",
+      "code": "00005",
+      "level": 1,
+      "sortId": 5,
+      "parentId": null,
+      "lastModificationTime": "2025-09-01 14:51:26",
+      "creationTime": "2025-06-16 17:11:55",
+      "count": 0,
+      "coverImg": "",
+      "aiSets": [],
+      "id": "8f375f57-3c89-442c-a899-b6c9ca98fe2d"
+    }
+  ]
+}

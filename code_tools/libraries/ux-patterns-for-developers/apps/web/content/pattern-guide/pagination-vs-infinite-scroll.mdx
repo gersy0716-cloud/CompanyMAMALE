@@ -1,0 +1,38 @@
+---
+title: "Pagination vs Infinite Scroll: When to Use Each Pattern (2025)"
+description: "Choose the right content loading pattern based on your user needs and content type"
+icon: Split
+---
+
+<div>
+
+  <div className="prose dark:prose-invert mb-10 space-y-4">
+    Choosing between pagination and infinite scroll is a crucial decision that
+    impacts your users' experience. Each pattern has its strengths and
+    trade-offs, making the choice highly dependent on your specific use case.
+
+    Use our interactive decision flow below to guide your choice based on
+    factors like content type, user behavior, and technical requirements. Follow
+    the path that best matches your needs to find the recommended pattern for
+    your application.
+
+  </div>
+
+  <DecisionFlowSection nodes={navigationNodes} edges={navigationEdges} title="Pagination vs Infinite Scroll Decision Flow" />
+  <ComparisonGrid patterns={paginationComparisonData.patterns} />
+  <PerformanceComparison patterns={paginationPerformanceData.patterns} />
+  <ExamplesGrid examples={paginationExamplesData.examples} />
+</div>
+
+## Next steps
+
+Ready to implement your chosen pattern? Check out our detailed implementation guides:
+
+<Cards>
+  <Card title="Pagination Pattern" href="/patterns/navigation/pagination">
+    Implementation details and best practices
+  </Card>
+  <Card title="Infinite Scroll Pattern" href="/patterns/navigation/infinite-scroll">
+    Implementation details and best practices
+  </Card>
+</Cards>

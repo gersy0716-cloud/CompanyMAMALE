@@ -1,0 +1,35 @@
+---
+title: "Text vs Number vs Email Input: When to Use Each HTML5 Type (2025)"
+description: "Select the most appropriate HTML input type based on your data collection needs and user experience requirements"
+icon: TextCursorInput
+status: complete
+---
+
+<div>
+  <div className="prose dark:prose-invert mb-10 space-y-4">
+    Selecting the right input type is crucial for creating efficient and user-friendly forms. Each input type serves specific purposes and comes with built-in features and validations. The choice impacts user experience, data accuracy, and form completion rates.
+
+    Use our interactive decision flow below to guide your choice based on factors like data type, validation requirements, and user interaction patterns. Follow the path that best matches your needs to find the recommended input type for your form.
+
+  </div>
+
+  <DecisionFlowSection nodes={inputTypeNodes} edges={inputTypeEdges} title="Input Types Decision Flow" />
+  <ComparisonGrid patterns={inputTypesComparisonData.patterns} />
+  <ImplementationMetrics patterns={inputTypesImplementationData.patterns} />
+</div>
+
+## Next steps
+
+Ready to implement your chosen pattern? Check out our detailed implementation guides:
+
+<Cards>
+  <Card title="Text Input Implementation" href="/patterns/forms/text-field">
+    How to implement and style text inputs
+  </Card>
+  <Card title="Select Component Guide" href="/patterns/forms/selection-input">
+    Building accessible select components
+  </Card>
+  <Card title="Radio Pattern" href="/patterns/forms/radio">
+    Best practices for option selection
+  </Card>
+</Cards>

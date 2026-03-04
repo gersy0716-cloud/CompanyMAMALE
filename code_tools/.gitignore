@@ -1,0 +1,22 @@
+# 依赖
+node_modules/
+
+# 备份文件
+*.bak
+
+# 编辑器
+.vscode/
+.idea/
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Vite 缓存
+.vite/
+dist/
+
+# 日志
+*.log
+npm-debug.log*

@@ -1,0 +1,77 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalDependencies": ["**/.env.*local"],
+	"remoteCache": {
+		"signature": true
+	},
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build", "registry:generate"],
+			"outputs": [
+				".next/**",
+				"!.next/cache/**",
+				"out/**",
+				"registry.json",
+				"public/r/**"
+			],
+			"env": [
+				"NODE_ENV",
+				"NEXT_PUBLIC_*",
+				"SENTRY_*",
+				"VERCEL_*",
+				"MDX_API_KEY",
+				"MAILERLITE_API_KEY",
+				"MAILERLITE_GROUP_IDS",
+				"KIT_API_KEY",
+				"KIT_FORM_ID",
+				"KIT_DEFAULT_TAG_IDS",
+				"PLAUSIBLE_API_KEY",
+				"TURBO_REMOTE_CACHE_SIGNATURE_KEY",
+				"GITHUB_TOKEN"
+			]
+		},
+		"registry:generate": {
+			"outputs": [
+				"../../apps/kit/public/r/**",
+				"../../apps/kit/public/registry.json"
+			],
+			"env": [
+				"NODE_ENV",
+				"SENTRY_*",
+				"MDX_API_KEY",
+				"MAILERLITE_API_KEY",
+				"MAILERLITE_GROUP_IDS",
+				"KIT_API_KEY",
+				"KIT_FORM_ID",
+				"KIT_DEFAULT_TAG_IDS",
+				"PLAUSIBLE_API_KEY",
+				"TURBO_REMOTE_CACHE_SIGNATURE_KEY",
+				"GITHUB_TOKEN"
+			]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"registry:watch": {
+			"cache": false,
+			"persistent": true
+		},
+		"lint": {
+			"outputs": []
+		},
+		"check": {
+			"outputs": []
+		},
+		"check:type": {
+			"outputs": []
+		},
+		"format": {
+			"outputs": []
+		},
+		"test": {
+			"outputs": [],
+			"dependsOn": []
+		}
+	}
+}

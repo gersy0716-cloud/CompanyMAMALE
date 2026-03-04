@@ -1,0 +1,11 @@
+https://api.mamale.vip/api/tenants/domain?domain=www.520ai.cc
+https://3w-api.mamale.vip/api/tenantSetting/publicExam
+https://3w-api.mamale.vip/api/tenantSetting/publicStudent
+https://3w-api.mamale.vip/api/app/programMatchSetting/registerSet
+https://3w-api.mamale.vip/api/app/aiMenu/public?pageIndex=1&pageSize=1000&TargetType=0
+https://api.mamale.vip/api/app/exam/pCurrentDateTime
+https://3w-api.mamale.vip/api/app/resultSetting
+https://3w-api.mamale.vip/api/tenantSetting/public
+https://3w-api.mamale.vip/api/app/aiApplicationCategory/public?Sorting=sortId%20desc&pageIndex=1&pageSize=100&status=1
+https://3w-api.mamale.vip/api/app/aiApplication/public?Sorting=sortId%20desc&pageIndex=1&pageSize=12&title=&SearchType=1&status=1
+https://3w-api.mamale.vip/api/tenantSetting/public

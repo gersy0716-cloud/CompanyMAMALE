@@ -1,0 +1,21 @@
+{
+  "tenantId": "c1863285-25d1-44fe-805c-5ddf611f83d3",
+  "userName": "luowenbin",
+  "name": null,
+  "phoneNumber": null,
+  "nickName": null,
+  "headUrl": null,
+  "email": "luowenbin@qq.com",
+  "sex": 0,
+  "county": null,
+  "city": null,
+  "isDeleted": false,
+  "userType": 2,
+  "tenant": null,
+  "isPublicBg": false,
+  "lastModificationTime": "2026-01-02 19:38:17",
+  "lastModifierId": "a345483d-35a0-7318-3900-3a16896189a7",
+  "creationTime": "2026-01-02 19:38:17",
+  "creatorId": "a345483d-35a0-7318-3900-3a16896189a7",
+  "id": "c45eda39-6b24-5b82-0646-3a1e90ad2a1c"
+}
