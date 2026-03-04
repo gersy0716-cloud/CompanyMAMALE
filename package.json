@@ -1,0 +1,37 @@
+{
+  "name": "mamale-workspace",
+  "version": "1.0.0",
+  "description": "码码乐统一工作区 - 集中管理所有Node.js项目依赖",
+  "private": true,
+  "workspaces": [
+    "项目/*/*"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "clean:node_modules": "npm run clean:node_modules:projects && npm install",
+    "clean:node_modules:projects": "find 项目 -name 'node_modules' -type d -exec rm -rf {} + 2>/dev/null || true",
+    "update:all": "npm update",
+    "audit:all": "npm audit",
+    "list:packages": "npm ls --depth=0"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0",
+    "typescript": "~5.8.2",
+    "@types/node": "^22.14.0",
+    "tailwindcss": "^3.4.17",
+    "postcss": "^8.5.6",
+    "autoprefixer": "^10.4.23",
+    "@vitejs/plugin-react": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "workspace",
+    "monorepo",
+    "mamale"
+  ],
+  "author": "码码乐",
+  "license": "MIT"
+}

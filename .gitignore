@@ -1,8 +1,9 @@
 # 忽略大文件
 dist/
 
-# 忽略node_modules
-node_modules/
+# 忽略node_modules - 使用workspaces统一管理
+# 忽略所有node_modules，但保留根目录的
+**/node_modules/
 
 # 忽略环境变量文件
 .env
