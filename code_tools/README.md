@@ -22,13 +22,39 @@
 | **libraries/claude-code-open/** | TypeScript, Node.js, Express, React | Axon (Claude Code 开源版)：Web IDE + 多 Agent + 37+ 工具 + MCP 协议 |
 | **libraries/claude-mem/** | TypeScript, Node.js | Claude 记忆系统插件，持久化上下文管理 |
 
+### 依赖管理
+
+本项目采用 **npm workspaces** 统一管理所有 Node.js 项目的依赖：
+
+| 特性 | 说明 |
+| :--- | :--- |
+| **统一依赖** | 所有项目的依赖集中管理在根目录 `node_modules/` |
+| **节省空间** | 避免重复安装相同的依赖包 |
+| **简化维护** | 只需在根目录运行一次 `npm install` |
+| **自动去重** | npm 自动处理依赖版本冲突和去重 |
+
+**使用方法**：
+```bash
+# 在根目录安装所有依赖
+npm install
+
+# 为特定项目添加依赖
+npm install <package> -w <project-name>
+
+# 查看所有已安装的包
+npm run list:packages
+```
+
+> 详细配置说明：[NODE_WORKSPACES配置说明.md](../NODE_WORKSPACES配置说明.md)
+
 ### 技术特点
 
 - **前端技术**：HTML5, CSS3, JavaScript (原生), React, TypeScript, Less, Tailwind CSS, SVG
-- **构建工具**：Webpack, Babel, TypeScript Compiler
+- **构建工具**：Webpack, Babel, TypeScript Compiler, Vite
 - **文档工具**：Storybook, Markdown
 - **设计系统**：Ant Design, Arco Design, 自定义 CSS 效果, SVG 动画
 - **AI 工具**：Claude Skills, 第三方 AI 服务集成
+- **依赖管理**：npm workspaces (Monorepo)
 
 ---
 
@@ -148,4 +174,4 @@
 
 ---
 
-*最后更新：2026-03-03*
+*最后更新：2026-03-04*
