@@ -34,6 +34,7 @@ out/
 # 忽略临时文件
 *.tmp
 *.temp
+.next/
 
 # 忽略包含敏感信息的配置文件
 **/config.js
