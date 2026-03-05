@@ -1,52 +1,73 @@
-# CompanyMAMALE 项目使用说明
+# 码码乐统一工作区 (Mamale Unified Workspace)
 
-本项目的本地目录与 GitHub 仓库已成功关联。本案档旨在说明如何进行日常的代码管理和同步。
+本项目采用了 **Node.js Workspaces** 架构，旨在集中管理码码乐旗下的所有子项目。通过统一的依赖管理，显著减少了磁盘占用并简化了跨项目的开发流程。
 
 ## 📋 基本信息
 
-- **本地路径**: `e:\worklwb`
+- **项目主路径**: `e:\worklwb`
 - **GitHub 仓库**: [CompanyMAMALE](https://github.com/gersy0716-cloud/CompanyMAMALE)
-- **主分支**: `main`
+- **技术栈**: React, Vite, Electron, TypeScript, TailwindCSS
 
-## 🚀 常用操作流程
+---
 
-### 1. 修改代码并上传 (Push)
+## � 项目结构
 
-当你在本地 `e:\worklwb` 中修改或新增了文件，请执行以下命令：
+工作区下包含多个核心模块，分别存放在 `项目/` 目录下：
+
+### 1. 公司管理 (Company Management)
+
+- **路径**: `项目/已完成项目/公司管理*`
+- **说明**: 基于 Electron 开发的内部协作管理平台。
+- **状态**: 已完成安全加固，运行在 Electron 40+ 的安全环境下。
+
+### 2. AI 备课工具 (AI PPT Workbench)
+
+- **路径**: `项目/已完成项目/ai备课工具`
+- **说明**: 集成 Gemini AI 能力的 PPT 辅助设计系统，支持 PDF 导出。
+- **状态**: 稳定运行中。
+
+### 3. 班级值日表 (Class Duty Schedule)
+
+- **路径**: `项目/已完成项目/班级值日表-1.0`
+- **说明**: 班级自动值日排班系统。
+
+---
+
+## 🛡️ 安全与依赖管理
+
+为了确保项目的长期稳定性，我们对依赖项进行了深度审计和加固：
+
+- **依赖对齐**: 所有子项目的 `node_modules` 均汇聚在根目录下。
+- **安全审计**: 已解决 2026 年 3 月发现的 major 级安全漏洞，包括：
+  - 更新至 `electron@40.7.0` (修复 tar 漏洞)
+  - 更新至 `vite@6.2.0` (修复 esbuild 漏洞)
+  - 锁定 `jspdf@2.5.2` (优化 dompurify 安全链)
+
+---
+
+## 🚀 常用开发命令
+
+在根目录下运行：
 
 ```powershell
-# 1. 查看修改状态
-git status
+# 1. 安装/同步所有项目依赖
+npm install
 
-# 2. 将所有修改添加到暂存区
+# 2. 运行安全审计
+npm audit
+
+# 3. 清理所有子项目的 node_modules 并重新安装
+npm run clean:node_modules
+```
+
+### Git 同步规范
+
+```powershell
+# 提交并推送到 GitHub
 git add .
-
-# 3. 提交修改并添加备注
-git commit -m "这里写你的修改描述"
-
-# 4. 推送到 GitHub
+git commit -m "描述你的更改"
 git push origin main
 ```
 
-### 2. 获取远程更新 (Pull)
-
-如果你在其他地方修改了代码，或者想要同步远程仓库的最新改动：
-
-```powershell
-git pull origin main
-```
-
-### 3. 查看版本记录
-
-```powershell
-git log --oneline
-```
-
-## ⚠️ 注意事项
-
-- **身份验证**: 第一次推送时，Git 会弹出浏览器要求你登录 GitHub。请按提示操作完成认证。
-- **忽略文件**: 如果有不需要上传的文件（如 `node_modules`、环境变量等），请确保它们记录在 `.gitignore` 文件中。
-- **冲突处理**: 如果多人同时修改了同一个文件，`git pull` 时可能会产生冲突。如有需要，我可以协助你处理冲突。
-
 ---
-*Created by Antigravity*
+*Last updated: 2026-03-05* | *Created by Antigravity*

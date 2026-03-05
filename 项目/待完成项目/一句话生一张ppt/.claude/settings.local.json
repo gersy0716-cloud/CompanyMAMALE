@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(ls:*)",
+      "Bash(dir:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(pnpm:*)",
+      "Bash(yarn:*)",
+      "Bash(tsc:*)",
+      "Bash(ts-node:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(rd /s /q node_modules)",
+      "Bash(npx rimraf:*)",
+      "Bash(del:*)",
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run preview)",
+      "Bash(findstr:*)",
+      "Bash(ipconfig:*)",
+      "Bash(python:*)",
+      "Bash(where:*)",
+      "Bash(py:*)",
+      "WebSearch",
+      "WebFetch(domain:www.cnblogs.com)",
+      "WebFetch(domain:blog.csdn.net)",
+      "WebFetch(domain:gitee.com)",
+      "WebFetch(domain:openai.com)",
+      "WebFetch(domain:stability.ai)"
+    ]
+  }
+}

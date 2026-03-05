@@ -17,42 +17,42 @@ import { VideoSettings } from './VideoSettings';
 import CategorySelectModal from './CategorySelectModal';
 import globalConfig from '../utils/globalConfig';
 import {
-    Download,
-    Wand2,
-    ChevronLeft,
-    ChevronRight,
-    ChevronDown,
-    RotateCcw,
-    Maximize2,
-    Layout,
-    FileText,
-    Presentation,
-    FileJson,
-    Upload,
-    Play,
-    Monitor,
-    Sparkles,
-    Pen,
-    ArrowUpRight,
-    Square,
-    Eraser,
-    Target,
-    MapPin,
-    Star,
-    ThumbsUp,
-    ThumbsDown,
-    Image as ImageIcon,
-    Volume2,
-    Video,
-    X,
-    Plus,
-    Cloud,
-    Home,
-    Code,
-    Edit3,
-    Trash2,
-    StopCircle,
-    GripVertical
+  Download,
+  Wand2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  RotateCcw,
+  Maximize2,
+  Layout,
+  FileText,
+  Presentation,
+  FileJson,
+  Upload,
+  Play,
+  Monitor,
+  Sparkles,
+  Pen,
+  ArrowUpRight,
+  Square,
+  Eraser,
+  Target,
+  MapPin,
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  Image as ImageIcon,
+  Volume2,
+  Video,
+  X,
+  Plus,
+  Cloud,
+  Home,
+  Code,
+  Edit3,
+  Trash2,
+  StopCircle,
+  GripVertical
 } from 'lucide-react';
 
 interface Props {
@@ -356,9 +356,8 @@ const WorkbenchStage: React.FC<Props> = ({
         onMouseDown={handleMouseDown}
         title={`拖拽调整位置 | 点击预览互动工具 ${tool.label}`}
       >
-        <div className={`w-10 h-10 bg-orange-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white transition-all ${
-          isDragging ? 'scale-125 shadow-xl' : 'hover:scale-110'
-        }`}>
+        <div className={`w-10 h-10 bg-orange-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white transition-all ${isDragging ? 'scale-125 shadow-xl' : 'hover:scale-110'
+          }`}>
           {tool.label}
         </div>
       </div>
@@ -417,9 +416,8 @@ const WorkbenchStage: React.FC<Props> = ({
         onMouseDown={handleMouseDown}
         title="拖拽调整位置 | 视频触发按钮"
       >
-        <div className={`w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white transition-all ${
-          isDragging ? 'scale-125 shadow-xl' : 'hover:scale-110'
-        }`}>
+        <div className={`w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white transition-all ${isDragging ? 'scale-125 shadow-xl' : 'hover:scale-110'
+          }`}>
           <Video className="w-8 h-8" />
         </div>
       </div>
@@ -456,15 +454,13 @@ const WorkbenchStage: React.FC<Props> = ({
       >
         {/* 图标主体 */}
         <div
-          className={`relative ${
-            hotspot.style === 'dot' ? 'dot-ripple' : 'animate-breathe'
-          }`}
+          className={`relative ${hotspot.style === 'dot' ? 'dot-ripple' : 'animate-breathe'
+            }`}
           style={{ transform: `scale(${sizeScale})` }}
         >
           <div
-            className={`relative z-10 p-1 rounded-full shadow-lg transition-transform duration-300 ${
-              isOpen ? 'scale-125' : ''
-            }`}
+            className={`relative z-10 p-1 rounded-full shadow-lg transition-transform duration-300 ${isOpen ? 'scale-125' : ''
+              }`}
             style={{
               color: hotspot.iconColor || hotspot.color,
               backgroundColor:
@@ -481,9 +477,8 @@ const WorkbenchStage: React.FC<Props> = ({
 
         {/* 弹出气泡 */}
         <div
-          className={`absolute left-full top-1/2 w-max max-w-xs bg-black/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm shadow-xl z-50 tooltip-content ${
-            isOpen ? 'tooltip-visible' : 'tooltip-hidden'
-          }`}
+          className={`absolute left-full top-1/2 w-max max-w-xs bg-black/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm shadow-xl z-50 tooltip-content ${isOpen ? 'tooltip-visible' : 'tooltip-hidden'
+            }`}
           style={{ marginLeft: `${12 * sizeScale}px` }}
         >
           <p
@@ -605,9 +600,9 @@ const WorkbenchStage: React.FC<Props> = ({
     try {
       const imageUrl = await generateSlideImage(slideToGen, settings.style, provider, model, 150000, controller);
       setSlides(prev => prev.map((s, i) => i === index ? {
-          ...s,
-          imageUrl,
-          status: SlideStatus.COMPLETED
+        ...s,
+        imageUrl,
+        status: SlideStatus.COMPLETED
       } : s));
     } catch (e) {
       const error = e as Error;
@@ -618,14 +613,14 @@ const WorkbenchStage: React.FC<Props> = ({
         updateSlideStatus(index, SlideStatus.ERROR);
       }
     } finally {
-        if (!fromBatch) {
-          setIsGeneratingImages(false);
-        }
-        setAbortControllers(prev => {
-          const newMap = new Map(prev);
-          newMap.delete(index);
-          return newMap;
-        });
+      if (!fromBatch) {
+        setIsGeneratingImages(false);
+      }
+      setAbortControllers(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(index);
+        return newMap;
+      });
     }
   };
 
@@ -940,7 +935,7 @@ const WorkbenchStage: React.FC<Props> = ({
   ];
 
   const updateActiveSlideContent = (field: keyof Slide, value: string) => {
-      setSlides(prev => prev.map((s, i) => i === activeSlideIndex ? { ...s, [field]: value } : s));
+    setSlides(prev => prev.map((s, i) => i === activeSlideIndex ? { ...s, [field]: value } : s));
   };
 
   // 处理语音文稿变化
@@ -1735,14 +1730,14 @@ const WorkbenchStage: React.FC<Props> = ({
 
       {/* Sidebar: Thumbnail Strip - 仅编辑模式显示 */}
       {viewMode === 'edit' && (
-      <div className="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-10">
-        <div className="p-4 border-b border-slate-200 bg-slate-50">
+        <div className="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-10">
+          <div className="p-4 border-b border-slate-200 bg-slate-50">
             <h3 className="font-bold text-slate-700">幻灯片概览</h3>
             <p className="text-xs text-slate-500">已生成 {slides.filter(s => s.status === SlideStatus.COMPLETED).length} / {slides.length} 页</p>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {slides.map((slide, index) => (
-            <div
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {slides.map((slide, index) => (
+              <div
                 key={slide.id}
                 draggable={viewMode === 'edit'}
                 onDragStart={(e) => handleSlideDragStart(e, index)}
@@ -1750,70 +1745,67 @@ const WorkbenchStage: React.FC<Props> = ({
                 onDragOver={(e) => handleSlideDragOver(e, index)}
                 onDragLeave={handleSlideDragLeave}
                 onDrop={(e) => handleSlideDrop(e, index)}
-                className={`cursor-pointer rounded-lg border-2 p-2 transition-all relative group ${
-                    activeSlideIndex === index
+                className={`cursor-pointer rounded-lg border-2 p-2 transition-all relative group ${activeSlideIndex === index
                     ? 'border-blue-500 bg-blue-50'
                     : dragOverSlideIndex === index
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-transparent hover:bg-slate-50'
-                } ${viewMode === 'edit' ? 'cursor-move' : ''}`}
-            >
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-transparent hover:bg-slate-50'
+                  } ${viewMode === 'edit' ? 'cursor-move' : ''}`}
+              >
                 {/* 拖拽图标 - 仅编辑模式显示 */}
                 {viewMode === 'edit' && (
-                <div
-                  className="absolute top-1 left-1 w-5 h-5 rounded bg-slate-400 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10 cursor-move"
-                  title="拖拽排序"
-                >
-                  <GripVertical className="w-3 h-3" />
-                </div>
+                  <div
+                    className="absolute top-1 left-1 w-5 h-5 rounded bg-slate-400 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10 cursor-move"
+                    title="拖拽排序"
+                  >
+                    <GripVertical className="w-3 h-3" />
+                  </div>
                 )}
 
                 {/* 删除按钮 - 仅编辑模式显示 */}
                 {viewMode === 'edit' && (
-                <button
-                  onClick={(e) => handleDeleteSlide(index, e)}
-                  className="absolute top-1 right-1 w-5 h-5 rounded bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-600 z-10"
-                  title="删除此页"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+                  <button
+                    onClick={(e) => handleDeleteSlide(index, e)}
+                    className="absolute top-1 right-1 w-5 h-5 rounded bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-600 z-10"
+                    title="删除此页"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                 )}
 
                 <div onClick={() => setActiveSlideIndex(index)}>
                   <div className="flex justify-between items-center mb-1">
-                       <div className="flex items-center gap-1.5">
-                         <span className="text-xs font-bold text-slate-500">第 {slide.pageNumber} 页</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-slate-500">第 {slide.pageNumber} 页</span>
 
-                         {/* 图片状态 - 圆点 */}
-                         <span className={`w-2 h-2 rounded-full ${
-                             slide.status === SlideStatus.COMPLETED ? 'bg-green-500' :
-                             slide.status === SlideStatus.GENERATING ? 'bg-yellow-400 animate-pulse' :
-                             slide.status === SlideStatus.ERROR ? 'bg-red-500' : 'bg-slate-300'
-                         }`} title={
-                             slide.status === SlideStatus.COMPLETED ? '图片已生成' :
-                             slide.status === SlideStatus.GENERATING ? '图片生成中' :
-                             slide.status === SlideStatus.ERROR ? '图片生成失败' : '图片待生成'
-                         } />
+                      {/* 图片状态 - 圆点 */}
+                      <span className={`w-2 h-2 rounded-full ${slide.status === SlideStatus.COMPLETED ? 'bg-green-500' :
+                          slide.status === SlideStatus.GENERATING ? 'bg-yellow-400 animate-pulse' :
+                            slide.status === SlideStatus.ERROR ? 'bg-red-500' : 'bg-slate-300'
+                        }`} title={
+                          slide.status === SlideStatus.COMPLETED ? '图片已生成' :
+                            slide.status === SlideStatus.GENERATING ? '图片生成中' :
+                              slide.status === SlideStatus.ERROR ? '图片生成失败' : '图片待生成'
+                        } />
 
-                         {/* 语音状态 - 方框（仅在启用语音时显示） */}
-                         {settings.enableVoice && (
-                           <span className={`w-2 h-2 ${
-                             slide.voiceUrl ? 'bg-green-500' : 'bg-slate-300'
-                           }`} title={
-                             slide.voiceUrl ? '语音已生成' :
-                             slide.voiceScript ? '语音待生成' : '语音未配置'
-                           } />
-                         )}
-                       </div>
+                      {/* 语音状态 - 方框（仅在启用语音时显示） */}
+                      {settings.enableVoice && (
+                        <span className={`w-2 h-2 ${slide.voiceUrl ? 'bg-green-500' : 'bg-slate-300'
+                          }`} title={
+                            slide.voiceUrl ? '语音已生成' :
+                              slide.voiceScript ? '语音待生成' : '语音未配置'
+                          } />
+                      )}
+                    </div>
                   </div>
                   <div className="aspect-video bg-slate-200 rounded overflow-hidden relative border border-slate-200">
-                      {slide.imageUrl ? (
-                          <img src={slide.imageUrl} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs text-center p-1 px-2">
-                              {slide.title}
-                          </div>
-                      )}
+                    {slide.imageUrl ? (
+                      <img src={slide.imageUrl} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs text-center p-1 px-2">
+                        {slide.title}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1830,42 +1822,42 @@ const WorkbenchStage: React.FC<Props> = ({
                     保存到阿里云
                   </button>
                 )}
-            </div>
-          ))}
-        </div>
-        {viewMode === 'edit' && (
-        <div className="p-4 border-t border-slate-200 bg-slate-50 space-y-2">
-             {/* 添加新页面按钮 */}
-             <button
+              </div>
+            ))}
+          </div>
+          {viewMode === 'edit' && (
+            <div className="p-4 border-t border-slate-200 bg-slate-50 space-y-2">
+              {/* 添加新页面按钮 */}
+              <button
                 onClick={handleAddSlide}
                 className="w-full py-2 bg-slate-600 text-white rounded text-sm font-medium hover:bg-slate-700 flex items-center justify-center gap-2"
-             >
+              >
                 <Plus className="w-4 h-4" />
                 添加页面
-             </button>
+              </button>
 
-             <button
+              <button
                 onClick={handleGenerateAll}
                 disabled={isGeneratingImages}
                 className="w-full py-2 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 disabled:bg-slate-400"
-            >
-                {isGeneratingImages ? '正在生成...' : '全部生成图片'}
-            </button>
-
-            {/* 如果启用了语音合成，显示全部生成语音按钮 */}
-            {settings.enableVoice && (
-              <button
-                onClick={handleGenerateAllVoices}
-                disabled={isGeneratingVoices}
-                className="w-full py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:bg-slate-400 flex items-center justify-center gap-2"
               >
-                <Volume2 className="w-4 h-4" />
-                {isGeneratingVoices ? '正在生成...' : '全部生成语音'}
+                {isGeneratingImages ? '正在生成...' : '全部生成图片'}
               </button>
-            )}
+
+              {/* 如果启用了语音合成，显示全部生成语音按钮 */}
+              {settings.enableVoice && (
+                <button
+                  onClick={handleGenerateAllVoices}
+                  disabled={isGeneratingVoices}
+                  className="w-full py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:bg-slate-400 flex items-center justify-center gap-2"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  {isGeneratingVoices ? '正在生成...' : '全部生成语音'}
+                </button>
+              )}
+            </div>
+          )}
         </div>
-        )}
-      </div>
       )}
 
       {/* Main Stage */}
@@ -1873,783 +1865,777 @@ const WorkbenchStage: React.FC<Props> = ({
 
         {/* Toolbar */}
         <div className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm z-50 relative">
-            {/* 左侧按钮组 */}
-            <div className="flex items-center gap-3">
-                 {/* 文件 */}
-                 <DropdownMenu
-                    trigger={
-                      <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800">
-                        <Download className="w-4 h-4" />
-                        文件
-                        <ChevronDown className="w-4 h-4 ml-1" />
-                      </button>
+          {/* 左侧按钮组 */}
+          <div className="flex items-center gap-3">
+            {/* 文件 */}
+            <DropdownMenu
+              trigger={
+                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800">
+                  <Download className="w-4 h-4" />
+                  文件
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+              }
+              items={[
+                {
+                  label: (() => {
+                    const currentUserId = globalConfig.get('userid');
+                    const isMyCourseware = currentCoursewareData && currentCoursewareData.creatorId === currentUserId;
+                    if (editMode === 'edit' && currentCoursewareId && isMyCourseware) {
+                      return "保存到云端";
+                    } else {
+                      return "另存为新课件";
                     }
-                    items={[
-                      {
-                        label: (() => {
-                          const currentUserId = globalConfig.get('userid');
-                          const isMyCourseware = currentCoursewareData && currentCoursewareData.creatorId === currentUserId;
-                          if (editMode === 'edit' && currentCoursewareId && isMyCourseware) {
-                            return "保存到云端";
-                          } else {
-                            return "另存为新课件";
-                          }
-                        })(),
-                        icon: <Cloud className="w-4 h-4" />,
-                        onClick: handleSaveToCloud,
-                      },
-                      {
-                        label: "导出为 PDF",
-                        icon: <FileText className="w-4 h-4" />,
-                        onClick: handleDownloadPDF,
-                      },
-                      {
-                        label: "导出为 PPTX",
-                        icon: <Presentation className="w-4 h-4" />,
-                        onClick: handleDownloadPPTX,
-                      },
-                      {
-                        label: "保存到本地",
-                        icon: <FileJson className="w-4 h-4" />,
-                        onClick: handleDownloadJSON,
-                      },
-                      {
-                        label: "加载本地文件",
-                        icon: <Upload className="w-4 h-4" />,
-                        onClick: handleLoadJSON,
-                      },
-                    ]}
-                 />
+                  })(),
+                  icon: <Cloud className="w-4 h-4" />,
+                  onClick: handleSaveToCloud,
+                },
+                {
+                  label: "导出为 PDF",
+                  icon: <FileText className="w-4 h-4" />,
+                  onClick: handleDownloadPDF,
+                },
+                {
+                  label: "导出为 PPTX",
+                  icon: <Presentation className="w-4 h-4" />,
+                  onClick: handleDownloadPPTX,
+                },
+                {
+                  label: "保存到本地",
+                  icon: <FileJson className="w-4 h-4" />,
+                  onClick: handleDownloadJSON,
+                },
+                {
+                  label: "加载本地文件",
+                  icon: <Upload className="w-4 h-4" />,
+                  onClick: handleLoadJSON,
+                },
+              ]}
+            />
 
-                 {/* 播放方式 */}
-                 <DropdownMenu
-                    trigger={
-                      <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
-                        <Play className="w-4 h-4" />
-                        播放方式
-                        <ChevronDown className="w-4 h-4 ml-1" />
-                      </button>
-                    }
-                    items={[
-                      {
-                        label: "全屏播放",
-                        icon: <Maximize2 className="w-4 h-4" />,
-                        onClick: () => {
-                          setActiveSlideIndex(0);
-                          setAutoPlayVoice(false);
-                          setEnableScreenRecording(false);
-                          setIsFullscreen(true);
-                        },
-                      },
-                      {
-                        label: "当页播放",
-                        icon: <Monitor className="w-4 h-4" />,
-                        onClick: () => {
-                          setAutoPlayVoice(false);
-                          setEnableScreenRecording(false);
-                          setIsFullscreen(true);
-                        },
-                      },
-                      {
-                        label: "自动语音播放",
-                        icon: <Volume2 className="w-4 h-4" />,
-                        onClick: () => {
-                          setActiveSlideIndex(0);
-                          setAutoPlayVoice(true);
-                          setEnableScreenRecording(false);
-                          setIsFullscreen(true);
-                        },
-                      },
-                      {
-                        label: "自动语音播放并录屏",
-                        icon: <Video className="w-4 h-4" />,
-                        onClick: async () => {
-                          // 先请求屏幕共享权限（必须在用户手势中调用）
-                          const stream = await requestDisplayStream();
-                          displayStreamRef.current = stream; // stream 可能为 null（用户取消）
-                          setActiveSlideIndex(0);
-                          setAutoPlayVoice(true);
-                          setEnableScreenRecording(true);
-                          setIsFullscreen(true);
-                        },
-                      },
-                    ]}
-                 />
+            {/* 播放方式 */}
+            <DropdownMenu
+              trigger={
+                <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+                  <Play className="w-4 h-4" />
+                  播放方式
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+              }
+              items={[
+                {
+                  label: "全屏播放",
+                  icon: <Maximize2 className="w-4 h-4" />,
+                  onClick: () => {
+                    setActiveSlideIndex(0);
+                    setAutoPlayVoice(false);
+                    setEnableScreenRecording(false);
+                    setIsFullscreen(true);
+                  },
+                },
+                {
+                  label: "当页播放",
+                  icon: <Monitor className="w-4 h-4" />,
+                  onClick: () => {
+                    setAutoPlayVoice(false);
+                    setEnableScreenRecording(false);
+                    setIsFullscreen(true);
+                  },
+                },
+                {
+                  label: "自动语音播放",
+                  icon: <Volume2 className="w-4 h-4" />,
+                  onClick: () => {
+                    setActiveSlideIndex(0);
+                    setAutoPlayVoice(true);
+                    setEnableScreenRecording(false);
+                    setIsFullscreen(true);
+                  },
+                },
+                {
+                  label: "自动语音播放并录屏",
+                  icon: <Video className="w-4 h-4" />,
+                  onClick: async () => {
+                    // 先请求屏幕共享权限（必须在用户手势中调用）
+                    const stream = await requestDisplayStream();
+                    displayStreamRef.current = stream; // stream 可能为 null（用户取消）
+                    setActiveSlideIndex(0);
+                    setAutoPlayVoice(true);
+                    setEnableScreenRecording(true);
+                    setIsFullscreen(true);
+                  },
+                },
+              ]}
+            />
 
-                 {/* 翻页方式 */}
-                 <DropdownMenu
-                    trigger={
-                      <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors">
-                        <Sparkles className="w-4 h-4" />
-                        翻页方式
-                        <ChevronDown className="w-4 h-4 ml-1" />
-                      </button>
-                    }
-                    items={[
-                      {
-                        label: "淡入淡出",
-                        icon: <Sparkles className="w-4 h-4" />,
-                        onClick: () => setTransitionEffect('fade'),
-                      },
-                      {
-                        label: "向上推入",
-                        icon: <ChevronDown className="w-4 h-4 rotate-180" />,
-                        onClick: () => setTransitionEffect('slideUp'),
-                      },
-                      {
-                        label: "向左推入",
-                        icon: <ChevronRight className="w-4 h-4 rotate-180" />,
-                        onClick: () => setTransitionEffect('slideLeft'),
-                      },
-                      {
-                        label: "拟真翻页",
-                        icon: <FileText className="w-4 h-4" />,
-                        onClick: () => setTransitionEffect('flip'),
-                      },
-                    ]}
-                 />
+            {/* 翻页方式 */}
+            <DropdownMenu
+              trigger={
+                <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors">
+                  <Sparkles className="w-4 h-4" />
+                  翻页方式
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+              }
+              items={[
+                {
+                  label: "淡入淡出",
+                  icon: <Sparkles className="w-4 h-4" />,
+                  onClick: () => setTransitionEffect('fade'),
+                },
+                {
+                  label: "向上推入",
+                  icon: <ChevronDown className="w-4 h-4 rotate-180" />,
+                  onClick: () => setTransitionEffect('slideUp'),
+                },
+                {
+                  label: "向左推入",
+                  icon: <ChevronRight className="w-4 h-4 rotate-180" />,
+                  onClick: () => setTransitionEffect('slideLeft'),
+                },
+                {
+                  label: "拟真翻页",
+                  icon: <FileText className="w-4 h-4" />,
+                  onClick: () => setTransitionEffect('flip'),
+                },
+              ]}
+            />
 
-                 {viewMode === 'edit' && (
-                 <div className="h-6 w-px bg-slate-200" />
-                 )}
+            {viewMode === 'edit' && (
+              <div className="h-6 w-px bg-slate-200" />
+            )}
 
-                 {/* 模型选择 - 仅编辑模式显示 */}
-                 {viewMode === 'edit' && (
-                 <div className="relative">
-                    <button
-                      onClick={() => setShowModelSelector(!showModelSelector)}
-                      disabled={isGeneratingImages}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span>{providers.find(p => p.value === provider)?.label} | {currentModels.find(m => m.value === model)?.label}</span>
-                      <ChevronDown className="w-4 h-4 ml-1" />
-                    </button>
+            {/* 模型选择 - 仅编辑模式显示 */}
+            {viewMode === 'edit' && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowModelSelector(!showModelSelector)}
+                  disabled={isGeneratingImages}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span>{providers.find(p => p.value === provider)?.label} | {currentModels.find(m => m.value === model)?.label}</span>
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
 
-                    {/* 模型选择下拉面板 */}
-                    {showModelSelector && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-10"
-                          onClick={() => setShowModelSelector(false)}
-                        />
-                        <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-20 overflow-hidden">
-                          {/* 通道选择 */}
-                          <div className="p-3 border-b border-slate-200 bg-slate-50">
-                            <div className="text-xs font-semibold text-slate-600 mb-2">选择通道</div>
-                            <div className="flex gap-2">
-                              {providers.map(p => (
-                                <button
-                                  key={p.value}
-                                  onClick={() => setProvider(p.value)}
-                                  className={`flex-1 px-3 py-2 text-sm rounded-lg transition-colors ${
-                                    provider === p.value
-                                      ? 'bg-blue-600 text-white font-medium'
-                                      : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
-                                  }`}
-                                >
-                                  {p.label}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* 模型列表 */}
-                          <div className="p-2 max-h-96 overflow-y-auto">
-                            <div className="text-xs font-semibold text-slate-600 px-2 py-2">选择模型</div>
-                            {currentModels.map(m => (
-                              <button
-                                key={m.value}
-                                onClick={() => {
-                                  setModel(m.value);
-                                  setShowModelSelector(false);
-                                }}
-                                className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
-                                  model === m.value
-                                    ? 'bg-blue-50 text-blue-700 font-medium'
-                                    : 'text-slate-700 hover:bg-slate-100'
+                {/* 模型选择下拉面板 */}
+                {showModelSelector && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowModelSelector(false)}
+                    />
+                    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-20 overflow-hidden">
+                      {/* 通道选择 */}
+                      <div className="p-3 border-b border-slate-200 bg-slate-50">
+                        <div className="text-xs font-semibold text-slate-600 mb-2">选择通道</div>
+                        <div className="flex gap-2">
+                          {providers.map(p => (
+                            <button
+                              key={p.value}
+                              onClick={() => setProvider(p.value)}
+                              className={`flex-1 px-3 py-2 text-sm rounded-lg transition-colors ${provider === p.value
+                                  ? 'bg-blue-600 text-white font-medium'
+                                  : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
                                 }`}
-                              >
-                                {m.label}
-                              </button>
-                            ))}
-                          </div>
+                            >
+                              {p.label}
+                            </button>
+                          ))}
                         </div>
-                      </>
-                    )}
-                 </div>
-                 )}
+                      </div>
 
-                 {/* 重新生成 - 仅编辑模式显示 */}
-                 {viewMode === 'edit' && (
-                 <button
-                    onClick={() => handleGenerateSingle(activeSlideIndex)}
-                    disabled={isGeneratingImages}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                 >
-                    <Wand2 className="w-4 h-4" />
-                    {activeSlide.status === SlideStatus.COMPLETED ? '重新生成' : '生成图片'}
-                 </button>
-                 )}
+                      {/* 模型列表 */}
+                      <div className="p-2 max-h-96 overflow-y-auto">
+                        <div className="text-xs font-semibold text-slate-600 px-2 py-2">选择模型</div>
+                        {currentModels.map(m => (
+                          <button
+                            key={m.value}
+                            onClick={() => {
+                              setModel(m.value);
+                              setShowModelSelector(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${model === m.value
+                                ? 'bg-blue-50 text-blue-700 font-medium'
+                                : 'text-slate-700 hover:bg-slate-100'
+                              }`}
+                          >
+                            {m.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
 
-                 {/* 中止生成按钮 - 仅在正在生成时显示 */}
-                 {viewMode === 'edit' && activeSlide.status === SlideStatus.GENERATING && abortControllers.has(activeSlideIndex) && (
-                   <button
-                      onClick={() => handleAbortGeneration(activeSlideIndex)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                   >
-                      <StopCircle className="w-4 h-4" />
-                      中止生成
-                   </button>
-                 )}
-            </div>
+            {/* 重新生成 - 仅编辑模式显示 */}
+            {viewMode === 'edit' && (
+              <button
+                onClick={() => handleGenerateSingle(activeSlideIndex)}
+                disabled={isGeneratingImages}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Wand2 className="w-4 h-4" />
+                {activeSlide.status === SlideStatus.COMPLETED ? '重新生成' : '生成图片'}
+              </button>
+            )}
 
-            {/* 右侧内容组 */}
-            <div className="flex items-center gap-4">
-                 {/* 1. 标题 */}
-                 <h2 className="font-semibold text-slate-800 truncate max-w-md">{activeSlide.title}</h2>
+            {/* 中止生成按钮 - 仅在正在生成时显示 */}
+            {viewMode === 'edit' && activeSlide.status === SlideStatus.GENERATING && abortControllers.has(activeSlideIndex) && (
+              <button
+                onClick={() => handleAbortGeneration(activeSlideIndex)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <StopCircle className="w-4 h-4" />
+                中止生成
+              </button>
+            )}
+          </div>
 
-                 <div className="h-6 w-px bg-slate-200" />
+          {/* 右侧内容组 */}
+          <div className="flex items-center gap-4">
+            {/* 1. 标题 */}
+            <h2 className="font-semibold text-slate-800 truncate max-w-md">{activeSlide.title}</h2>
 
-                 {/* 2. 返回按钮（下拉选择） */}
-                 <DropdownMenu
-                    trigger={
-                      <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-                        <Layout className="w-4 h-4" />
-                        返回
-                        <ChevronDown className="w-4 h-4 ml-1" />
-                      </button>
-                    }
-                    items={[
-                      {
-                        label: "返回大纲",
-                        icon: <Layout className="w-4 h-4" />,
-                        onClick: onBack,
-                      },
-                      ...(onBackToCoursewareCenter ? [{
-                        label: "返回课件中心",
-                        icon: <Home className="w-4 h-4" />,
-                        onClick: onBackToCoursewareCenter,
-                      }] : [])
-                    ]}
-                 />
-            </div>
+            <div className="h-6 w-px bg-slate-200" />
+
+            {/* 2. 返回按钮（下拉选择） */}
+            <DropdownMenu
+              trigger={
+                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                  <Layout className="w-4 h-4" />
+                  返回
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+              }
+              items={[
+                {
+                  label: "返回大纲",
+                  icon: <Layout className="w-4 h-4" />,
+                  onClick: onBack,
+                },
+                ...(onBackToCoursewareCenter ? [{
+                  label: "返回课件中心",
+                  icon: <Home className="w-4 h-4" />,
+                  onClick: onBackToCoursewareCenter,
+                }] : [])
+              ]}
+            />
+          </div>
         </div>
 
         {/* Workspace Content */}
         <div className="flex-1 flex overflow-hidden">
-            
-            {/* Center: Preview */}
-            <div className="flex-1 bg-slate-100 p-8 flex flex-col items-center justify-center relative overflow-y-auto">
-                <div className="w-full max-w-4xl flex flex-col gap-4">
-                  <div className="aspect-video bg-white shadow-2xl rounded-lg overflow-hidden relative border border-slate-200">
-                    {/* 互动工具预览弹窗 - 覆盖在图片上 */}
-                    {showInteractivePreview && (
-                      <div className="absolute inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
-                        <div className="relative" style={{ width: `${previewWidth}%`, height: `${previewHeight}%` }}>
-                          {/* 关闭按钮 */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowInteractivePreview(false);
-                              setPreviewHtmlContent('');
-                              setCurrentPreviewToolId(null);
-                            }}
-                            className="absolute top-4 right-4 z-10 p-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-slate-700 rounded-full shadow-lg transition-all"
-                            title="关闭"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
 
-                          {/* 四个角的拖动控制点 */}
-                          {/* 左上角 */}
-                          <div
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const container = document.querySelector('.aspect-video');
-                              if (container) {
-                                resizeStateRef.current = {
-                                  startX: e.clientX,
-                                  startY: e.clientY,
-                                  startWidth: previewWidth,
-                                  startHeight: previewHeight,
-                                  containerRect: container.getBoundingClientRect()
-                                };
-                                setIsResizing(true);
-                                setResizeCorner('tl');
-                              }
-                            }}
-                            className="absolute -top-2 -left-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nwse-resize hover:scale-125 transition-transform z-20"
-                            title="拖动调整大小"
-                          />
-                          {/* 右上角 */}
-                          <div
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const container = document.querySelector('.aspect-video');
-                              if (container) {
-                                resizeStateRef.current = {
-                                  startX: e.clientX,
-                                  startY: e.clientY,
-                                  startWidth: previewWidth,
-                                  startHeight: previewHeight,
-                                  containerRect: container.getBoundingClientRect()
-                                };
-                                setIsResizing(true);
-                                setResizeCorner('tr');
-                              }
-                            }}
-                            className="absolute -top-2 -right-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nesw-resize hover:scale-125 transition-transform z-20"
-                            title="拖动调整大小"
-                          />
-                          {/* 左下角 */}
-                          <div
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const container = document.querySelector('.aspect-video');
-                              if (container) {
-                                resizeStateRef.current = {
-                                  startX: e.clientX,
-                                  startY: e.clientY,
-                                  startWidth: previewWidth,
-                                  startHeight: previewHeight,
-                                  containerRect: container.getBoundingClientRect()
-                                };
-                                setIsResizing(true);
-                                setResizeCorner('bl');
-                              }
-                            }}
-                            className="absolute -bottom-2 -left-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nesw-resize hover:scale-125 transition-transform z-20"
-                            title="拖动调整大小"
-                          />
-                          {/* 右下角 */}
-                          <div
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const container = document.querySelector('.aspect-video');
-                              if (container) {
-                                resizeStateRef.current = {
-                                  startX: e.clientX,
-                                  startY: e.clientY,
-                                  startWidth: previewWidth,
-                                  startHeight: previewHeight,
-                                  containerRect: container.getBoundingClientRect()
-                                };
-                                setIsResizing(true);
-                                setResizeCorner('br');
-                              }
-                            }}
-                            className="absolute -bottom-2 -right-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nwse-resize hover:scale-125 transition-transform z-20"
-                            title="拖动调整大小"
-                          />
+          {/* Center: Preview */}
+          <div className="flex-1 bg-slate-100 p-8 flex flex-col items-center justify-center relative overflow-y-auto">
+            <div className="w-full max-w-4xl flex flex-col gap-4">
+              <div className="aspect-video bg-white shadow-2xl rounded-lg overflow-hidden relative border border-slate-200">
+                {/* 互动工具预览弹窗 - 覆盖在图片上 */}
+                {showInteractivePreview && (
+                  <div className="absolute inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
+                    <div className="relative" style={{ width: `${previewWidth}%`, height: `${previewHeight}%` }}>
+                      {/* 关闭按钮 */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowInteractivePreview(false);
+                          setPreviewHtmlContent('');
+                          setCurrentPreviewToolId(null);
+                        }}
+                        className="absolute top-4 right-4 z-10 p-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-slate-700 rounded-full shadow-lg transition-all"
+                        title="关闭"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
 
-                          {/* iframe内容区域 - 全屏显示 */}
-                          <iframe
-                            srcDoc={previewHtmlContent}
-                            className="w-full h-full bg-white"
-                            sandbox="allow-scripts allow-forms allow-modals allow-popups"
-                            title="互动工具预览"
-                          />
-                        </div>
+                      {/* 四个角的拖动控制点 */}
+                      {/* 左上角 */}
+                      <div
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const container = document.querySelector('.aspect-video');
+                          if (container) {
+                            resizeStateRef.current = {
+                              startX: e.clientX,
+                              startY: e.clientY,
+                              startWidth: previewWidth,
+                              startHeight: previewHeight,
+                              containerRect: container.getBoundingClientRect()
+                            };
+                            setIsResizing(true);
+                            setResizeCorner('tl');
+                          }
+                        }}
+                        className="absolute -top-2 -left-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nwse-resize hover:scale-125 transition-transform z-20"
+                        title="拖动调整大小"
+                      />
+                      {/* 右上角 */}
+                      <div
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const container = document.querySelector('.aspect-video');
+                          if (container) {
+                            resizeStateRef.current = {
+                              startX: e.clientX,
+                              startY: e.clientY,
+                              startWidth: previewWidth,
+                              startHeight: previewHeight,
+                              containerRect: container.getBoundingClientRect()
+                            };
+                            setIsResizing(true);
+                            setResizeCorner('tr');
+                          }
+                        }}
+                        className="absolute -top-2 -right-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nesw-resize hover:scale-125 transition-transform z-20"
+                        title="拖动调整大小"
+                      />
+                      {/* 左下角 */}
+                      <div
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const container = document.querySelector('.aspect-video');
+                          if (container) {
+                            resizeStateRef.current = {
+                              startX: e.clientX,
+                              startY: e.clientY,
+                              startWidth: previewWidth,
+                              startHeight: previewHeight,
+                              containerRect: container.getBoundingClientRect()
+                            };
+                            setIsResizing(true);
+                            setResizeCorner('bl');
+                          }
+                        }}
+                        className="absolute -bottom-2 -left-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nesw-resize hover:scale-125 transition-transform z-20"
+                        title="拖动调整大小"
+                      />
+                      {/* 右下角 */}
+                      <div
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const container = document.querySelector('.aspect-video');
+                          if (container) {
+                            resizeStateRef.current = {
+                              startX: e.clientX,
+                              startY: e.clientY,
+                              startWidth: previewWidth,
+                              startHeight: previewHeight,
+                              containerRect: container.getBoundingClientRect()
+                            };
+                            setIsResizing(true);
+                            setResizeCorner('br');
+                          }
+                        }}
+                        className="absolute -bottom-2 -right-2 w-4 h-4 bg-orange-500 border-2 border-white rounded-full cursor-nwse-resize hover:scale-125 transition-transform z-20"
+                        title="拖动调整大小"
+                      />
+
+                      {/* iframe内容区域 - 全屏显示 */}
+                      <iframe
+                        srcDoc={previewHtmlContent}
+                        className="w-full h-full bg-white"
+                        sandbox="allow-scripts allow-forms allow-modals allow-popups"
+                        title="互动工具预览"
+                      />
+                    </div>
+                  </div>
+                )}
+                {activeSlide.videoUrl ? (
+                  // 显示视频
+                  <video
+                    src={activeSlide.videoUrl}
+                    controls
+                    className="w-full h-full object-contain bg-black"
+                    title="页面视频"
+                  />
+                ) : activeSlide.imageUrl ? (
+                  // 显示图片
+                  <img
+                    src={activeSlide.imageUrl}
+                    alt="Slide Preview"
+                    className="w-full h-full object-contain select-none"
+                    style={{ zIndex: 1 }}
+                    draggable={false}
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+                    <div className="w-16 h-16 mb-4 rounded-full bg-slate-200 flex items-center justify-center">
+                      {activeSlide.status === SlideStatus.GENERATING ? (
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      ) : (
+                        <Maximize2 className="w-8 h-8 opacity-50" />
+                      )}
+                    </div>
+                    <p className="text-lg font-medium">
+                      {activeSlide.status === SlideStatus.GENERATING ? '正在生成页面...' : '暂无预览图'}
+                    </p>
+
+                    {/* 如果不在生成中，显示操作按钮 */}
+                    {activeSlide.status !== SlideStatus.GENERATING && (
+                      <div className="flex gap-3 mt-6">
+                        <button
+                          onClick={handleUploadImage}
+                          className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md"
+                        >
+                          <Upload className="w-5 h-5" />
+                          上传图片
+                        </button>
+                        <button
+                          onClick={handleUploadVideo}
+                          className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-md"
+                        >
+                          <Upload className="w-5 h-5" />
+                          上传小视频
+                        </button>
+                        <button
+                          onClick={() => handleGenerateSingle(activeSlideIndex)}
+                          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+                        >
+                          <Wand2 className="w-5 h-5" />
+                          生成图片
+                        </button>
                       </div>
                     )}
-                     {activeSlide.videoUrl ? (
-                         // 显示视频
-                         <video
-                           src={activeSlide.videoUrl}
-                           controls
-                           className="w-full h-full object-contain bg-black"
-                           title="页面视频"
-                         />
-                     ) : activeSlide.imageUrl ? (
-                         // 显示图片
-                         <img
-                           src={activeSlide.imageUrl}
-                           alt="Slide Preview"
-                           className="w-full h-full object-contain select-none"
-                           style={{ zIndex: 1 }}
-                           draggable={false}
-                         />
-                     ) : (
-                         <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
-                             <div className="w-16 h-16 mb-4 rounded-full bg-slate-200 flex items-center justify-center">
-                                 {activeSlide.status === SlideStatus.GENERATING ? (
-                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                                 ) : (
-                                     <Maximize2 className="w-8 h-8 opacity-50" />
-                                 )}
-                             </div>
-                             <p className="text-lg font-medium">
-                                 {activeSlide.status === SlideStatus.GENERATING ? '正在生成页面...' : '暂无预览图'}
-                             </p>
 
-                             {/* 如果不在生成中，显示操作按钮 */}
-                             {activeSlide.status !== SlideStatus.GENERATING && (
-                               <div className="flex gap-3 mt-6">
-                                 <button
-                                   onClick={handleUploadImage}
-                                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md"
-                                 >
-                                   <Upload className="w-5 h-5" />
-                                   上传图片
-                                 </button>
-                                 <button
-                                   onClick={handleUploadVideo}
-                                   className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-md"
-                                 >
-                                   <Upload className="w-5 h-5" />
-                                   上传小视频
-                                 </button>
-                                 <button
-                                   onClick={() => handleGenerateSingle(activeSlideIndex)}
-                                   className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-                                 >
-                                   <Wand2 className="w-5 h-5" />
-                                   生成图片
-                                 </button>
-                               </div>
-                             )}
+                    <p className="text-sm mt-4 opacity-60">
+                      {activeSlide.status === SlideStatus.GENERATING ? '请稍候...' : '选择一种方式来添加页面内容'}
+                    </p>
+                  </div>
+                )}
 
-                             <p className="text-sm mt-4 opacity-60">
-                               {activeSlide.status === SlideStatus.GENERATING ? '请稍候...' : '选择一种方式来添加页面内容'}
-                             </p>
-                         </div>
-                     )}
+                {/* SVG 绘图层（只读模式） */}
+                {activeSlide.imageUrl && (
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none select-none"
+                    style={{ zIndex: 10 }}
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="xMidYMid meet"
+                  >
+                    {/* 渲染已保存的标注 (仅绘图类型) */}
+                    {(annotations[activeSlide.id] || []).filter(ann => ann.type !== 'hotspot').map((ann, idx) => {
+                      if (ann.type === 'pen' && ann.points && ann.points.length > 1) {
+                        const pathData = ann.points.map((p, i) =>
+                          `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`
+                        ).join(' ');
+                        return (
+                          <path
+                            key={idx}
+                            d={pathData}
+                            stroke={ann.color}
+                            strokeWidth="3"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        );
+                      } else if (ann.type === 'arrow' && ann.start && ann.end) {
+                        const dx = ann.end.x - ann.start.x;
+                        const dy = ann.end.y - ann.start.y;
+                        const angle = Math.atan2(dy, dx);
+                        const arrowLength = 15;
+                        const arrowAngle = Math.PI / 6;
+                        return (
+                          <g key={idx}>
+                            <line
+                              x1={ann.start.x}
+                              y1={ann.start.y}
+                              x2={ann.end.x}
+                              y2={ann.end.y}
+                              stroke={ann.color}
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              d={`M ${ann.end.x} ${ann.end.y} L ${ann.end.x - arrowLength * Math.cos(angle - arrowAngle)} ${ann.end.y - arrowLength * Math.sin(angle - arrowAngle)} M ${ann.end.x} ${ann.end.y} L ${ann.end.x - arrowLength * Math.cos(angle + arrowAngle)} ${ann.end.y - arrowLength * Math.sin(angle + arrowAngle)}`}
+                              stroke={ann.color}
+                              strokeWidth="3"
+                              fill="none"
+                              strokeLinecap="round"
+                            />
+                          </g>
+                        );
+                      } else if (ann.type === 'rect' && ann.start && ann.end) {
+                        return (
+                          <rect
+                            key={idx}
+                            x={Math.min(ann.start.x, ann.end.x)}
+                            y={Math.min(ann.start.y, ann.end.y)}
+                            width={Math.abs(ann.end.x - ann.start.x)}
+                            height={Math.abs(ann.end.y - ann.start.y)}
+                            stroke={ann.color}
+                            strokeWidth="3"
+                            fill="none"
+                          />
+                        );
+                      }
+                      return null;
+                    })}
+                  </svg>
+                )}
 
-                     {/* SVG 绘图层（只读模式） */}
-                     {activeSlide.imageUrl && (
-                       <svg
-                         className="absolute inset-0 w-full h-full pointer-events-none select-none"
-                         style={{ zIndex: 10 }}
-                         viewBox="0 0 100 100"
-                         preserveAspectRatio="xMidYMid meet"
-                       >
-                         {/* 渲染已保存的标注 (仅绘图类型) */}
-                         {(annotations[activeSlide.id] || []).filter(ann => ann.type !== 'hotspot').map((ann, idx) => {
-                           if (ann.type === 'pen' && ann.points && ann.points.length > 1) {
-                             const pathData = ann.points.map((p, i) =>
-                               `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`
-                             ).join(' ');
-                             return (
-                               <path
-                                 key={idx}
-                                 d={pathData}
-                                 stroke={ann.color}
-                                 strokeWidth="3"
-                                 fill="none"
-                                 strokeLinecap="round"
-                                 strokeLinejoin="round"
-                               />
-                             );
-                           } else if (ann.type === 'arrow' && ann.start && ann.end) {
-                             const dx = ann.end.x - ann.start.x;
-                             const dy = ann.end.y - ann.start.y;
-                             const angle = Math.atan2(dy, dx);
-                             const arrowLength = 15;
-                             const arrowAngle = Math.PI / 6;
-                             return (
-                               <g key={idx}>
-                                 <line
-                                   x1={ann.start.x}
-                                   y1={ann.start.y}
-                                   x2={ann.end.x}
-                                   y2={ann.end.y}
-                                   stroke={ann.color}
-                                   strokeWidth="3"
-                                   strokeLinecap="round"
-                                 />
-                                 <path
-                                   d={`M ${ann.end.x} ${ann.end.y} L ${ann.end.x - arrowLength * Math.cos(angle - arrowAngle)} ${ann.end.y - arrowLength * Math.sin(angle - arrowAngle)} M ${ann.end.x} ${ann.end.y} L ${ann.end.x - arrowLength * Math.cos(angle + arrowAngle)} ${ann.end.y - arrowLength * Math.sin(angle + arrowAngle)}`}
-                                   stroke={ann.color}
-                                   strokeWidth="3"
-                                   fill="none"
-                                   strokeLinecap="round"
-                                 />
-                               </g>
-                             );
-                           } else if (ann.type === 'rect' && ann.start && ann.end) {
-                             return (
-                               <rect
-                                 key={idx}
-                                 x={Math.min(ann.start.x, ann.end.x)}
-                                 y={Math.min(ann.start.y, ann.end.y)}
-                                 width={Math.abs(ann.end.x - ann.start.x)}
-                                 height={Math.abs(ann.end.y - ann.start.y)}
-                                 stroke={ann.color}
-                                 strokeWidth="3"
-                                 fill="none"
-                               />
-                             );
-                           }
-                           return null;
-                         })}
-                       </svg>
-                     )}
+                {/* 互动工具小图标层 */}
+                {activeSlide.imageUrl && activeSlide.interactiveTools && activeSlide.interactiveTools.length > 0 && (
+                  <div className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 40 }}>
+                    {activeSlide.interactiveTools.map((tool) => (
+                      <InteractiveToolIcon
+                        key={tool.id}
+                        tool={tool}
+                      />
+                    ))}
+                  </div>
+                )}
 
-                     {/* 互动工具小图标层 */}
-                     {activeSlide.imageUrl && activeSlide.interactiveTools && activeSlide.interactiveTools.length > 0 && (
-                       <div className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 40 }}>
-                         {activeSlide.interactiveTools.map((tool) => (
-                           <InteractiveToolIcon
-                             key={tool.id}
-                             tool={tool}
-                           />
-                         ))}
-                       </div>
-                     )}
+                {/* 视频触发按钮图标层 */}
+                {activeSlide.imageUrl && activeSlide.videoUrl && activeSlide.videoTriggerMode === 'manual' && (
+                  <div className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 40 }}>
+                    <VideoTriggerButtonIcon slide={activeSlide} />
+                  </div>
+                )}
 
-                     {/* 视频触发按钮图标层 */}
-                     {activeSlide.imageUrl && activeSlide.videoUrl && activeSlide.videoTriggerMode === 'manual' && (
-                       <div className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 40 }}>
-                         <VideoTriggerButtonIcon slide={activeSlide} />
-                       </div>
-                     )}
+                {/* Overlay Navigation */}
+                <button
+                  onClick={() => setActiveSlideIndex(Math.max(0, activeSlideIndex - 1))}
+                  disabled={activeSlideIndex === 0}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg backdrop-blur text-slate-700 disabled:opacity-0 transition-all"
+                  style={{ zIndex: 20 }}
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setActiveSlideIndex(Math.min(slides.length - 1, activeSlideIndex + 1))}
+                  disabled={activeSlideIndex === slides.length - 1}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg backdrop-blur text-slate-700 disabled:opacity-0 transition-all"
+                  style={{ zIndex: 20 }}
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
 
-                     {/* Overlay Navigation */}
-                     <button
-                        onClick={() => setActiveSlideIndex(Math.max(0, activeSlideIndex - 1))}
-                        disabled={activeSlideIndex === 0}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg backdrop-blur text-slate-700 disabled:opacity-0 transition-all"
-                        style={{ zIndex: 20 }}
-                     >
-                         <ChevronLeft className="w-6 h-6" />
-                     </button>
-                     <button
-                        onClick={() => setActiveSlideIndex(Math.min(slides.length - 1, activeSlideIndex + 1))}
-                        disabled={activeSlideIndex === slides.length - 1}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg backdrop-blur text-slate-700 disabled:opacity-0 transition-all"
-                        style={{ zIndex: 20 }}
-                     >
-                         <ChevronRight className="w-6 h-6" />
-                     </button>
+              {/* 编辑按钮 - 仅在有图片且编辑模式时显示 */}
+              {viewMode === 'edit' && activeSlide.imageUrl && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setEditingSlideIndex(activeSlideIndex)}
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md font-medium"
+                  >
+                    <Edit3 className="w-5 h-5" />
+                    编辑图片
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Panel: Contextual Edit */}
+          {viewMode === 'edit' && (
+            <div className="w-80 bg-white border-l border-slate-200 flex flex-col h-full shadow-xl z-10">
+              {/* TAB 切换 */}
+              <div className="border-b border-slate-200 flex">
+                <button
+                  onClick={() => setActiveTab('image')}
+                  className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${activeTab === 'image'
+                      ? 'bg-white text-blue-600 border-b-2 border-blue-600'
+                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  图片
+                </button>
+                <button
+                  onClick={() => setActiveTab('voice')}
+                  className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${activeTab === 'voice'
+                      ? 'bg-white text-blue-600 border-b-2 border-blue-600'
+                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                >
+                  <Volume2 className="w-4 h-4" />
+                  语音
+                </button>
+                <button
+                  onClick={() => setActiveTab('video')}
+                  className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${activeTab === 'video'
+                      ? 'bg-white text-purple-600 border-b-2 border-purple-600'
+                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                >
+                  <Video className="w-4 h-4" />
+                  视频
+                </button>
+                <button
+                  onClick={() => setActiveTab('interactive')}
+                  className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${activeTab === 'interactive'
+                      ? 'bg-white text-orange-600 border-b-2 border-orange-600'
+                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                >
+                  <Code className="w-4 h-4" />
+                  互动
+                </button>
+              </div>
+
+              {/* TAB 内容 */}
+              {activeTab === 'image' ? (
+                <div className="flex-1 overflow-y-auto p-6">
+                  <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">图片</h4>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">标题</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-slate-200 rounded text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        value={activeSlide.title}
+                        onChange={(e) => updateActiveSlideContent('title', e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">内容</label>
+                      <textarea
+                        className="w-full h-32 p-2 border border-slate-200 rounded text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                        value={activeSlide.content}
+                        onChange={(e) => updateActiveSlideContent('content', e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        视觉提示词
+                        <span className="ml-2 text-[10px] bg-slate-100 text-slate-500 px-1 rounded">AI 指令</span>
+                      </label>
+                      <textarea
+                        className="w-full h-32 p-2 border border-slate-200 rounded text-xs font-mono text-slate-600 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                        value={activeSlide.visualPrompt}
+                        onChange={(e) => updateActiveSlideContent('visualPrompt', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-100">
+                      <p className="text-xs text-slate-400 italic">
+                        提示: 修改视觉提示词可以改变图片生成的效果。您可以指定颜色、布局或具体的图像元素。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : activeTab === 'voice' ? (
+                <VoiceSettings
+                  slide={activeSlide}
+                  onScriptChange={handleVoiceScriptChange}
+                  onGenerateVoice={handleGenerateVoice}
+                  onVoiceGenerated={handleVoiceGenerated}
+                />
+              ) : activeTab === 'video' ? (
+                <VideoSettings
+                  slide={activeSlide}
+                  onVideoUpload={handleVideoUploadFromSettings}
+                  onVideoDelete={handleVideoDelete}
+                  onVideoGenerated={handleVideoGenerated}
+                  onSlideUpdate={handleSlideUpdate}
+                />
+              ) : (
+                <div className="flex-1 overflow-y-auto p-6">
+                  {/* 互动工具标题和添加按钮 */}
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider">互动工具</h4>
+                    <button
+                      onClick={() => {
+                        setEditingInteractiveId(null);
+                        setInteractiveHtmlInput('');
+                        setInteractiveWidth(90);
+                        setInteractiveHeight(90);
+                        setShowInteractiveModal(true);
+                      }}
+                      className="px-3 py-1.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium flex items-center gap-1.5"
+                    >
+                      <Plus className="w-4 h-4" />
+                      添加
+                    </button>
                   </div>
 
-                  {/* 编辑按钮 - 仅在有图片且编辑模式时显示 */}
-                  {viewMode === 'edit' && activeSlide.imageUrl && (
-                    <div className="flex justify-center">
-                      <button
-                        onClick={() => setEditingSlideIndex(activeSlideIndex)}
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md font-medium"
-                      >
-                        <Edit3 className="w-5 h-5" />
-                        编辑图片
-                      </button>
+                  {/* 互动工具列表 */}
+                  {(!activeSlide.interactiveTools || activeSlide.interactiveTools.length === 0) ? (
+                    <div className="text-center py-12">
+                      <Code className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                      <p className="text-sm text-slate-400">暂无互动工具</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {activeSlide.interactiveTools.map((tool) => {
+                        const isEditing = editingInteractiveId === tool.id;
+
+                        return (
+                          <div
+                            key={tool.id}
+                            className="bg-slate-50 border border-slate-200 rounded-lg p-3 hover:bg-slate-100 transition-colors"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                  {tool.label}
+                                </span>
+                                <span className="text-sm font-medium text-slate-700">互动工具 {tool.label}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => handleEditInteractiveTool(tool.id)}
+                                  disabled={isEditing}
+                                  className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors disabled:opacity-50"
+                                  title="编辑"
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteInteractiveTool(tool.id)}
+                                  className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                  title="删除"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* 编辑模式 - 展开编辑区域 */}
+                            {isEditing ? (
+                              <div className="space-y-2 mt-2">
+                                <textarea
+                                  value={interactiveHtmlInput}
+                                  onChange={(e) => setInteractiveHtmlInput(e.target.value)}
+                                  placeholder='输入HTML代码'
+                                  className="w-full h-48 px-3 py-2 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none font-mono text-xs"
+                                  autoFocus
+                                />
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={handleSaveEditedInteractiveTool}
+                                    disabled={!interactiveHtmlInput.trim()}
+                                    className="flex-1 px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                                  >
+                                    保存
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEditInteractiveTool}
+                                    className="flex-1 px-3 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium"
+                                  >
+                                    取消
+                                  </button>
+                                </div>
+                              </div>
+                            ) : null}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
+              )}
             </div>
-
-            {/* Right Panel: Contextual Edit */}
-            {viewMode === 'edit' && (
-            <div className="w-80 bg-white border-l border-slate-200 flex flex-col h-full shadow-xl z-10">
-                 {/* TAB 切换 */}
-                 <div className="border-b border-slate-200 flex">
-                   <button
-                     onClick={() => setActiveTab('image')}
-                     className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                       activeTab === 'image'
-                         ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                     }`}
-                   >
-                     <ImageIcon className="w-4 h-4" />
-                     图片
-                   </button>
-                   <button
-                     onClick={() => setActiveTab('voice')}
-                     className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                       activeTab === 'voice'
-                         ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                     }`}
-                   >
-                     <Volume2 className="w-4 h-4" />
-                     语音
-                   </button>
-                   <button
-                     onClick={() => setActiveTab('video')}
-                     className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                       activeTab === 'video'
-                         ? 'bg-white text-purple-600 border-b-2 border-purple-600'
-                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                     }`}
-                   >
-                     <Video className="w-4 h-4" />
-                     视频
-                   </button>
-                   <button
-                     onClick={() => setActiveTab('interactive')}
-                     className={`flex-1 px-3 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                       activeTab === 'interactive'
-                         ? 'bg-white text-orange-600 border-b-2 border-orange-600'
-                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                     }`}
-                   >
-                     <Code className="w-4 h-4" />
-                     互动
-                   </button>
-                 </div>
-
-                 {/* TAB 内容 */}
-                 {activeTab === 'image' ? (
-                   <div className="flex-1 overflow-y-auto p-6">
-                     <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">图片</h4>
-
-                     <div className="space-y-6">
-                         <div>
-                             <label className="block text-xs font-semibold text-slate-700 mb-1">标题</label>
-                             <input
-                                type="text"
-                                className="w-full p-2 border border-slate-200 rounded text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                value={activeSlide.title}
-                                onChange={(e) => updateActiveSlideContent('title', e.target.value)}
-                             />
-                         </div>
-
-                         <div>
-                             <label className="block text-xs font-semibold text-slate-700 mb-1">内容</label>
-                             <textarea
-                                className="w-full h-32 p-2 border border-slate-200 rounded text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
-                                value={activeSlide.content}
-                                onChange={(e) => updateActiveSlideContent('content', e.target.value)}
-                             />
-                         </div>
-
-                         <div>
-                             <label className="block text-xs font-semibold text-slate-700 mb-1">
-                                 视觉提示词
-                                 <span className="ml-2 text-[10px] bg-slate-100 text-slate-500 px-1 rounded">AI 指令</span>
-                             </label>
-                             <textarea
-                                className="w-full h-32 p-2 border border-slate-200 rounded text-xs font-mono text-slate-600 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
-                                value={activeSlide.visualPrompt}
-                                onChange={(e) => updateActiveSlideContent('visualPrompt', e.target.value)}
-                             />
-                         </div>
-
-                         <div className="pt-4 border-t border-slate-100">
-                             <p className="text-xs text-slate-400 italic">
-                                 提示: 修改视觉提示词可以改变图片生成的效果。您可以指定颜色、布局或具体的图像元素。
-                             </p>
-                         </div>
-                     </div>
-                   </div>
-                 ) : activeTab === 'voice' ? (
-                   <VoiceSettings
-                     slide={activeSlide}
-                     onScriptChange={handleVoiceScriptChange}
-                     onGenerateVoice={handleGenerateVoice}
-                     onVoiceGenerated={handleVoiceGenerated}
-                   />
-                 ) : activeTab === 'video' ? (
-                   <VideoSettings
-                     slide={activeSlide}
-                     onVideoUpload={handleVideoUploadFromSettings}
-                     onVideoDelete={handleVideoDelete}
-                     onVideoGenerated={handleVideoGenerated}
-                     onSlideUpdate={handleSlideUpdate}
-                   />
-                 ) : (
-                   <div className="flex-1 overflow-y-auto p-6">
-                     {/* 互动工具标题和添加按钮 */}
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider">互动工具</h4>
-                      <button
-                        onClick={() => {
-                          setEditingInteractiveId(null);
-                          setInteractiveHtmlInput('');
-                          setInteractiveWidth(90);
-                          setInteractiveHeight(90);
-                          setShowInteractiveModal(true);
-                        }}
-                        className="px-3 py-1.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium flex items-center gap-1.5"
-                      >
-                        <Plus className="w-4 h-4" />
-                        添加
-                      </button>
-                    </div>
-
-                     {/* 互动工具列表 */}
-                     {(!activeSlide.interactiveTools || activeSlide.interactiveTools.length === 0) ? (
-                       <div className="text-center py-12">
-                         <Code className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                         <p className="text-sm text-slate-400">暂无互动工具</p>
-                       </div>
-                     ) : (
-                       <div className="space-y-3">
-                         {activeSlide.interactiveTools.map((tool) => {
-                           const isEditing = editingInteractiveId === tool.id;
-
-                           return (
-                             <div
-                               key={tool.id}
-                               className="bg-slate-50 border border-slate-200 rounded-lg p-3 hover:bg-slate-100 transition-colors"
-                             >
-                               <div className="flex items-center justify-between mb-2">
-                                 <div className="flex items-center gap-2">
-                                   <span className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                                     {tool.label}
-                                   </span>
-                                   <span className="text-sm font-medium text-slate-700">互动工具 {tool.label}</span>
-                                 </div>
-                                 <div className="flex items-center gap-1">
-                                   <button
-                                     onClick={() => handleEditInteractiveTool(tool.id)}
-                                     disabled={isEditing}
-                                     className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors disabled:opacity-50"
-                                     title="编辑"
-                                   >
-                                     <Edit3 className="w-4 h-4" />
-                                   </button>
-                                   <button
-                                     onClick={() => handleDeleteInteractiveTool(tool.id)}
-                                     className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                     title="删除"
-                                   >
-                                     <Trash2 className="w-4 h-4" />
-                                   </button>
-                                 </div>
-                               </div>
-
-                               {/* 编辑模式 - 展开编辑区域 */}
-                               {isEditing ? (
-                                 <div className="space-y-2 mt-2">
-                                   <textarea
-                                     value={interactiveHtmlInput}
-                                     onChange={(e) => setInteractiveHtmlInput(e.target.value)}
-                                     placeholder='输入HTML代码'
-                                     className="w-full h-48 px-3 py-2 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none font-mono text-xs"
-                                     autoFocus
-                                   />
-                                   <div className="flex items-center gap-2">
-                                     <button
-                                       onClick={handleSaveEditedInteractiveTool}
-                                       disabled={!interactiveHtmlInput.trim()}
-                                       className="flex-1 px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
-                                     >
-                                       保存
-                                     </button>
-                                     <button
-                                       onClick={handleCancelEditInteractiveTool}
-                                       className="flex-1 px-3 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium"
-                                     >
-                                       取消
-                                     </button>
-                                   </div>
-                                 </div>
-                               ) : null}
-                             </div>
-                           );
-                         })}
-                       </div>
-                     )}
-                   </div>
-                 )}
-            </div>
-            )}
+          )}
 
         </div>
       </div>

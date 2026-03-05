@@ -11,6 +11,7 @@
 | 项目 | 技术栈 | 功能说明 |
 | :--- | :--- | :--- |
 | **playground/** | HTML5, CSS3, JavaScript (原生) | UI/UX 设计展示，包括材质效果、布局系统、动效库和组件样式 |
+| **生成漫画/** | HTML5, CSS3, JavaScript (原生) | AI 漫画生成器，集成 DeepSeek 分镜构思与即梦/Chatgptten 多引擎绘图，纯客户端架构 |
 | **libraries/ant-design/** | React, TypeScript, Less | 企业级 UI 组件库 v6，提供丰富的 React 组件 |
 | **libraries/arco-design-react/** | React, TypeScript | 字节跳动 React UI 组件库，提供现代化 UI 组件 |
 | **libraries/galaxy/** | HTML, CSS, Tailwind CSS | 3000+ 社区 UI 元素，提供丰富的 CSS 组件 |
@@ -34,6 +35,7 @@
 | **自动去重** | npm 自动处理依赖版本冲突和去重 |
 
 **使用方法**：
+
 ```bash
 # 在根目录安装所有依赖
 npm install

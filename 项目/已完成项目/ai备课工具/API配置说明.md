@@ -1,155 +1,131 @@
 # AI 备课工具 - API 配置说明
 
-## 项目概述
+本项目是一个 AI 驱动的教学课件生成工具，集成了大纲预测、多模态媒体生成、文档解析及云端同步功能。
 
-本项目是一个 AI 驱动的教学课件生成工具，可以自动将教案内容转换为精美的 PPT 演示文稿。
+## 1. 核心 AI 配置
 
-## 当前 API 配置
+### 文本生成 API (OpenAI 兼容)
 
-### 文本生成 API（大纲生成）
+用于生成 PPT 大纲、口播文稿、Markdown 清理等逻辑。
 
-使用第三方 OpenAI 兼容接口：
+- **提供商**: Dalu (第三方)
+- **API 地址**: `https://dalu.chatgptten.com/v1`
+- **模型名称**: `gemini-3-pro-preview`
+- **环境变量**: `OPENAI_API_KEY`, `OPENAI_BASE_URL`
 
-- **API 地址**: https://dalu.chatgptten.com/v1
-- **模型名称**: gemini-3-pro-preview
-- **API Key**: sk-bfsoBhqtsjZ1x5sqbKrA4mFg0DH7aUQMlToVykNJ5IGnww7r
+### 图像生成 API (同步/异步)
 
-### 图片生成 API（幻灯片图片）
+用于根据视觉提示词渲染 PPT 页面背景或完整页面。
 
-使用自定义图片生成接口：
+- **API 地址**: `https://3w-api.mamale.vip/api/app/zjAi/myUnifiedOpenAiStream`
+- **支持通道 (Provider)**: `TuZi` (同步), `TuZiAsync` (异步), `Chatgptten` (格谷)
+- **全量模型列表 (含最新 Banana 系列)**:
+  - **新通道推荐**:
+    - `gemini-3.1-flash-image-preview`: **新的 Banana 2** (极速高质量，当前最佳推荐)
+  - **兔子通道 (TuZi)**:
+    - `nano-banana-2`: Nano Banana 2 普通版（默认）
+    - `nano-banana-2-2k`: Nano Banana 2 2K 分辨率
+    - `nano-banana-2-4k`: Nano Banana 2 4K 分辨率
+    - `nano-banana-2-hd`: Nano Banana 2 高清版
+    - `nano-banana-2-vip`: Nano Banana 2 VIP 增强版
+    - `gemini-3-pro-image-preview-2k`: Gemini 3 Pro 2K
+  - **兔子异步通道 (TuZiAsync)**:
+    - `gemini-3-pro-image-preview-async`: 异步生成默认模型
+    - `gemini-3-pro-image-preview-2k-async`: 2K 异步模型
+    - `gemini-3-pro-image-preview-4k-async`: 4K 异步模型
+  - **格谷通道 (Chatgptten)**:
+    - `nano-banana-2-4k-vip`: Nano Banana 2 4K VIP
+    - `nano-banana-2-2k-vip`: Nano Banana 2 2K VIP
+    - `nano-banana-2-hd`: Nano Banana 2 高清版
+    - `nano-banana-2-vip`: Nano Banana 2 VIP 增强版
+  - **其他通用**: `dalle-3`, `midjourney` (需后端通道支持)
+- **环境变量**: `IMAGE_API_URL`, `IMAGE_API_TOKEN`
 
-- **API 地址**: https://3w-api.mamale.vip/api/app/chatgptten/myImage
-- **模型名称**: nano-banana-2-4k-vip（4K 高质量版本）
-- **认证方式**: Bearer Token
-- **Token**: eyJhbGciOiJSUzI1NiIsImtpZCI6IkI3RDU5REJCNDFGMjZDNTBENkEyRDE5RDQ3RjI0OThFIiwidHlwIjoiYXQrand0In0...（完整 token 已配置）
+---
 
-## 技术栈
+## 2. 多媒体与扩展服务
 
-- **前端框架**: React 19 + TypeScript
-- **构建工具**: Vite
-- **AI SDK**: OpenAI SDK (兼容格式)
-- **UI 组件**: Lucide React (图标)
-- **拖拽功能**: @hello-pangea/dnd
-- **PDF 导出**: jsPDF
+### 语音合成 (TTS)
 
-## 启动项目
+使用火山引擎 (Volcengine) 接口生成口播语音。
 
-```bash
-# 安装依赖
-npm install
+- **任务提交**: `/app/volcengine/ttsMy`
+- **状态查询**: `/app/volcengine/queryTtsMy/{taskId}?isOss=1`
+- **音色支持**: 默认色及自定义音色 (如 BV123_streaming)
 
-# 启动开发服务器
-npm run dev
+### 视频生成 (Digital Human / Sora)
 
-# 构建生产版本
-npm run build
-```
+将 PPT 页面与指令转换为动态视频。
 
-## 访问地址
+- **创建任务**: `/app/tuZi/asyncDataCreateMy` (Model: `sora-2`)
+- **状态查询**: `/app/tuZi/asyncDataQueryMy/{taskId}`
 
-- **本地**: http://localhost:5000/
-- **网络**: http://192.168.1.102:5000/
+### 图片 URL 转换 (阿里云中转)
 
-**注意**: 端口已固定为 5000，如果被占用会报错而不会自动切换。
+为解决外部图片链接跨域或有效期问题，系统会将图片转换为阿里云地址。
 
-## 功能特性
+- **接口地址**: `/app/zjAi/myConvertUrl`
+- **逻辑**: 将外部 URL 提交，返回 `https://s.mamale.vip` 开头的稳定链接。
 
-1. **智能大纲生成**
-   - 自动分析教案内容
-   - 生成结构化的 PPT 大纲
-   - 支持自定义页数（3-50 页）
+---
 
-2. **多种风格选择**
-   - 童趣卡通（低年级）
-   - 黑板手绘（通用）
-   - 清新自然（文科/科学）
-   - 纸张笔记（理科/高年级）
+## 3. 文档处理与基础架构
 
-3. **内容侧重调整**
-   - 概括摘要
-   - 详细内容
-   - 视觉为主
+### 统一文件上传 (Unified Upload)
 
-4. **大纲编辑**
-   - 拖拽排序
-   - 实时编辑标题和内容
-   - 自定义视觉提示词
-   - 添加/删除页面
+支持图片、视频、JSON、PDF 的统一上传。
 
-5. **AI 图片生成**
-   - 使用 nano-banana-2-4k-vip 模型生成 4K 高质量图片
-   - 16:9 宽高比
-   - 自定义 API 接口调用
-   - 单页生成或批量生成
-   - 直接返回图片 URL（无需 base64 转换）
+- **接口地址**: `/fileResouceItem/uploadUnified`
+- **参数**: `formfile` (Multipart/form-data)
 
-6. **PDF 导出**
-   - 一键导出完整 PPT
-   - 保持原始图片质量
+### PDF 解析服务
 
-## 环境变量配置
+将上传的 PDF 教案自动解析为 Markdown。
 
-在 `.env.local` 文件中配置：
+- **接口地址**: `/app/aiTextin/myPdfToDoMarkdown`
+- **逻辑**: 接收 PDF URL，返回原始 Markdown 文本。
 
-```env
-# 第三方 OpenAI 兼容 API 配置（文本生成）
-OPENAI_API_KEY=sk-bfsoBhqtsjZ1x5sqbKrA4mFg0DH7aUQMlToVykNJ5IGnww7r
-OPENAI_BASE_URL=https://dalu.chatgptten.com/v1
+---
 
-# 自定义图片生成 API 配置
-IMAGE_API_URL=https://3w-api.mamale.vip/api/app/chatgptten/myImage
-IMAGE_API_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6...（完整 token）
-```
+## 4. 云端同步与分类
+
+### 分类管理
+
+用于将生成的课件归类存储。
+
+- **获取分类**: `/app/aiApplicationCategory/public?Sorting=id%20desc&PageIndex=1&PageSize=100`
+
+### 课件保存
+
+持久化保存演示文稿数据到云端。
+
+- **保存接口**: `/app/aiPPTX/my`
+- **数据结构**: 包含 `aiApplicationCategoryId`, `converImg`, `pptData` (JSON) 等。
+
+---
+
+## 5. 环境变量与全局逻辑
+
+### 基础 URL 动态构建
+
+系统通过 `globalConfig.ts` 动态构建 API 地址：
+
+- **模式**: `https://${type}.mamale.vip/api`
+- **参数**: 通过 URL 参数 `type` 指定（默认为 `3w-api`）。
+
+### 身份验证 (Authorization)
+
+- **方式**: 所有内部 API 均需携带 `Bearer Token`。
+- **令牌来源**: 优先从 URL 参数 `token` 中提取。
+
+---
 
 ## 修改记录
 
-### 2025-12-17 (第四次更新)
-- 将开发服务器端口固定为 5000
-- 添加 strictPort 配置，确保端口不会自动切换
+### 2026-03-05 (最新补全)
 
-### 2025-12-17 (第三次更新)
-- 将图片模型从 nano-banana-2-hd 升级为 nano-banana-2-4k-vip
-- 支持 4K 超高清图片生成，提升课件质量
-
-### 2025-12-17 (第二次更新)
-- 将图片生成接口更换为自定义 API
-- 使用 nano-banana 系列模型
-- 采用 Bearer Token 认证方式
-- 直接返回图片 URL，优化性能
-- 更新环境变量，添加 IMAGE_API_URL 和 IMAGE_API_TOKEN
-- 修改 geminiService.ts 中的 generateSlideImage 函数使用 fetch 调用
-
-### 2025-12-17 (首次更新)
-- 将 Google Gemini API 替换为第三方 OpenAI 兼容接口
-- 移除 @google/genai 依赖
-- 安装 openai SDK
-- 更新 geminiService.ts 以使用 OpenAI Chat Completions API
-- 更新环境变量配置
-- 更新 UI 文案，移除 Gemini 品牌相关内容
-
-## 注意事项
-
-1. **API 密钥安全**: 请勿将 API 密钥提交到公共代码仓库
-2. **费用控制**: 图片生成可能产生较高费用，建议合理使用
-3. **浏览器支持**: 建议使用 Chrome、Edge 等现代浏览器
-4. **网络要求**: 需要稳定的网络连接以访问 API 服务
-
-## 疑难解答
-
-### 端口被占用
-如果 3000 端口被占用，Vite 会自动尝试其他端口（如 3001）。
-
-### API 调用失败
-- 检查网络连接
-- 确认 API 密钥是否正确
-- 检查 API 服务是否可用
-- 查看浏览器控制台错误信息
-
-### 图片生成失败
-- 确认模型名称配置正确
-- 检查视觉提示词是否合理
-- 验证 API 配额是否充足
-
-## 联系支持
-
-如有问题，请联系项目管理员。
+- 补全了 TTS (火山引擎) 与视频生成 (Sora-2) 的 API 详情。
+- 添加了 URL 转换 (Aliyun) 服务文档。
+- 详细说明了 PDF 解析与 Markdown 智能清理流程。
+- 增加了云端分类与课件保存接口的说明。
+- 明确了 `globalConfig` 的动态地址构建逻辑。

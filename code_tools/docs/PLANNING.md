@@ -75,6 +75,7 @@ code_tools/
 | 后端 | Node.js / Express |
 | 数据库 | BaseMulti（类 Airtable），端点 `https://data.520ai.cc/` |
 | AI 服务 | 多服务商对话、AI即梦/兔子Sora视频、火山引擎语音、OCR、图像生成 |
+| **AI 漫画工厂** | **Next.js (重构为纯客户端)**，支持 Electron 无缝集成 |
 
 ---
 
@@ -87,6 +88,7 @@ code_tools/
 5. **BaseMulti 数据库** — 快速开发，无需后端
 6. **动态子域名** — 支持多租户
 7. **多端应用** — 教师端+学生端、手机端+屏幕端
+8. **AI 漫画工厂去服务端化** — 将 `ai-comic-factory` 的 Next.js 服务端逻辑全部移至客户端，以便在纯 Web/Electron 环境下直接调用第三方 AI 接口，避免部署服务器压力。
 
 ---
 
