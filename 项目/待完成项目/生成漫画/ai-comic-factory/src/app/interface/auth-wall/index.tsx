@@ -8,25 +8,24 @@ export function AuthWall({ show }: { show: boolean }) {
   return (
     <Dialog open={show}>
       <DialogContent className="sm:max-w-[800px]">
-        <div className="grid gap-4 py-4 text-stone-800 text-center text-xl">
-        <p className="">
-          The AI Comic Factory is a free app compatible with many vendors.
-        </p>
-        <p>
-          By default it uses Hugging Face for story and image generation,<br/>
-          our service is free of charge but we would like you to sign-in 👇
-         </p>
-         <p>
-          <Login />
-         </p>
-         {/*<p>(if login doesn&apos;t work for you, please use the button in the About panel)</p>*/}
-         <p className="mt-2 text-lg">
-          To hide this message, you can also go in the <SettingsDialog /> to replace<br/>
-           both the image and the story providers to use external vendors.
-      </p>
-         <p className="mt-2 text-base">
-          This pop-up will also disappear if you <a className="text-stone-600 underline" href="https://github.com/jbilcke-hf/ai-comic-factory" target="_blank">download the code</a> to run the app at home.
-         </p>
+        <div className="grid gap-4 py-4 text-stone-800 text-center text-xl font-[var(--font-main)]">
+          <p className="font-bold">
+            码码乐 AI 漫画工厂是一款免费的创作工具。
+          </p>
+          <p className="text-lg">
+            默认使用码码乐 AI 引擎生成剧情和分镜图，<br />
+            我们的服务完全免费，请先登录以开启创作 👇
+          </p>
+          <div className="flex justify-center py-2">
+            <Login />
+          </div>
+          <p className="mt-2 text-base text-[var(--text-muted)]">
+            如果登录遇到问题，您也可以在 <SettingsDialog /> 中<br />
+            配置您自己的 API 服务商。
+          </p>
+          <p className="mt-2 text-xs text-zinc-400">
+            此弹窗在您登录成功或配置外部引擎后将不再显示。
+          </p>
         </div>
       </DialogContent>
     </Dialog>

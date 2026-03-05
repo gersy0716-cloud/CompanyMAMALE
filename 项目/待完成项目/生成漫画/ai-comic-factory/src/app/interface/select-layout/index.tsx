@@ -27,9 +27,9 @@ export function SelectLayout({
       defaultValue={defaultValue}
       onValueChange={(name) => { onLayoutChange?.(name as LayoutName) }}
       disabled={disabled}
-      >
-      <SelectTrigger className="flex-grow bg-gray-100 text-gray-700 dark:bg-gray-100 dark:text-gray-700">
-        <SelectValue className="text-2xs md:text-sm" placeholder="Layout" />
+    >
+      <SelectTrigger className="flex-grow h-14 backdrop-blur-md bg-white/40 border-white/20 text-[var(--text-main)] rounded-[var(--radius-md)] hover:bg-white/60 transition-colors px-6">
+        <SelectValue className="text-sm md:text-base font-bold font-[var(--font-main)]" placeholder="选择布局" />
       </SelectTrigger>
       <SelectContent>
         {layouts.map(key =>
@@ -38,14 +38,15 @@ export function SelectLayout({
               <div className="flex">{
                 (allLayoutLabels as any)[key]
               }</div>
-           
+
               {(layoutIcons as any)[key]
                 ? <Image
-                    className="rounded-sm opacity-75"
-                    src={(layoutIcons as any)[key]}
-                    width={20}
-                    height={18}
-                    alt={key}
+                  className="rounded-sm opacity-75"
+                  src={(layoutIcons as any)[key]}
+                  width={20}
+                  height={18}
+                  style={{ width: 'auto' }}
+                  alt={key}
                 /> : null}
             </div>
           </SelectItem>

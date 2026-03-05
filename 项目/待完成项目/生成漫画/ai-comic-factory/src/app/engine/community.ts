@@ -1,13 +1,12 @@
-"use server"
 
 import { v4 as uuidv4 } from "uuid"
 
 import { CreatePostResponse, GetAppPostsResponse, Post, PostVisibility } from "@/types"
 import { filterOutBadWords } from "./censorship"
 
-const apiUrl = `${process.env.COMMUNITY_API_URL || ""}`
-const apiToken = `${process.env.COMMUNITY_API_TOKEN || ""}`
-const appId = `${process.env.COMMUNITY_API_ID || ""}`
+const apiUrl = ""
+const apiToken = ""
+const appId = ""
 
 export async function postToCommunity({
   prompt,
@@ -63,20 +62,20 @@ export async function postToCommunity({
       },
       body: JSON.stringify(post),
       cache: 'no-store',
-    // we can also use this (see https://vercel.com/blog/vercel-cache-api-nextjs-cache)
-    // next: { revalidate: 1 }
+      // we can also use this (see https://vercel.com/blog/vercel-cache-api-nextjs-cache)
+      // next: { revalidate: 1 }
     })
 
     // console.log("res:", res)
     // The return value is *not* serialized
     // You can return Date, Map, Set, etc.
-    
+
     // Recommendation: handle errors
     if (res.status !== 200) {
       // This will activate the closest `error.js` Error Boundary
       throw new Error('Failed to fetch data')
     }
-    
+
     const response = (await res.json()) as CreatePostResponse
     // console.log("response:", response)
     return response.post
@@ -99,9 +98,8 @@ export async function getLatestPosts(visibility?: PostVisibility): Promise<Post[
 
   try {
     // console.log(`calling GET ${apiUrl}/posts with renderId: ${renderId}`)
-    const res = await fetch(`${apiUrl}/posts/${appId}/${
-      visibility || "all"
-    }`, {
+    const res = await fetch(`${apiUrl}/posts/${appId}/${visibility || "all"
+      }`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -109,20 +107,20 @@ export async function getLatestPosts(visibility?: PostVisibility): Promise<Post[
         Authorization: `Bearer ${apiToken}`,
       },
       cache: 'no-store',
-    // we can also use this (see https://vercel.com/blog/vercel-cache-api-nextjs-cache)
-    // next: { revalidate: 1 }
+      // we can also use this (see https://vercel.com/blog/vercel-cache-api-nextjs-cache)
+      // next: { revalidate: 1 }
     })
 
     // console.log("res:", res)
     // The return value is *not* serialized
     // You can return Date, Map, Set, etc.
-    
+
     // Recommendation: handle errors
     if (res.status !== 200) {
       // This will activate the closest `error.js` Error Boundary
       throw new Error('Failed to fetch data')
     }
-    
+
     const response = (await res.json()) as GetAppPostsResponse
     // console.log("response:", response)
     return Array.isArray(response?.posts) ? response?.posts : []

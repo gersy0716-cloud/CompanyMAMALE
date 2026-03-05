@@ -1,4 +1,3 @@
-"use server"
 
 import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 import { LLMEngine, LLMPredictionFunctionParams } from "@/types"
@@ -11,18 +10,18 @@ export async function predict({
   // llmVendorConfig // <-- arbitrary/custom LLM models hosted on HF is not supported yet using the UI
 }: LLMPredictionFunctionParams): Promise<string> {
 
-  const hf = new HfInference(process.env.AUTH_HF_API_TOKEN)
+  const hf = new HfInference("")
 
-  const llmEngine = `${process.env.LLM_ENGINE || ""}` as LLMEngine
-  const inferenceEndpoint = `${process.env.LLM_HF_INFERENCE_ENDPOINT_URL || ""}`
-  const inferenceModel = `${process.env.LLM_HF_INFERENCE_API_MODEL || ""}`
+  const llmEngine = "" as LLMEngine
+  const inferenceEndpoint = ""
+  const inferenceModel = ""
 
   let hfie: HfInferenceEndpoint = hf
 
   switch (llmEngine) {
     case "INFERENCE_ENDPOINT":
       if (inferenceEndpoint) {
-       //  console.log("Using a custom HF Inference Endpoint")
+        //  console.log("Using a custom HF Inference Endpoint")
         hfie = hf.endpoint(inferenceEndpoint)
       } else {
         const error = "No Inference Endpoint URL defined"
@@ -30,7 +29,7 @@ export async function predict({
         throw new Error(error)
       }
       break;
-    
+
     case "INFERENCE_API":
       if (inferenceModel) {
         // console.log("Using an HF Inference API Model")
@@ -46,14 +45,14 @@ export async function predict({
       console.error(error)
       throw new Error(error)
   }
-    
+
   const api = llmEngine === "INFERENCE_ENDPOINT" ? hfie : hf
 
   let instructions = ""
   try {
     for await (const output of api.textGenerationStream({
       model: llmEngine === "INFERENCE_ENDPOINT" ? undefined : (inferenceModel || undefined),
-      
+
       inputs: createZephyrPrompt([
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
@@ -68,7 +67,7 @@ export async function predict({
       instructions += output.token.text
       // process.stdout.write(output.token.text)
       if (
-        instructions.includes("</s>") || 
+        instructions.includes("</s>") ||
         instructions.includes("<s>") ||
         instructions.includes("/s>") ||
         instructions.includes("[INST]") ||
@@ -97,20 +96,20 @@ export async function predict({
   // need to do some cleanup of the garbage the LLM might have gave us
   return (
     instructions
-    .replaceAll("<|end|>", "")
-    .replaceAll("<s>", "")
-    .replaceAll("</s>", "")
-    .replaceAll("/s>", "")
-    .replaceAll("[INST]", "")
-    .replaceAll("[/INST]", "") 
-    .replaceAll("<SYS>", "")
-    .replaceAll("<<SYS>>", "")
-    .replaceAll("</SYS>", "")
-    .replaceAll("<</SYS>>", "")
-    .replaceAll("<|system|>", "")
-    .replaceAll("<|user|>", "")
-    .replaceAll("<|all|>", "")
-    .replaceAll("<|assistant|>", "")
-    .replaceAll('""', '"')
+      .replaceAll("<|end|>", "")
+      .replaceAll("<s>", "")
+      .replaceAll("</s>", "")
+      .replaceAll("/s>", "")
+      .replaceAll("[INST]", "")
+      .replaceAll("[/INST]", "")
+      .replaceAll("<SYS>", "")
+      .replaceAll("<<SYS>>", "")
+      .replaceAll("</SYS>", "")
+      .replaceAll("<</SYS>>", "")
+      .replaceAll("<|system|>", "")
+      .replaceAll("<|user|>", "")
+      .replaceAll("<|all|>", "")
+      .replaceAll("<|assistant|>", "")
+      .replaceAll('""', '"')
   )
 }

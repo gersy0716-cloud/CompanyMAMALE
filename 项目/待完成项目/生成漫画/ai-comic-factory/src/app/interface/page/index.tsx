@@ -67,32 +67,26 @@ export function Page({ page }: { page: number }) {
         padding: `${Math.round((zoomLevel / 100) * 16)}px`
         // marginLeft: `${zoomLevel > 100 ? `100`}`
       }}
-      >
+    >
       <div
-      className={cn(
-        aspectRatio,
-        `transition-all duration-100 ease-in-out`,
-        `border border-stone-200`,
-        `shadow-2xl`,
-        `print:shadow-none`,
-        `print:border-0`,
-      )}
-      style={{
-        padding: `${Math.round((zoomLevel / 100) * 16)}px`
-        // marginLeft: `${zoomLevel > 100 ? `100`}`
-      }}
+        className={cn(
+          aspectRatio,
+          `transition-all duration-300 ease-in-out`,
+          `bg-white rounded-[var(--radius-lg)]`,
+          `border border-white/40 shadow-xl`,
+          `hover:shadow-2xl hover:-translate-y-1`,
+          `print:shadow-none`,
+          `print:border-0`,
+        )}
+        style={{
+          padding: `${Math.round((zoomLevel / 100) * 20)}px`
+        }}
       >
-       <LayoutElement page={page} nbPanels={panelsPerPage} />
+        <LayoutElement page={page} nbPanels={panelsPerPage} />
       </div>
       {currentNbPages > 1 &&
-        <p className="w-full text-center pt-4 font-sans text-2xs font-semibold text-stone-600">
-          {page + 1}/{maxNbPages}
-          {/*
-          alternative styles:
-          Page {page + 1}
-          Page {page + 1} / {maxNbPages}
-          {page + 1} / {maxNbPages}
-          */}
+        <p className="w-full text-center pt-6 font-[var(--font-heading)] text-xs font-bold text-[var(--text-muted)]">
+          第 {page + 1} 页 / 共 {maxNbPages} 页
         </p>}
     </div>
   )

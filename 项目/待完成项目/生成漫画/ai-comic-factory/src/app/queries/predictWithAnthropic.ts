@@ -1,4 +1,3 @@
-"use server"
 
 import { LLMPredictionFunctionParams } from '@/types';
 import Anthropic from '@anthropic-ai/sdk';
@@ -10,18 +9,10 @@ export async function predict({
   nbMaxNewTokens,
   llmVendorConfig
 }: LLMPredictionFunctionParams): Promise<string> {
-  const anthropicApiKey = `${
-    llmVendorConfig.apiKey ||
-    process.env.AUTH_ANTHROPIC_API_KEY ||
-    ""
-  }`
-  const anthropicApiModel = `${
-    llmVendorConfig.modelId ||
-    process.env.LLM_ANTHROPIC_API_MODEL ||
-    "claude-3-opus-20240229"
-  }`
+  const anthropicApiKey = ""
+  const anthropicApiModel = "claude-3-opus-20240229"
   if (!anthropicApiKey) { throw new Error(`cannot call Anthropic without an API key`) }
-  
+
   const anthropic = new Anthropic({
     apiKey: anthropicApiKey,
   })

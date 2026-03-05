@@ -18,7 +18,6 @@ import { Page } from "./interface/page"
 import { getStoryContinuation } from "./queries/getStoryContinuation"
 import { localStorageKeys } from "./interface/settings-dialog/localStorageKeys"
 import { defaultSettings } from "./interface/settings-dialog/defaultSettings"
-import { SignUpCTA } from "./interface/sign-up-cta"
 import { useLLMVendorConfig } from "@/lib/useLLMVendorConfig"
 
 export default function Main() {
@@ -64,7 +63,7 @@ export default function Main() {
     localStorageKeys.userDefinedMaxNumberOfPages,
     defaultSettings.userDefinedMaxNumberOfPages
   )
-  
+
   const numberOfPanels = Object.keys(panels).length
   const panelGenerationStatus = useStore(s => s.panelGenerationStatus)
   const allStatus = Object.values(panelGenerationStatus)
@@ -82,7 +81,7 @@ export default function Main() {
     hasAtLeastOnePage &&
     hasNoPendingGeneration &&
     hasStillMorePagesToGenerate
-  
+
   /*
   console.log("<Main>: " + JSON.stringify({
     currentNbPages,
@@ -140,7 +139,7 @@ export default function Main() {
     // we wouldn't still have remnants of the previous comic
     // in the data sent to the LLM (also the page cursor would be wrong)
     if (
-      prompt !== ref.current.prompt || 
+      prompt !== ref.current.prompt ||
       preset?.label !== ref.current.preset) {
       // console.log("overwriting ref.current!")
       ref.current = {
@@ -165,14 +164,14 @@ export default function Main() {
       if (limitedStylePrompt.length !== stylePrompt.length) {
         console.log("Sorry folks, the style prompt was cut to:", limitedStylePrompt)
       }
-    
+
       // new experimental prompt: let's drop the user prompt, and only use the style
       const lightPanelPromptPrefix: string = joinWords(preset.imagePrompt(limitedStylePrompt))
-    
+
       // this prompt will be used if the LLM generation failed
       const degradedPanelPromptPrefix: string = joinWords([
         ...preset.imagePrompt(limitedStylePrompt),
-    
+
         // we re-inject the story, then
         userStoryPrompt
       ])
@@ -188,7 +187,7 @@ export default function Main() {
         "ref.current:": ref.current,
       }, null, 2))
       */
-    
+
       for (
         let currentPanel = previousNbPanels;
         currentPanel < currentNbPanels;
@@ -214,20 +213,20 @@ export default function Main() {
           // console.log("ref.current.existingPanels.push(...candidatePanels) successful, now we have ref.current.existingPanels = ", ref.current.existingPanels)
 
           // console.log(`main.tsx: converting the ${nbPanelsToGenerate} new panels into image prompts..`)
-         
+
           const startAt = currentPanel
           const endAt = currentPanel + nbPanelsToGenerate
           for (let p = startAt; p < endAt; p++) {
             ref.current.newCaptions.push(ref.current.existingPanels[p]?.caption.trim() || "...")
             ref.current.newSpeeches.push(ref.current.existingPanels[p]?.speech.trim() || "...")
             const newPanel = joinWords([
-    
+
               // what we do here is that ideally we give full control to the LLM for prompting,
               // unless there was a catastrophic failure, in that case we preserve the original prompt
               ref.current.existingPanels[p]?.instructions
-              ? lightPanelPromptPrefix
-              : degradedPanelPromptPrefix,
-    
+                ? lightPanelPromptPrefix
+                : degradedPanelPromptPrefix,
+
               ref.current.existingPanels[p]?.instructions || ""
             ])
             ref.current.newPanelsPrompts.push(newPanel)
@@ -243,7 +242,7 @@ export default function Main() {
           setGeneratingStory(false)
 
           // TODO generate the clap here
-          
+
         } catch (err) {
           console.log("main.tsx: LLM generation failed:", err)
           setGeneratingStory(false)
@@ -254,18 +253,18 @@ export default function Main() {
           console.log("main.tsx: we are halfway there, hold tight!")
           // setWaitABitMore(true)
         }
-        
+
         // we could sleep here if we want to
         // await sleep(1000)
       }
-   
+
       /*
       setTimeout(() => {
         setGeneratingStory(false)
         setWaitABitMore(false)
       }, enableRateLimiter ? 12000 : 0)
       */
- 
+
     })
   }, [
     prompt,
@@ -279,14 +278,12 @@ export default function Main() {
     <Suspense>
       <TopMenu />
       <div className={cn(
-        `flex items-start w-screen h-screen pt-24 md:pt-[72px] overflow-y-scroll`,
+        `flex items-start w-screen h-screen pt-32 overflow-y-scroll`,
         `transition-all duration-200 ease-in-out`,
-        zoomLevel > 105 ? `px-0` : `pl-1 pr-8 md:pl-16 md:pr-16`,
+        zoomLevel > 105 ? `px-0` : `px-6 md:px-12 lg:px-24`,
 
         // important: in "print" mode we need to allow going out of the screen
-        `print:pt-0 print:px-0 print:pl-0 print:pr-0 print:h-auto print:w-auto print:overflow-visible`,
-
-        fonts.actionman.className
+        `print:pt-0 print:px-0 print:pl-0 print:pr-0 print:h-auto print:w-auto print:overflow-visible`
       )}>
         <div
           className={cn(
@@ -301,7 +298,7 @@ export default function Main() {
               currentNbPages > 1 ? `md:grid-cols-2` : ``,
 
               // spaces between pages
-              `gap-x-3 gap-y-4 md:gap-x-8 lg:gap-x-12 xl:gap-x-16`,
+              `gap-x-6 gap-y-8`,
 
               // when printed
               `print:gap-x-3 print:gap-y-4 print:grid-cols-1`,
@@ -312,39 +309,45 @@ export default function Main() {
             {Array(currentNbPages).fill(0).map((_, i) => <Page key={i} page={i} />)}
           </div>
           {
-          showNextPageButton &&
+            showNextPageButton &&
             <div className={cn(
-              `flex flex-col space-y-2 pt-2 pb-6 text-gray-600 dark:text-gray-600`,
+              `flex flex-col items-center space-y-4 pt-8 pb-12`,
               `print:hidden`
             )}>
-              <div>Happy with your story?</div>
-              <div>You can <Button onClick={() => {
-                setCurrentNbPages(currentNbPages + 1)
-              }}>Add page {currentNbPages + 1} 👀</Button></div>
+              <div className="text-[var(--text-muted)] font-medium">对当前故事满意吗？</div>
+              <Button
+                className="bg-[var(--secondary)] hover:scale-105 transition-transform rounded-full px-8"
+                onClick={() => {
+                  setCurrentNbPages(currentNbPages + 1)
+                }}>继续生成第 {currentNbPages + 1} 页 👀</Button>
             </div>
           }
         </div>
       </div>
-      <SignUpCTA />
       <Zoom />
       <BottomBar />
       <div className={cn(
         `print:hidden`,
-        `z-20 fixed inset-0`,
+        `z-50 fixed inset-0`,
         `flex flex-row items-center justify-center`,
-        `transition-all duration-300 ease-in-out`,
+        `transition-all duration-500 ease-in-out`,
         isGeneratingStory
-          ? `bg-zinc-50/30 backdrop-blur-md`
-          : `bg-zinc-50/0 backdrop-blur-none pointer-events-none`,
-        fonts.actionman.className
+          ? `bg-white/40 backdrop-blur-xl`
+          : `opacity-0 pointer-events-none`,
+        `font-[var(--font-heading)]`
       )}>
         <div className={cn(
-          `text-center text-xl text-stone-700 w-[70%]`,
-          isGeneratingStory ? ``: `scale-0 opacity-0`,
-          `transition-all duration-300 ease-in-out`,
+          `text-center p-12 bg-white/80 rounded-[var(--radius-lg)] shadow-2xl border border-white/50`,
+          `transition-all duration-500 ease-in-out transform`,
+          isGeneratingStory ? `scale-100 opacity-100` : `scale-90 opacity-0`,
         )}>
-          {waitABitMore ? `Story is ready, but server is a bit busy!`: 'Generating a new story..'}<br/>
-          {waitABitMore ? `Please hold tight..` : ''}
+          <div className="w-12 h-12 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <div className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent mb-2">
+            {waitABitMore ? `正在努力加载中...` : '正在构思精彩分镜...'}
+          </div>
+          <div className="text-[var(--text-muted)]">
+            {waitABitMore ? `请求较多，请稍候片刻...` : '码码乐 AI 正在为您排版布局'}
+          </div>
         </div>
       </div>
     </Suspense>

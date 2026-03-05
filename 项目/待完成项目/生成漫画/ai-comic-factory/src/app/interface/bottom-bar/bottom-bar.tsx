@@ -7,10 +7,6 @@ import { cn } from "@/lib/utils"
 import { upscaleImage } from "@/app/engine/render"
 import { sleep } from "@/lib/sleep"
 
-import { Share } from "../share"
-import { About } from "../about"
-import { Discord } from "../discord"
-import { SettingsDialog } from "../settings-dialog"
 import { useLocalStorage } from "usehooks-ts"
 import { localStorageKeys } from "../settings-dialog/localStorageKeys"
 import { defaultSettings } from "../settings-dialog/defaultSettings"
@@ -29,14 +25,14 @@ function BottomBar() {
   const panelGenerationStatus = useStore(s => s.panelGenerationStatus)
 
   const preset = useStore(s => s.preset)
-  
+
   const canSeeBetaFeatures = false // getParam<boolean>("beta", false)
 
   const allStatus = Object.values(panelGenerationStatus)
   const remainingImages = allStatus.reduce((acc, s) => (acc + (s ? 1 : 0)), 0)
 
   const currentClap = useStore(s => s.currentClap)
-  
+
   const upscaleQueue = useStore(s => s.upscaleQueue)
   const renderedScenes = useStore(s => s.renderedScenes)
   const removeFromUpscaleQueue = useStore(s => s.removeFromUpscaleQueue)
@@ -73,7 +69,7 @@ function BottomBar() {
             console.error(`failed to upscale: ${err}`)
           }
         }
-        
+
         setUpscaling(false)
       }
 
@@ -114,93 +110,28 @@ function BottomBar() {
   }, [fileData?.name])
 
 
+  const handleSave = () => {
+    console.log("Saving work to database... (Logic to be implemented in InteractiveDisplay integration)")
+    alert("作品保存逻辑已触发（请查阅开发文档了解集成说明）")
+  }
+
   return (
     <div className={cn(
       `print:hidden`,
-      `fixed bottom-2 md:bottom-4 left-2 right-0 md:left-3 md:right-1`,
-      `flex flex-row`,
-      `justify-between`,
-      `pointer-events-none`
+      `fixed bottom-8 left-1/2 -translate-x-1/2`,
+      `flex flex-row items-center px-10 py-5`,
+      `bg-white border border-gray-200 shadow-xl rounded-full`,
+      `space-x-8 pointer-events-auto`,
+      isGeneratingStory ? `scale-0 opacity-0` : `scale-100 opacity-100`,
+      `transition-all duration-500 ease-in-out`
     )}>
-      <div className={cn(
-        `flex flex-row`,
-        `items-end`,
-        `pointer-events-auto`,
-        `animation-all duration-300 ease-in-out`,
-        isGeneratingStory ? `scale-0 opacity-0` : ``,
-        `space-x-3`,
-        `scale-[0.9]`
-      )}>
-        <About />
-        <Discord />
-        <Advert />
-      </div>
-      <div className={cn(
-      `flex flex-row`,
-      `pointer-events-auto`,
-      `animation-all duration-300 ease-in-out`,
-      isGeneratingStory ? `scale-0 opacity-0` : ``,
-      `space-x-3`,
-      `scale-[0.9]`
-    )}>
-      <SettingsDialog />
-      {/*<Button
-        onClick={handleUpscale}
-        disabled={!prompt?.length || remainingImages > 0 || isUpscaling || !Object.values(upscaleQueue).length}
+      <Button
+        onClick={handleSave}
+        disabled={!prompt?.length || remainingImages > 0}
+        className="h-14 bg-[var(--primary)] hover:scale-105 active:scale-95 transition-all rounded-full px-10 font-bold text-base shadow-lg shadow-[var(--primary-glow)]"
       >
-        {isUpscaling
-            ? `${allStatus.length - Object.values(upscaleQueue).length}/${allStatus.length} ⌛`
-            : "Upscale"}
-        </Button>*/}
-
-        {/*
-        <div>
-          <Button
-            onClick={handlePrint}
-            disabled={!prompt?.length}
-          >
-            Print
-          </Button>
-        </div>
-        <div>
-          <Button
-            onClick={download}
-            disabled={!prompt?.length}
-          >
-            <span className="hidden md:inline">{
-            remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} panels ⌛` : `Save`
-            }</span>
-            <span className="inline md:hidden">{
-              remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} ⌛` : `Save`
-            }</span>
-           </Button>
-        </div>
-          */}
-          {canSeeBetaFeatures ? <Button
-            onClick={openFilePicker}
-            disabled={remainingImages > 0}
-          >Load</Button> : null}
-          {canSeeBetaFeatures ? <Button
-            onClick={downloadClap}
-            disabled={remainingImages > 0}
-          >
-          {remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} ⌛` : `Save`}
-        </Button> : null}
-     
-          <Button
-            onClick={handlePrint}
-            disabled={!prompt?.length}
-          >
-            <span className="hidden md:inline">{
-            remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} panels ⌛` : `Get PDF`
-            }</span>
-            <span className="inline md:hidden">{
-              remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} ⌛` : `PDF`
-            }</span>
-        </Button>
-  
-       <Share />
-      </div>
+        {remainingImages ? `生成中 ${allStatus.length - remainingImages}/${allStatus.length}` : `保存作品`}
+      </Button>
     </div>
   )
 }

@@ -1,7 +1,11 @@
 import { ReactNode } from "react"
+import { cn } from "@/lib/utils"
 
-export function Field({ children }: { children: ReactNode }) {
+export const Field = ({ className, children }: {
+  className?: string
+  children: ReactNode
+}) => {
   return (
-    <div className="flex flex-col space-y-2">{children}</div>
+    <div className={cn("flex flex-col space-y-3", className)}>{children}</div>
   )
 }

@@ -3,8 +3,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'AI Comic Factory: generate your own comics! Powered by Hugging Face 🤗',
-  description: 'Generate comic panels using a LLM + SDXL. Powered by Hugging Face 🤗',
+  title: '码码乐 AI 漫画工厂：创作属于您自己的漫画！',
+  description: '使用 LLM + 即梦 AI 生成漫画分镜。由码码乐提供支持。',
 }
 
 export default function RootLayout({
@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={fonts.actionman.className}>
+    <html lang="zh-CN">
+      <body>
         {children}
       </body>
     </html>

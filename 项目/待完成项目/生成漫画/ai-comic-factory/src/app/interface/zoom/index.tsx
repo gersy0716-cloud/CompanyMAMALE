@@ -10,15 +10,14 @@ export function Zoom() {
   return (
     <div className={cn(
       `print:hidden`,
-      // `fixed flex items-center justify-center bottom-8 top-32 right-8 z-10 h-screen`,
-      `fixed flex flex-col items-center bottom-8 top-40 right-2 md:top-28 md:right-6 z-10`,
-      `animation-all duration-300 ease-in-out`,
+      `fixed flex flex-col items-center bottom-44 right-8 z-10`,
+      `transition-all duration-300 ease-in-out font-[var(--font-main)]`,
       isGeneratingStory ? `scale-0 opacity-0` : ``,
     )}>
-      <div className="font-bold text-xs pb-2 text-stone-600 bg-stone-50 dark:text-stone-600 dark:bg-stone-50 p-1 rounded-sm">
-        Zoom
+      <div className="font-bold text-sm mb-4 px-4 py-2 backdrop-blur-md bg-white/60 border border-white/40 text-[var(--text-main)] rounded-full shadow-lg">
+        页面缩放
       </div>
-      <div className="w-2">
+      <div className="w-4 h-80">
         <VerticalSlider
           defaultValue={[zoomLevel]}
           min={30}
@@ -26,7 +25,7 @@ export function Zoom() {
           step={1}
           onValueChange={value => setZoomLevel(value[0] || 10)}
           value={[zoomLevel]}
-          className="h-64 md:h-80"
+          className="h-full"
           orientation="vertical"
         />
       </div>

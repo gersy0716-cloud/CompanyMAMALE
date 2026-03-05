@@ -1,4 +1,3 @@
-"use server"
 
 import type { ChatCompletionMessageParam } from "openai/resources/chat"
 import OpenAI from "openai"
@@ -10,21 +9,9 @@ export async function predict({
   nbMaxNewTokens,
   llmVendorConfig
 }: LLMPredictionFunctionParams): Promise<string> {
-  const openaiApiKey = `${
-    llmVendorConfig.apiKey ||
-    process.env.AUTH_OPENAI_API_KEY ||
-    ""
-  }`
-  const openaiApiModel = `${
-    llmVendorConfig.modelId ||
-    process.env.LLM_OPENAI_API_MODEL ||
-    "gpt-4-turbo"
-  }`
-
-  if (!openaiApiKey) { throw new Error(`cannot call OpenAI without an API key`) }
-  
-
-  const openaiApiBaseUrl = `${process.env.LLM_OPENAI_API_BASE_URL || "https://api.openai.com/v1"}`
+  const openaiApiKey = "sk-bfsoBhqtsjZ1x5sqbKrA4mFg0DH7aUQMlToVykNJ5IGnww7r"
+  const openaiApiModel = "gemini-3-pro-preview"
+  const openaiApiBaseUrl = "https://dalu.chatgptten.com/v1"
 
   const openai = new OpenAI({
     apiKey: openaiApiKey,

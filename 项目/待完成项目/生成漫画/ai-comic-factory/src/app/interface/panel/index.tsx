@@ -39,7 +39,7 @@ export function Panel({
   className?: string
   width?: number
   height?: number
- }) {
+}) {
   // index of the panel in the whole app
   const panelIndex = page * nbPanels + panel
 
@@ -65,11 +65,11 @@ export function Panel({
   const speeches = useStore(s => s.speeches)
   const speech = speeches[panelIndex] || ""
   const setPanelSpeech = useStore(s => s.setPanelSpeech)
-  
+
   const captions = useStore(s => s.captions)
   const caption = captions[panelIndex] || ""
   const setPanelCaption = useStore(s => s.setPanelCaption)
-  
+
   const zoomLevel = useStore(s => s.zoomLevel)
 
   const addToUpscaleQueue = useStore(s => s.addToUpscaleQueue)
@@ -89,13 +89,13 @@ export function Panel({
 
   const timeoutRef = useRef<any>(null)
 
-  const enableRateLimiter = `${process.env.NEXT_PUBLIC_ENABLE_RATE_LIMITER}`  === "true"
+  const enableRateLimiter = false
 
   const [renderingModelVendor, _setRenderingModelVendor] = useLocalStorage<RenderingModelVendor>(
     localStorageKeys.renderingModelVendor,
     defaultSettings.renderingModelVendor
   )
-  
+
   let delay = enableRateLimiter ? (1000 + (500 * panelIndex)) : 1000
 
 
@@ -146,7 +146,7 @@ export function Panel({
   // the value is between 12 and 20, default is 16
   // This is not the ideal wait to configure this,
   // but the AI Comic Factory is a just a prototype, so it will do
-  
+
   const nbFrames = preset.id.startsWith("video")
     ? 16
     : 1
@@ -177,13 +177,13 @@ export function Panel({
         let cacheInvalidationHack = ""
         const nbMaxRevisions = 20
         for (let i = 0; i < revision && revision < nbMaxRevisions; i++) {
-          const j =  Math.random() 
+          const j = Math.random()
           cacheInvalidationHack += j < 0.3 ? "_" : j < 0.6 ? "," : "-"
         }
 
         let newRendered: RenderedScene
         try {
-  
+
           newRendered = await newRender({
             prompt: cacheInvalidationHack + " " + prompt,
             width,
@@ -279,8 +279,8 @@ export function Panel({
 
         if (newRendered.status === "pending") {
           timeoutRef.current = setTimeout(checkStatus, delay)
-        } else if (!newRendered.status || newRendered.status === "error" || 
-        (newRendered.status === "completed" && !newRendered.assetUrl?.length)) {
+        } else if (!newRendered.status || newRendered.status === "error" ||
+          (newRendered.status === "completed" && !newRendered.assetUrl?.length)) {
           try {
             // we try only once
             const newAttempt = await newRender({
@@ -304,7 +304,7 @@ export function Panel({
           setGeneratingImages(panelId, false)
           addToUpscaleQueue(panelId, newRendered)
           addSpeechBubble()
-  
+
         }
       } catch (err) {
         console.error(err)
@@ -330,7 +330,7 @@ export function Panel({
     startImageGeneration({ prompt, width, height, nbFrames, revision })
 
     clearTimeout(timeoutRef.current)
-    
+
     // normally it should reply in < 1sec, but we could also use an interval
     timeoutRef.current = setTimeout(checkStatus, delay)
 
@@ -369,14 +369,15 @@ export function Panel({
     //`flex`,
     `relative`,
     `w-full h-full`,
-    `border-stone-800`,
+    `bg-white`,
+    `border-gray-300`,
     `transition-all duration-200 ease-in-out`,
-    zoomLevel > 140 ? `border-[2px] md:border-[4px] rounded-sm md:rounded-md` :
-    zoomLevel > 120 ? `border-[1.5px] md:border-[3px] rounded-xs md:rounded-sm` :
-    zoomLevel > 90 ? `border-[1px] md:border-[2px] rounded-xs md:rounded-sm` :
-    zoomLevel > 40 ? `border-[0.5px] md:border-[1px] rounded-none md:rounded-xs` :
-    `border-transparent md:border-[0.5px] rounded-none md:rounded-none`,
-    `shadow-sm`,
+    zoomLevel > 140 ? `border-[2px] md:border-[4px] rounded-xl` :
+      zoomLevel > 120 ? `border-[1.5px] md:border-[3px] rounded-lg` :
+        zoomLevel > 90 ? `border-[1px] md:border-[2px] rounded-md` :
+          zoomLevel > 40 ? `border-[0.5px] md:border-[1px] rounded-sm` :
+            `border-transparent md:border-[0.5px] rounded-none`,
+    `shadow-lg hover:shadow-xl`,
     `overflow-hidden`,
     `print:border-[1.5px] print:shadow-none`,
   )
@@ -403,7 +404,7 @@ export function Panel({
         `flex flex-col items-center justify-center`,
         className,
       )}>
-       <Progress isLoading />
+        <Progress isLoading />
       </div>
     )
   }
@@ -418,76 +419,76 @@ export function Panel({
       { "grayscale": preset.color === "grayscale" },
       className
     )}
-    onMouseEnter={() => setMouseOver(true)}
-    onMouseLeave={() => setMouseOver(false)}
+      onMouseEnter={() => setMouseOver(true)}
+      onMouseLeave={() => setMouseOver(false)}
     >
       {(prompt && rendered.assetUrl && caption)
         ? <Bubble onChange={handleSaveCaption}>{caption}</Bubble>
         : null}
       <div
+        className={cn(
+          `absolute`,
+          `top-0 w-full`,
+          `flex justify-between`,
+          `p-2 space-x-2`,
+          `print:hidden`
+        )}>
+        <div
+          onClick={
+            hasSucceededOrFailed
+              ? handleReload
+              : undefined}
           className={cn(
-            `absolute`,
-            `top-0 w-full`,
-            `flex justify-between`,
-            `p-2 space-x-2`,
-            `print:hidden`
+            `bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl`,
+            `flex flex-row space-x-2 items-center`,
+            `py-1.5 px-4 md:py-2 md:px-5`,
+            `transition-all duration-200 ease-in-out shadow-sm`,
+            hasSucceededOrFailed
+              ? "opacity-95 cursor-pointer hover:bg-white hover:shadow-md"
+              : "opacity-50 cursor-wait",
+            mouseOver && (
+              hasSucceededOrFailed
+            ) ? `scale-100 opacity-100` : `scale-0`
+          )}>
+          <RxReload
+            className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
+          />
+          <span className={cn(
+            zoomLevel > 80
+              ? `text-xs md:text-sm lg:text-base` :
+              zoomLevel > 40
+                ? `text-2xs md:text-xs lg:text-sm` :
+                `text-3xs md:text-2xs lg:text-xs`
+          )}>Redraw</span>
+        </div>
+        <EditModal
+          isEnabled={hasSucceededOrFailed}
+          existingPrompt={prompt}
+          onSave={handleSavePrompt}
+        >
+          <div
+            className={cn(
+              `bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl`,
+              `flex flex-row space-x-2 items-center`,
+              `py-1.5 px-4 md:py-2 md:px-5 cursor-pointer`,
+              `transition-all duration-200 ease-in-out shadow-sm`,
+              hasSucceededOrFailed ? "opacity-95 hover:bg-white hover:shadow-md" : "opacity-50",
+              mouseOver && hasSucceededOrFailed ? `scale-100 opacity-100` : `scale-0`
             )}>
-            <div
-              onClick={
-                hasSucceededOrFailed
-                ? handleReload
-                : undefined}
-              className={cn(
-                `bg-stone-100 rounded-lg`,
-                `flex flex-row space-x-2 items-center`,
-                `py-1 px-2 md:py-2 md:px-3`,
-                `transition-all duration-200 ease-in-out`,
-                hasSucceededOrFailed
-                ?  "opacity-95 cursor-pointer"
-                : "opacity-50 cursor-wait",
-                mouseOver && (
-                  hasSucceededOrFailed
-                ) ? `scale-95 hover:scale-100 hover:opacity-100`: `scale-0`
-              )}>
-              <RxReload
-                className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
-              />
-              <span className={cn(
-                zoomLevel > 80
+            <RxPencil2
+              className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
+            />
+            <span className={cn(
+              zoomLevel > 80
                 ? `text-xs md:text-sm lg:text-base` :
                 zoomLevel > 40
-                ? `text-2xs md:text-xs lg:text-sm` :
-                  `text-3xs md:text-2xs lg:text-xs`
-              )}>Redraw</span>
-            </div>
-            <EditModal
-              isEnabled={hasSucceededOrFailed}
-              existingPrompt={prompt}
-              onSave={handleSavePrompt}
-            >
-              <div
-                className={cn(
-                  `bg-stone-100 rounded-lg`,
-                  `flex flex-row space-x-2 items-center`,
-                  `py-1 px-3 md:py-2 md:px-3 cursor-pointer`,
-                  `transition-all duration-200 ease-in-out`,
-                  hasSucceededOrFailed ? "opacity-95" : "opacity-50",
-                  mouseOver && hasSucceededOrFailed ? `scale-95 hover:scale-100 hover:opacity-100`: `scale-0`
-                )}>
-                <RxPencil2
-                  className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
-                />
-                <span className={cn(
-                  zoomLevel > 80
-                  ? `text-xs md:text-sm lg:text-base` :
-                  zoomLevel > 40
                   ? `text-2xs md:text-xs lg:text-sm` :
-                    `text-3xs md:text-2xs lg:text-xs`
-                  )}>Edit</span>
-              </div>
-                        
-            </EditModal>
-       </div>
+                  `text-3xs md:text-2xs lg:text-xs`
+            )}>Edit</span>
+          </div>
+
+        </EditModal>
+      </div>
 
       {rendered.assetUrl &&
         <img
@@ -505,7 +506,7 @@ export function Panel({
             // `max-w-max`,
 
             // showCaptions ? `-mt-11` : ''
-            )}
+          )}
         />}
     </div>
   )

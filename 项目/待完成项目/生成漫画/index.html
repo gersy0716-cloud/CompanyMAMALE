@@ -4,63 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 漫画生成器 - 码码乐</title>
+    <title>AI 漫画生成器 - 码码乐互动平台</title>
     <link rel="stylesheet" href="style.css">
     <!-- Google Fonts: Inter & Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@500;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
+    <!-- 背景装饰 (InteractiveDisplay DNA) -->
+    <div class="bg-decorations">
+        <div class="decor-circle decor-1"></div>
+        <div class="decor-circle decor-2"></div>
+        <div class="decor-circle decor-3"></div>
+    </div>
+
     <div class="app-container">
-        <!-- 背景装饰 -->
-        <div class="bg-glow"></div>
+        <!-- 顶部导航 (InteractiveDisplay DNA) -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-icon">🎮</div>
+                <span class="brand-name">AI 互动平台</span>
+            </div>
+            <div class="nav-actions">
+                <button class="glass-btn">
+                    <span>💎</span>
+                    <span>数字资产</span>
+                </button>
+                <button class="glass-btn" style="width: 44px; justify-content: center; padding: 0;">
+                    <span>⚙️</span>
+                </button>
+            </div>
+        </nav>
 
         <header class="app-header">
-            <h1 class="logo">码码乐<span>AI</span></h1>
+            <h1>AI 生漫画</h1>
             <p class="subtitle">一句话，开启你的漫画宇宙</p>
         </header>
 
         <main class="main-content">
-            <!-- 输入区域 (Bento Card) -->
-            <section class="card hero-card">
+            <!-- 核心交互区 (Bento Hero Card) -->
+            <section class="hero-card">
                 <div class="input-wrapper">
                     <textarea id="promptInput" placeholder="描述你的故事场景... (例如：宇航员在火星发现一只发光的猫咪)"></textarea>
-                    <button id="generateBtn" class="primary-btn">
-                        <span class="btn-text">立即生成</span>
-                        <div class="btn-glow"></div>
-                    </button>
+                    <button id="generateBtn" class="primary-btn">立即生成</button>
                 </div>
 
                 <div class="presets-container">
-                    <label>选择风格：</label>
+                    <label>选择风格</label>
                     <div id="stylePresets" class="preset-chips">
                         <!-- 由 JS 填充 -->
                     </div>
                 </div>
             </section>
 
-            <!-- 状态展示 -->
-            <section id="statusArea" class="status-overlay hidden">
-                <div class="loader-card">
-                    <div class="spinner"></div>
-                    <p id="statusText">正在构思分镜...</p>
-                </div>
-            </section>
-
             <!-- 漫画预览区 (Bento Grid) -->
             <section id="comicGrid" class="comic-grid">
                 <!-- 由 JS 填充生成的漫画卡片 -->
-                <div class="empty-state">
-                    <div class="empty-icon">🎨</div>
-                    <p>由文字变身漫画，在此见证奇迹</p>
-                </div>
             </section>
         </main>
 
-        <footer class="app-footer">
-            <p>&copy; 2026 码码乐 AI Lab. 基于 DeepSeek & 即梦 驱动.</p>
-        </footer>
+        <!-- 状态展示 (Glass Style) -->
+        <section id="statusArea" class="status-overlay hidden">
+            <div class="loader-card">
+                <div class="spinner"></div>
+                <p id="statusText">正在构思分镜...</p>
+            </div>
+        </section>
+
     </div>
 
     <script src="main.js"></script>

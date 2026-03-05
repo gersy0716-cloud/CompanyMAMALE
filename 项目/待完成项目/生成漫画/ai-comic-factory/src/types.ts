@@ -104,6 +104,7 @@ export type LLMEngine =
   | "REPLICATE"
   | "GROQ"
   | "ANTHROPIC"
+  | "MAMALE"
 
 export type RenderingEngine =
   | "VIDEOCHAIN"
@@ -112,6 +113,7 @@ export type RenderingEngine =
   | "INFERENCE_API"
   | "INFERENCE_ENDPOINT"
   | "TUZI"
+  | "MAMALE"
 
 export type RenderingModelVendor =
   | "SERVER"
@@ -126,6 +128,7 @@ export type LLMVendor =
   | "OPENAI"
   | "GROQ"
   | "ANTHROPIC"
+  | "MAMALE"
 
 export type LLMVendorConfig = {
   vendor: LLMVendor

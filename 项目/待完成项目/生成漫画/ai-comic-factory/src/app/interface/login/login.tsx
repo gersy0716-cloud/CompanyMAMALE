@@ -7,7 +7,7 @@ import { useOAuth } from "@/lib/useOAuth"
 
 function Login() {
   const { login } = useOAuth({ debug: false })
-  return <Button onClick={login} className="text-xl">Sign-in with Hugging Face</Button>
+  return <Button onClick={login} className="text-xl font-[var(--font-main)]">通过码码乐登录</Button>
 }
 
 export default Login

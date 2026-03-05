@@ -42,7 +42,7 @@ ${uploadUrl
   : (`(please drag & drop a capture of your comic here - we recommend you to print the PDF and convert it to JPG for best quality!)`)}
 `;
     */
-     
+
     const storyPrompt = (prompt.split("||")[1] || "")
 
     const storyPromptMd = storyPrompt ? `
@@ -58,7 +58,7 @@ ${uploadUrl
 ` : ``
 
     const comicFileMd =
-`### Comic:
+      `### Comic:
 
 Drag & drop your comic image (converted to JPG) here!
 `
@@ -76,76 +76,73 @@ ${comicFileMd}`;
     const slicedStory = storyPrompt.slice(0, 77)
 
     const params = new URLSearchParams({
-      title: `[Comic] ${
-        slicedStory
-      }${
-        slicedStory !== storyPrompt ? '...' : ''
-      }${
-        stylePrompt ? `(${stylePrompt.slice(0, 77)
-      })` : ''}`,
+      title: `[Comic] ${slicedStory
+        }${slicedStory !== storyPrompt ? '...' : ''
+        }${stylePrompt ? `(${stylePrompt.slice(0, 77)
+          })` : ''}`,
       description: descriptionMd,
-      });
+    });
     const paramsStr = params.toString();
     window.open(`https://huggingface.co/spaces/jbilcke-hf/comic-factory/discussions/new?${paramsStr}`, '_blank');
   }
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           disabled={!prompt?.length}
           className="space-x-1 md:space-x-2"
-          >
+        >
           <div className="scale-105"><HuggingClap /></div>
           <div>
-          <span className="hidden md:inline">{remainingImages ? `⌛` : `Share`}</span>
-        <span className="inline md:hidden">{remainingImages ? `⌛` : `Share`}</span>
+            <span className="hidden md:inline">{remainingImages ? `⌛` : `分享`}</span>
+            <span className="inline md:hidden">{remainingImages ? `⌛` : `分享`}</span>
           </div>
-        </Button> 
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogDescription className="w-full text-center text-lg font-bold text-stone-800">
-            Sharing Your Comic
+            分享您的作品
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4 text-stone-800">
+        <div className="grid gap-4 py-4 text-stone-800 text-sm">
           <p className="">
-            To ensure optimal output quality comics are saved as PDF files:
+            为了保证最佳输出质量，漫画建议保存为 PDF 文件：
           </p>
           <p>
-            👉 Step 1: Click on <Button
-            onClick={handlePrint}
-            disabled={!prompt?.length}
-          >
-            <span className="hidden md:inline">{
-            remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} panels ⌛` : `Get PDF`
-            }</span>
-            <span className="inline md:hidden">{
-              remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} ⌛` : `PDF`
-            }</span>
-        </Button>
+            👉 第一步：点击 <Button
+              onClick={handlePrint}
+              disabled={!prompt?.length}
+              size="sm"
+              className="h-8 mx-1"
+            >
+              <span>{
+                remainingImages ? `${allStatus.length - remainingImages}/${allStatus.length} 正在生图...` : `获取 PDF`
+              }</span>
+            </Button>
           </p>
           <p>
-            👉 Step 2: Select &quot;Print to PDF&quot; in the printing options (Note: if you use Safari, print from the OS menu)
+            👉 第二步：在打印选项中选择“另存为 PDF”（Safari 用户请通过系统菜单打印）。
           </p>
           <p>
-            👉 Step 3: Open your PDF and convert it to a JPG image (using &quot;Export to&quot; or &quot;Convert to&quot;)
+            👉 第三步：打开 PDF 并根据需要导出为 JPG 图像（可选）。
           </p>
           <p>
-            👉 Step 4: Click here to post: <Button
-            onClick={handleShare}
-            className="space-x-2"
-          >
-            <div className="scale-105"><HuggingClap /></div>
-            <div>
-              Share
-            </div>
-          </Button> 
+            👉 第四步：点击这里发布到社区：<Button
+              onClick={handleShare}
+              className="space-x-2"
+              size="sm"
+            >
+              <div className="scale-90"><HuggingClap /></div>
+              <div>
+                分享到码码乐
+              </div>
+            </Button>
           </p>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={() => setOpen(false)}>Close</Button>
+          <Button type="submit" onClick={() => setOpen(false)}>关闭</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

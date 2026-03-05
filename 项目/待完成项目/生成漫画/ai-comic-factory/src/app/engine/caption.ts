@@ -1,8 +1,7 @@
-"use server"
 
 import { ImageAnalysisRequest, ImageAnalysisResponse } from "@/types"
 
-const apiUrl = `${process.env.RENDERING_VIDEOCHAIN_API_URL || ""}`
+const apiUrl = ""
 
 export async function see({
   prompt,
@@ -37,8 +36,8 @@ export async function see({
       },
       body: JSON.stringify(request),
       cache: 'no-store',
-    // we can also use this (see https://vercel.com/blog/vercel-cache-api-nextjs-cache)
-    // next: { revalidate: 1 }
+      // we can also use this (see https://vercel.com/blog/vercel-cache-api-nextjs-cache)
+      // next: { revalidate: 1 }
     })
 
     if (res.status !== 200) {

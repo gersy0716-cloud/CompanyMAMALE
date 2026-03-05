@@ -28,7 +28,7 @@ export interface Preset {
 export const presets: Record<string, Preset> = {
   random: {
     id: "random",
-    label: "Random style",
+    label: "随机风格",
     family: "european",
     color: "color",
     font: "actionman",
@@ -38,7 +38,7 @@ export const presets: Record<string, Preset> = {
   },
   neutral: {
     id: "neutral",
-    label: "Neutral (no style)",
+    label: "自然 (无特定风格)",
     family: "american",
     color: "color",
     font: "actionman",
@@ -46,7 +46,7 @@ export const presets: Record<string, Preset> = {
     imagePrompt: (prompt: string) => [
       prompt,
     ],
-    negativePrompt: () => [ ],
+    negativePrompt: () => [],
   },
   /*
   video_3d_style: {
@@ -64,7 +64,7 @@ export const presets: Record<string, Preset> = {
   */
   japanese_manga: {
     id: "japanese_manga",
-    label: "Japanese",
+    label: "日式漫画",
     family: "asian",
     color: "grayscale",
     font: "actionman",
@@ -93,7 +93,7 @@ export const presets: Record<string, Preset> = {
   },
   nihonga: {
     id: "nihonga",
-    label: "Nihonga",
+    label: "日本画 (Nihonga)",
     family: "asian",
     color: "color",
     font: "actionman",
@@ -121,7 +121,7 @@ export const presets: Record<string, Preset> = {
   },
   franco_belgian: {
     id: "franco_belgian",
-    label: "Franco-Belgian",
+    label: "法比漫 (法式/比利时)",
     family: "european",
     color: "color",
     font: "actionman",
@@ -129,7 +129,7 @@ export const presets: Record<string, Preset> = {
     imagePrompt: (prompt: string) => [
       "bande dessinée",
       "franco-belgian comic",
-       prompt,
+      prompt,
       "comic album",
       "detailed drawing"
       // "color drawing"
@@ -147,7 +147,7 @@ export const presets: Record<string, Preset> = {
   },
   american_comic_90: {
     id: "american_comic_90",
-    label: "American (modern)",
+    label: "现代美漫",
     family: "american",
     color: "color",
     font: "actionman",
@@ -209,7 +209,7 @@ export const presets: Record<string, Preset> = {
   */
   american_comic_50: {
     id: "american_comic_50",
-    label: "American (1950)",
+    label: "复古美漫 (1950s)",
     family: "american",
     color: "color",
     font: "actionman",
@@ -221,7 +221,7 @@ export const presets: Record<string, Preset> = {
       prompt,
       "detailed drawing"
       // "single panel",
-     //  "comicbook style",
+      //  "comicbook style",
       // "color comicbook",
       // "color drawing"
     ],
@@ -269,10 +269,10 @@ export const presets: Record<string, Preset> = {
   },
   */
 
-  
+
   flying_saucer: {
     id: "flying_saucer",
-    label: "Flying saucer",
+    label: "经典科幻",
     family: "european",
     color: "color",
     font: "actionman",
@@ -298,10 +298,10 @@ export const presets: Record<string, Preset> = {
       "3D render"
     ],
   },
- 
+
   humanoid: {
     id: "humanoid",
-    label: "Humanoid",
+    label: "人形生物 (Moebius 风格)",
     family: "european",
     color: "color",
     font: "actionman",
@@ -330,7 +330,7 @@ export const presets: Record<string, Preset> = {
   },
   haddock: {
     id: "haddock",
-    label: "Haddock",
+    label: "哈多克 (Tintin 风格)",
     family: "european",
     color: "color",
     font: "actionman",
@@ -343,8 +343,8 @@ export const presets: Record<string, Preset> = {
       "by Hergé",
       "french comic panel",
       "franco-belgian style",
-     //  "color panel",
-     //  "bande dessinée",
+      //  "color panel",
+      //  "bande dessinée",
       // "single panel",
       // "comic album"
     ],
@@ -385,7 +385,7 @@ export const presets: Record<string, Preset> = {
   */
   armorican: {
     id: "armorican",
-    label: "Armorican",
+    label: "阿莫里卡 (高卢英雄风格)",
     family: "european",
     color: "monochrome",
     font: "actionman",
@@ -416,7 +416,7 @@ export const presets: Record<string, Preset> = {
   },
   render: {
     id: "render",
-    label: "3D Render",
+    label: "3D 渲染 (皮克斯风格)",
     family: "european",
     color: "color",
     font: "actionman",
@@ -442,7 +442,7 @@ export const presets: Record<string, Preset> = {
   },
   klimt: {
     id: "klimt",
-    label: "Klimt",
+    label: "克里姆特 (金箔拼贴风格)",
     family: "european",
     color: "color",
     font: "actionman",
@@ -467,7 +467,7 @@ export const presets: Record<string, Preset> = {
   },
   medieval: {
     id: "medieval",
-    label: "Medieval",
+    label: "中世纪插画",
     family: "european",
     color: "color",
     font: "actionman",
@@ -543,7 +543,7 @@ export const presets: Record<string, Preset> = {
   */
   egyptian: {
     id: "egyptian",
-    label: "Egyptian",
+    label: "古埃及壁画",
     family: "european",
     color: "color",
     font: "actionman",
@@ -587,33 +587,33 @@ export const presets: Record<string, Preset> = {
     ],
   },
   */
- /*
-  pixel: {
-    label: "Pixel",
-    family: "european",
-    color: "color",
-    font: "actionman",
-    llmPrompt: "new movie",
-    imagePrompt: (prompt: string) => [
-      `pixelart`,
-      `isometric`,
-      `pixelated`,
-      `low res`,
-      `${prompt}`,
-    ],
-    negativePrompt: () => [
-      "manga",
-      "anime",
-      "american comic",
-      "grayscale",
-      "monochrome",
-      "painting"
-    ],
-  },
-  */
+  /*
+   pixel: {
+     label: "Pixel",
+     family: "european",
+     color: "color",
+     font: "actionman",
+     llmPrompt: "new movie",
+     imagePrompt: (prompt: string) => [
+       `pixelart`,
+       `isometric`,
+       `pixelated`,
+       `low res`,
+       `${prompt}`,
+     ],
+     negativePrompt: () => [
+       "manga",
+       "anime",
+       "american comic",
+       "grayscale",
+       "monochrome",
+       "painting"
+     ],
+   },
+   */
   photonovel: {
     id: "photonovel",
-    label: "Vintage photonovel",
+    label: "复古相片小说",
     family: "european",
     color: "color",
     font: "actionman",
@@ -638,7 +638,7 @@ export const presets: Record<string, Preset> = {
   },
   stockphoto: {
     id: "stockphoto",
-    label: "Stock photo",
+    label: "写实摄影",
     family: "european",
     color: "color",
     font: "actionman",

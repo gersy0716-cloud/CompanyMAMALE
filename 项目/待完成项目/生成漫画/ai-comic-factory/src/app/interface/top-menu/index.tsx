@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { StaticImageData } from "next/image"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -32,6 +32,7 @@ import { getLocalStorageShowSpeeches } from "@/lib/getLocalStorageShowSpeeches"
 
 export function TopMenu() {
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   const requestedPreset = (searchParams?.get('preset') as PresetName) || defaultPreset
   const requestedFont = (searchParams?.get('font') as FontName) || defaultFont
@@ -39,7 +40,7 @@ export function TopMenu() {
   const requestedStoryPrompt = (searchParams?.get('storyPrompt') as string) || ""
   const requestedLayout = (searchParams?.get('layout') as LayoutName) || defaultLayout
 
-   // const font = useStore(s => s.font)
+  // const font = useStore(s => s.font)
   // const setFont = useStore(s => s.setFont)
   const preset = useStore(s => s.preset)
   const prompt = useStore(s => s.prompt)
@@ -77,9 +78,9 @@ export function TopMenu() {
 
   const [draftPreset, setDraftPreset] = useState<PresetName>(requestedPreset)
   const [draftLayout, setDraftLayout] = useState<LayoutName>(requestedLayout)
-  
+
   const { isLoggedIn, enableOAuthWall } = useOAuth({ debug: false })
-  
+
   const [hasGeneratedAtLeastOnce, setHasGeneratedAtLeastOnce] = useLocalStorage<boolean>(
     localStorageKeys.hasGeneratedAtLeastOnce,
     defaultSettings.hasGeneratedAtLeastOnce
@@ -118,25 +119,37 @@ export function TopMenu() {
       setLayout(draftLayout)
     }
   }, [layout, draftLayout, isBusy])
-    
+
   return (
     <div className={cn(
       `print:hidden`,
-      `z-10 fixed top-0 left-0 right-0`,
-      `flex flex-col md:flex-row w-full justify-between items-center`,
-      `backdrop-blur-xl`,
-      `transition-all duration-200 ease-in-out`,
-      `px-2 py-2 border-b-1 border-gray-50 dark:border-gray-50`,
-      //`bg-[#2d435c] dark:bg-[#2d435c] text-gray-50 dark:text-gray-50`,
-      `bg-gradient-to-r from-[#102c4c] to-[#1a426f] dark:bg-gradient-to-r dark:from-[#102c4c] dark:to-[#1a426f]`,
-      `space-y-2 md:space-y-0 md:space-x-3 lg:space-x-6`
+      `z-20 fixed top-6 left-6 right-6 mx-auto max-w-[95vw]`,
+      `flex flex-col xl:flex-row justify-between items-center`,
+      `bg-white border border-gray-200`,
+      `transition-all duration-300 ease-in-out`,
+      `px-8 py-5 rounded-2xl shadow-xl`,
+      `space-y-4 xl:space-y-0 xl:space-x-8`,
+      `font-[var(--font-main)]`
     )}>
-      <div className="flex flex-row space-x-2 md:space-x-3 w-full md:w-auto">
+      <div className="flex flex-row items-center space-x-6">
+        <button
+          onClick={() => router.push('/')}
+          className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold rounded-xl shadow-sm transition-all border border-gray-200 active:scale-95"
+        >
+          <span className="text-xl">←</span>
+          <span className="hidden md:inline">返回主页</span>
+        </button>
+        <div className="flex flex-row items-center font-[var(--font-heading)] font-bold text-3xl tracking-tighter mr-4">
+          <span className="text-slate-800">码码乐</span>
+          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-2">AI</span>
+        </div>
+      </div>
+      <div className="flex flex-row items-center space-x-4 md:space-x-6 w-full xl:w-auto">
         <div className={cn(
           `transition-all duration-200 ease-in-out`,
-          `flex flex-row items-center justify-start space-x-3`,
+          `flex flex-row items-center justify-start space-x-4`,
           `flex-grow`
-          )}>
+        )}>
 
           {/* <Label className="flex text-2xs md:text-sm md:w-24">Style:</Label> */}
 
@@ -144,9 +157,9 @@ export function TopMenu() {
             defaultValue={defaultPreset}
             onValueChange={(value) => { setDraftPreset(value as PresetName) }}
             disabled={isBusy}
-            >
-            <SelectTrigger className="flex-grow bg-gray-100 text-gray-700 dark:bg-gray-100 dark:text-gray-700">
-              <SelectValue className="text-2xs md:text-sm" placeholder="Style" />
+          >
+            <SelectTrigger className="flex-grow h-14 px-6 bg-white/50 text-[var(--text-main)] border-[var(--card-border)] rounded-[var(--radius-md)]">
+              <SelectValue className="text-sm md:text-base" placeholder="风格选择" />
             </SelectTrigger>
             <SelectContent>
               {nonRandomPresets.map(key =>
@@ -157,9 +170,9 @@ export function TopMenu() {
         </div>
         <div className={cn(
           `transition-all duration-200 ease-in-out`,
-          `flex flex-row items-center justify-start space-x-3`,
-          `w-40`
-          )}>
+          `flex flex-row items-center justify-start space-x-4`,
+          `w-48`
+        )}>
 
           {/* <Label className="flex text-2xs md:text-sm md:w-24">Style:</Label> */}
 
@@ -171,25 +184,27 @@ export function TopMenu() {
           />
         </div>
         <div className="flex flex-row items-center space-x-3">
-        <Switch
-          checked={showCaptions}
-          onCheckedChange={setShowCaptions}
-        />
-        <Label className="text-gray-200 dark:text-gray-200">
-          <span className="hidden lg:inline">📖&nbsp;Captions</span>
-          <span className="inline lg:hidden">📖</span>
-        </Label>
+          <Switch
+            className="scale-125"
+            checked={showCaptions}
+            onCheckedChange={setShowCaptions}
+          />
+          <Label className="text-[var(--text-main)] font-bold text-sm">
+            <span className="hidden xl:inline">说明文字</span>
+            <span className="inline xl:hidden text-lg">📖</span>
+          </Label>
         </div>
         <div className="flex flex-row items-center space-x-3">
-        <Switch
-          checked={showSpeeches}
-          onCheckedChange={setShowSpeeches}
-          defaultChecked={showSpeeches}
-        />
-        <Label className="text-gray-200 dark:text-gray-200">
-          <span className="hidden lg:inline">💬&nbsp;Bubbles</span>
-          <span className="inline lg:hidden">💬</span>
-        </Label>
+          <Switch
+            className="scale-125"
+            checked={showSpeeches}
+            onCheckedChange={setShowSpeeches}
+            defaultChecked={showSpeeches}
+          />
+          <Label className="text-[var(--text-main)] font-bold text-sm">
+            <span className="hidden xl:inline">对话气泡</span>
+            <span className="inline xl:hidden text-lg">💬</span>
+          </Label>
         </div>
         {/*
         <div className={cn(
@@ -220,18 +235,18 @@ export function TopMenu() {
           */}
       </div>
       <div className={cn(
-          `transition-all duration-200 ease-in-out`,
-          `flex  flex-grow flex-col space-y-2 md:space-y-0 md:flex-row items-center md:space-x-3 w-full md:w-auto`
-        )}>
+        `transition-all duration-200 ease-in-out`,
+        `flex  flex-grow flex-col space-y-2 md:space-y-0 md:flex-row items-center md:space-x-3 w-full md:w-auto`
+      )}>
         <div className="flex flex-row flex-grow w-full">
           <div className="flex flex-row flex-grow w-full">
             <Input
               id="top-menu-input-story-prompt"
-              placeholder="1. Story (eg. detective dog)"
+              placeholder="1. 故事内容 (如：侦探犬)"
               className={cn(
-                `w-1/2 rounded-r-none`,
-                `bg-gray-100 text-gray-700 dark:bg-gray-100 dark:text-gray-700`,
-                `border-r-stone-100`
+                `w-1/2 rounded-r-none h-14 text-base px-6`,
+                `bg-white/50 text-[var(--text-main)] border-[var(--card-border)]`,
+                `focus:bg-white rounded-l-[var(--radius-md)]`
               )}
               // disabled={atLeastOnePanelIsBusy}
               onChange={(e) => {
@@ -246,11 +261,11 @@ export function TopMenu() {
             />
             <Input
               id="top-menu-input-style-prompt"
-              placeholder="2. Style (eg 'rain, shiba')"
+              placeholder="2. 画面风格 (如：雨、柴犬)"
               className={cn(
-                `w-1/2`,
-                `bg-gray-100 text-gray-700 dark:bg-gray-100 dark:text-gray-700`,
-                `border-l-gray-300 rounded-l-none rounded-r-none`
+                `w-1/2 rounded-l-none rounded-r-none h-14 text-base px-6`,
+                `bg-white/50 text-[var(--text-main)] border-[var(--card-border)] border-l-0`,
+                `focus:bg-white`
               )}
               // disabled={atLeastOnePanelIsBusy}
               onChange={(e) => {
@@ -264,19 +279,20 @@ export function TopMenu() {
               value={draftPromptA}
             />
           </div>
-            <Button
+          <Button
             className={cn(
-              `rounded-l-none cursor-pointer`,
-              `transition-all duration-200 ease-in-out`,
-              `text-xl`,
-              `bg-[rgb(59,134,247)] hover:bg-[rgb(69,144,255)] disabled:bg-[rgb(59,134,247)]`
-              )}
+              `rounded-l-none h-14 px-10 cursor-pointer`,
+              `transition-all duration-300 ease-in-out`,
+              `font-bold text-lg rounded-r-[var(--radius-md)]`,
+              `bg-[var(--primary)] hover:scale-105 active:scale-95 shadow-lg shadow-[var(--primary-glow)]`,
+              isBusy && `animate-jelly`
+            )}
             onClick={() => {
               handleSubmit()
             }}
             disabled={!draftPrompt?.trim().length || isBusy}
           >
-            Go
+            立即生成
           </Button>
 
           <AuthWall show={showAuthWall} />

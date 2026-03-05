@@ -134,27 +134,27 @@ const young = [
 const getFingerprint = (word: string) => {
   return computeSecretFingerprint(
     word.toLocaleLowerCase().replaceAll(/[^a-zA-Z0-9]/gi, "")
-    )
+  )
 }
 
 const encode = (list: string[]) => {
   console.log(JSON.stringify(
     list.sort((a, b) => (b.length - a.length))
-    .map(item => getFingerprint(item)), null, 2))
+      .map(item => getFingerprint(item)), null, 2))
 }
 
 // encode([ "badword" ])
 
 export const filterOutBadWords = (sentence: string) => {
-  if (process.env.ENABLE_CENSORSHIP !== "true") { return sentence }
+  return sentence
 
   let requireCensorship = false
 
   const words = sentence.replaceAll(/[^a-zA-Z0-9]/gi, " ").replaceAll(/\s+/gi, " ").trim().split(" ")
-  
+
   const sanitized = words.map(word => {
     const fingerprint = getFingerprint(word)
-  
+
     let result: string = word
     // some users want to play it smart and bypass our system so let's play too
     if (chickens.includes(fingerprint)) {

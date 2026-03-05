@@ -1,4 +1,3 @@
-"use server"
 
 import { LLMEngine, LLMPredictionFunctionParams } from "@/types"
 import { defaultLLMEngineName, getLLMEngineFunction } from "./getLLMEngineFunction"
@@ -9,9 +8,10 @@ export async function predict(params: LLMPredictionFunctionParams): Promise<stri
   // LLMEngine = the actual engine to use (eg. hugging face)
   const llmEngineName: LLMEngine =
     vendor === "ANTHROPIC" ? "ANTHROPIC" :
-    vendor === "GROQ" ? "GROQ" :
-    vendor === "OPENAI" ? "OPENAI" :
-    defaultLLMEngineName
+      vendor === "GROQ" ? "GROQ" :
+        vendor === "OPENAI" ? "OPENAI" :
+          vendor === "MAMALE" ? "MAMALE" :
+            defaultLLMEngineName
 
   const llmEngineFunction = getLLMEngineFunction(llmEngineName)
 
