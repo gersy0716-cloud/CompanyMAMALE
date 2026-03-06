@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书借还图标预览 - 码码乐 (动态增强版)</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --primary-blue: #4dabf7;
+            --primary-orange: #ff922b;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Comic Sans MS', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #8c92a4;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1000px;
+        }
+
+        .icon-card {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 280px;
+        }
+
+        .icon-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .svg-container {
+            background: #ffffff;
+            border: 3px dashed #f1f3f5;
+            border-radius: 24px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 240px;
+            height: 240px;
+        }
+
+        .icon-title {
+            margin-top: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #343a40;
+        }
+
+        .icon-desc {
+            margin-top: 12px;
+            color: #868e96;
+            font-size: 15px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* 借书按钮的强调色 */
+        .color-borrow {
+            color: var(--primary-blue);
+        }
+
+        .color-return {
+            color: var(--primary-orange);
+        }
+
+        .code-container {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 800px;
+            background: #212529;
+            color: #f8f9fa;
+            padding: 25px;
+            border-radius: 16px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        pre {
+            margin: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>图书借还图标预览 <span style="color:#ff6b6b">❤</span></h1>
+    <div class="subtitle">更具童趣的“书宝宝回家/出门”动态隐喻设计</div>
+
+    <div class="container">
+        <!-- 借书图标 -->
+        <div class="icon-card">
+            <div class="svg-container">
+                <!-- SVG START: Borrow Book -->
+                <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .borrow-anim {
+                            animation: bookFlyOut 3s infinite cubic-bezier(0.34, 1.56, 0.64, 1);
+                            transform-origin: center;
+                        }
+
+                        .borrow-sparkle {
+                            animation: sparkleOut 3s infinite;
+                            transform-origin: center;
+                        }
+
+                        @keyframes bookFlyOut {
+                            0% {
+                                transform: translate(120px, 140px) scale(0);
+                                opacity: 0;
+                            }
+
+                            10% {
+                                transform: translate(120px, 140px) scale(0);
+                                opacity: 1;
+                            }
+
+                            35% {
+                                transform: translate(70px, 60px) scale(0.9) rotate(-15deg);
+                                opacity: 1;
+                            }
+
+                            55% {
+                                transform: translate(40px, 140px) scale(1.1) rotate(5deg);
+                                opacity: 1;
+                            }
+
+                            65% {
+                                transform: translate(40px, 140px) scale(1.1) rotate(0deg);
+                                opacity: 1;
+                            }
+
+                            85% {
+                                transform: translate(40px, 140px) scale(1.1) rotate(0deg);
+                                opacity: 1;
+                            }
+
+                            100% {
+                                transform: translate(40px, 140px) scale(1.1) rotate(0deg);
+                                opacity: 0;
+                            }
+                        }
+
+                        @keyframes sparkleOut {
+
+                            0%,
+                            55% {
+                                opacity: 0;
+                                transform: scale(0.5);
+                            }
+
+                            65% {
+                                opacity: 1;
+                                transform: scale(1.2);
+                            }
+
+                            85% {
+                                opacity: 0;
+                                transform: scale(1.5);
+                            }
+
+                            100% {
+                                opacity: 0;
+                            }
+                        }
+                    </style>
+
+                    <!-- Library Building -->
+                    <path d="M30 190 h180" stroke="#dee2e6" stroke-width="12" stroke-linecap="round" />
+                    <rect x="75" y="115" width="90" height="70" fill="#f8f9fa" rx="10" />
+                    <!-- Roof -->
+                    <path d="M65 115 L120 70 L175 115 Z" fill="#ffe066" />
+                    <path d="M65 115 L120 70 L175 115" stroke="#fcc419" stroke-width="8" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <circle cx="120" cy="95" r="8" fill="#fff" />
+                    <!-- Door -->
+                    <path d="M100 185 v-35 a10 10 0 0 1 20 0 v35 Z" fill="#ffc078" />
+
+                    <!-- Animated Borrowing Book -->
+                    <g class="borrow-anim">
+                        <!-- Book Base -->
+                        <rect x="0" y="0" width="45" height="55" rx="8" fill="#4dabf7" stroke="#339af0"
+                            stroke-width="4" />
+                        <path d="M10 0 v55" stroke="#fff" stroke-width="2" opacity="0.4" />
+                        <!-- Eyes -->
+                        <circle cx="18" cy="22" r="4.5" fill="#fff" />
+                        <circle cx="19" cy="22" r="2" fill="#212529" />
+                        <circle cx="32" cy="22" r="4.5" fill="#fff" />
+                        <circle cx="33" cy="22" r="2" fill="#212529" />
+                        <!-- Smile -->
+                        <path d="M20 32 Q25 38 30 32" stroke="#fff" stroke-width="3" fill="none"
+                            stroke-linecap="round" />
+                        <!-- Blush -->
+                        <ellipse cx="14" cy="28" rx="3" ry="2" fill="#ff8787" opacity="0.8" />
+                        <ellipse cx="36" cy="28" rx="3" ry="2" fill="#ff8787" opacity="0.8" />
+                    </g>
+
+                    <!-- Landing Sparkles -->
+                    <g class="borrow-sparkle" transform="translate(40, 140)">
+                        <path d="M -5 -5 L -15 -15 M 50 -5 L 60 -15 M 22 -15 L 22 -30" stroke="#ffe066" stroke-width="4"
+                            stroke-linecap="round" />
+                    </g>
+
+                    <!-- Outward Arrow -->
+                    <g transform="translate(170, 40)">
+                        <path d="M40 10 Q 15 10 -5 35" stroke="#4dabf7" stroke-width="6" fill="none"
+                            stroke-linecap="round" stroke-dasharray="0 15" stroke-dashoffset="0" />
+                        <path d="M-5 20 L-5 35 L10 35" stroke="#4dabf7" stroke-width="6" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                </svg>
+                <!-- SVG END -->
+            </div>
+            <div class="icon-title">我要<span class="color-borrow">借书</span></div>
+            <div class="icon-desc">书宝宝从图书馆开心出门，陪你回家啦！</div>
+        </div>
+
+        <!-- 还书图标 -->
+        <div class="icon-card">
+            <div class="svg-container">
+                <!-- SVG START: Return Book -->
+                <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .return-anim {
+                            animation: bookFlyIn 3s infinite cubic-bezier(0.34, 1.56, 0.64, 1);
+                            transform-origin: center;
+                        }
+
+                        .return-sparkle {
+                            animation: sparkleIn 3s infinite;
+                            transform-origin: center;
+                        }
+
+                        @keyframes bookFlyIn {
+                            0% {
+                                transform: translate(40px, 140px) scale(1.1) rotate(0deg);
+                                opacity: 0;
+                            }
+
+                            10% {
+                                transform: translate(40px, 140px) scale(1.1) rotate(0deg);
+                                opacity: 1;
+                            }
+
+                            35% {
+                                transform: translate(70px, 60px) scale(0.9) rotate(15deg);
+                                opacity: 1;
+                            }
+
+                            55% {
+                                transform: translate(120px, 140px) scale(0);
+                                opacity: 1;
+                            }
+
+                            65% {
+                                transform: translate(120px, 140px) scale(0);
+                                opacity: 0;
+                            }
+
+                            100% {
+                                transform: translate(120px, 140px) scale(0);
+                                opacity: 0;
+                            }
+                        }
+
+                        @keyframes sparkleIn {
+
+                            0%,
+                            50% {
+                                opacity: 0;
+                                transform: scale(0.5);
+                            }
+
+                            60% {
+                                opacity: 1;
+                                transform: scale(1.2);
+                            }
+
+                            80% {
+                                opacity: 0;
+                                transform: scale(1.5);
+                            }
+
+                            100% {
+                                opacity: 0;
+                            }
+                        }
+                    </style>
+
+                    <!-- Library Building -->
+                    <path d="M30 190 h180" stroke="#dee2e6" stroke-width="12" stroke-linecap="round" />
+                    <rect x="75" y="115" width="90" height="70" fill="#f8f9fa" rx="10" />
+                    <!-- Roof -->
+                    <path d="M65 115 L120 70 L175 115 Z" fill="#ffe066" />
+                    <path d="M65 115 L120 70 L175 115" stroke="#fcc419" stroke-width="8" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <circle cx="120" cy="95" r="8" fill="#fff" />
+                    <!-- Door -->
+                    <path d="M100 185 v-35 a10 10 0 0 1 20 0 v35 Z" fill="#ffc078" />
+
+                    <!-- Animated Returning Book -->
+                    <g class="return-anim">
+                        <!-- Book Base -->
+                        <rect x="0" y="0" width="45" height="55" rx="8" fill="#ff922b" stroke="#f76707"
+                            stroke-width="4" />
+                        <path d="M10 0 v55" stroke="#fff" stroke-width="2" opacity="0.4" />
+                        <!-- Eyes -->
+                        <circle cx="18" cy="22" r="4.5" fill="#fff" />
+                        <circle cx="19" cy="22" r="2" fill="#212529" />
+                        <circle cx="32" cy="22" r="4.5" fill="#fff" />
+                        <circle cx="33" cy="22" r="2" fill="#212529" />
+                        <!-- Smile -->
+                        <path d="M20 32 Q25 38 30 32" stroke="#fff" stroke-width="3" fill="none"
+                            stroke-linecap="round" />
+                        <!-- Blush -->
+                        <ellipse cx="14" cy="28" rx="3" ry="2" fill="#ff8787" opacity="0.8" />
+                        <ellipse cx="36" cy="28" rx="3" ry="2" fill="#ff8787" opacity="0.8" />
+                    </g>
+
+                    <!-- Home Spot Sparkles -->
+                    <g class="return-sparkle" transform="translate(120, 150)">
+                        <path d="M 0 -10 L -10 -20 M 35 -10 L 45 -20 M 17 -20 L 17 -35" stroke="#69db7c"
+                            stroke-width="4" stroke-linecap="round" />
+                        <circle cx="17" cy="-5" r="3" fill="#69db7c" />
+                    </g>
+
+                    <!-- Inward Arrow -->
+                    <g transform="translate(170, 40)">
+                        <path d="M-5 35 Q 15 10 40 10" stroke="#ff922b" stroke-width="6" fill="none"
+                            stroke-linecap="round" stroke-dasharray="0 15" stroke-dashoffset="0" />
+                        <path d="M30 0 L45 10 L30 20" fill="#ff922b" />
+                    </g>
+                </svg>
+                <!-- SVG END -->
+            </div>
+            <div class="icon-title">我要<span class="color-return">还书</span></div>
+            <div class="icon-desc">书宝宝旅行完毕，重新回到图书馆妈妈的怀抱！</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
