@@ -11,16 +11,20 @@ import {
 } from "@/components/ui/select"
 import { LayoutName, allLayoutLabels, defaultLayout, layoutIcons } from "@/app/layouts"
 
+import { cn } from "@/lib/utils"
+
 export function SelectLayout({
   defaultValue = defaultLayout,
   onLayoutChange,
   disabled = false,
   layouts = [],
+  className = ""
 }: {
   defaultValue?: string | undefined
   onLayoutChange?: ((name: LayoutName) => void)
   disabled?: boolean
   layouts: string[]
+  className?: string
 }) {
   return (
     <Select
@@ -28,7 +32,10 @@ export function SelectLayout({
       onValueChange={(name) => { onLayoutChange?.(name as LayoutName) }}
       disabled={disabled}
     >
-      <SelectTrigger className="flex-grow h-14 backdrop-blur-md bg-white/40 border-white/20 text-[var(--text-main)] rounded-[var(--radius-md)] hover:bg-white/60 transition-colors px-6">
+      <SelectTrigger className={cn(
+        "flex-grow h-14 backdrop-blur-md bg-white/40 border-white/20 text-[var(--text-main)] rounded-[var(--radius-md)] hover:bg-white/60 transition-colors px-6",
+        className
+      )}>
         <SelectValue className="text-sm md:text-base font-bold font-[var(--font-main)]" placeholder="选择布局" />
       </SelectTrigger>
       <SelectContent>

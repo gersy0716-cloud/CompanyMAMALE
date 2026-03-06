@@ -9,8 +9,8 @@ export async function predict({
   nbMaxNewTokens,
   llmVendorConfig
 }: LLMPredictionFunctionParams): Promise<string> {
-  const anthropicApiKey = ""
-  const anthropicApiModel = "claude-3-opus-20240229"
+  const anthropicApiKey = llmVendorConfig.apiKey || ""
+  const anthropicApiModel = llmVendorConfig.modelId || "claude-3-opus-20240229"
   if (!anthropicApiKey) { throw new Error(`cannot call Anthropic without an API key`) }
 
   const anthropic = new Anthropic({

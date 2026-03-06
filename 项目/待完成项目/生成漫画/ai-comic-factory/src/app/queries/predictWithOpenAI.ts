@@ -9,8 +9,8 @@ export async function predict({
   nbMaxNewTokens,
   llmVendorConfig
 }: LLMPredictionFunctionParams): Promise<string> {
-  const openaiApiKey = "sk-bfsoBhqtsjZ1x5sqbKrA4mFg0DH7aUQMlToVykNJ5IGnww7r"
-  const openaiApiModel = "gemini-3-pro-preview"
+  const openaiApiKey = llmVendorConfig.apiKey || "sk-bfsoBhqtsjZ1x5sqbKrA4mFg0DH7aUQMlToVykNJ5IGnww7r"
+  const openaiApiModel = llmVendorConfig.modelId || "gemini-3-pro-preview"
   const openaiApiBaseUrl = "https://dalu.chatgptten.com/v1"
 
   const openai = new OpenAI({

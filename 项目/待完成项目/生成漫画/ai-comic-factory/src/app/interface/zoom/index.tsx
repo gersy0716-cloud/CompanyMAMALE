@@ -14,10 +14,10 @@ export function Zoom() {
       `transition-all duration-300 ease-in-out font-[var(--font-main)]`,
       isGeneratingStory ? `scale-0 opacity-0` : ``,
     )}>
-      <div className="font-bold text-sm mb-4 px-4 py-2 backdrop-blur-md bg-white/60 border border-white/40 text-[var(--text-main)] rounded-full shadow-lg">
+      <div className="font-bold text-base mb-6 px-6 py-3 backdrop-blur-xl bg-white/70 border border-white/50 text-slate-800 rounded-full shadow-xl">
         页面缩放
       </div>
-      <div className="w-4 h-80">
+      <div className="w-8 h-96 flex justify-center">
         <VerticalSlider
           defaultValue={[zoomLevel]}
           min={30}
@@ -25,7 +25,7 @@ export function Zoom() {
           step={1}
           onValueChange={value => setZoomLevel(value[0] || 10)}
           value={[zoomLevel]}
-          className="h-full"
+          className="h-full w-full"
           orientation="vertical"
         />
       </div>

@@ -4,21 +4,24 @@
  */
 
 // ─── 配置 ──────────────────────────────────────────────
-const AUTH_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkI3RDU5REJCNDFGMjZDNTBENkEyRDE5RDQ3RjI0OThFIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3NzI2NzU5NzMsImV4cCI6MTgwNDIxMTk3MywiaXNzIjoiaHR0cHM6Ly9vYXV0aC5tYW1hbGUudmlwIiwiYXVkIjoiQ29kZUFCQyIsImNsaWVudF9pZCI6IkNvZGVBQkNfQXBwIiwic3ViIjoiMTM5ZGNhMzktNDcwYi0yYjAwLWZkMGEtM2ExNjg5NmUwYTE4IiwiYXV0aF90aW1lIjoxNzcyNjc1OTcyLCJpZHAiOiJsb2NhbCIsInRlbmFudGlkIjoiYzE4NjMyODUtMjVkMS00NGZlLTgwNWMtNWRkZjYxMWY4M2QzIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJlbWFpbCI6ImxpY2tpZXNAcXEuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJGYWxzZSIsIm5hbWUiOiJsaWNraWVzIiwiaWF0IjoxNzcyNjc1OTczLCJzY29wZSI6WyJhZGRyZXNzIiwiQ29kZUFCQyIsImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9maWxlIiwicm9sZSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.sdvH0tAiTEg-NvRt_q0fgKNvul2bTA-e_kZ2e859VnQJRcG20l6DhlHKBMGwJErpFqynZj-JOwZKoqBhQdLsSd8zMQVmbqx7VqWBKelZEAQ9Pii1RE1WuKC1OpOlZhOpN8v5UZprhwEQmd_K_ssMI6TATi4ir7zX8lgEd_ATmce9a0CnlvD1p6OAUMdjefaHn6fnkZRWcwRzRJB1_wIuTs28u9lGbs7Z2MIQ50bqqH3XXIIEEDOjiqgZMgzw9QSHzFsMnUJ7BupoHM6kxCUhOLfWjmfsN62XwPcTqYAal8zSki-byJkoAkTd-s_LHL7872QCPTivgpFV8QUOGu8nbg";
+const TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkI3RDU5REJCNDFGMjZDNTBENkEyRDE5RDQ3RjI0OThFIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3NzI3NjAxODUsImV4cCI6MTgwNDI5NjE4NSwiaXNzIjoiaHR0cHM6Ly9vYXV0aC5tYW1hbGUudmlwIiwiYXVkIjoiQ29kZUFCQyIsImNsaWVudF9pZCI6IkNvZGVBQkNfQXBwIiwic3ViIjoiMTM5ZGNhMzktNDcwYi0yYjAwLWZkMGEtM2ExNjg5NmUwYTE4IiwiYXV0aF90aW1lIjoxNzcyNzYwMTg0LCJpZHAiOiJsb2NhbCIsInRlbmFudGlkIjoiYzE4NjMyODUtMjVkMS00NGZlLTgwNWMtNWRkZjYxMWY4M2QzIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJlbWFpbCI6ImxpY2tpZXNAcXEuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJGYWxzZSIsIm5hbWUiOiJsaWNraWVzIiwiaWF0IjoxNzcyNzYwMTg1LCJzY29wZSI6WyJhZGRyZXNzIiwiQ29kZUFCQyIsImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9maWxlIiwicm9sZSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.rLKKF6SlZ7KrnF_0qszH07ZJphbHw2J-Vh1NFIA5qxpODh7xiGakUo6OLRwqVbCHwqLLLLs5iNrlMfpdgZ81BJehoTK4OnZHgImn354cPzpREjocKU85W7xcIWM9cAE23chIP3U9AygJBMsV6Yap82Np7uSlleR_CTG-3HBflF3V1E3a3-djOCItV99ty-CQ0QIt9kV1CRlRfk2_zRH_W4GRqhRGifG1rk7zdahm7tk8E5e3NCKzSwistSQhxIHl7oQMValeSneghuYh7S7s8hVNmSD0SDxDEgtu8yMD_XtN18egCpqo1y4VGjoBmVrjXlATjpYvfeXAyilrMbRlkg";
+const TEACHER_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkI3RDU5REJCNDFGMjZDNTBENkEyRDE5RDQ3RjI0OThFIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE3NzI3NjAxODgsImV4cCI6MTgwNDI5NjE4OCwiaXNzIjoiaHR0cHM6Ly9vYXV0aC5tYW1hbGUudmlwIiwiYXVkIjoiQ29kZUFCQyIsImNsaWVudF9pZCI6IkNvZGVBQkNfQXBwIiwic3ViIjoiNjQzNmY2OGEtZTU1Ni1mYWVmLWExYjUtM2ExNjg5N2I3NjU4IiwiYXV0aF90aW1lIjoxNzcyNzYwMTg4LCJpZHAiOiJsb2NhbCIsInRlbmFudGlkIjoiYzE4NjMyODUtMjVkMS00NGZlLTgwNWMtNWRkZjYxMWY4M2QzIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJlbWFpbCI6IjE4ODU5NzczOTk5QHFxLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjoiRmFsc2UiLCJuYW1lIjoiMTg4NTk3NzM5OTkiLCJpYXQiOjE3NzI3NjAxODgsInNjb3BlIjpbImFkZHJlc3MiLCJDb2RlQUJDIiwiZW1haWwiLCJvcGVuaWQiLCJwaG9uZSIsInByb2ZpbGUiLCJyb2xlIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbInB3ZCJdfQ.MWVQ3IocjB3a3juC0Girt7X2cnzbBt98LX54glQ5PTlKmDI_sN5t8n3BcTNeOtsJK8BRPDgpyvJiOo5WkT9aZhykk5psxnQjDIwhq4Ys5K_0UrMpvmISkAYxelz8F-WD0YDQ2FyNoeDdj5d77zW9fPjXK-4_uM-LsK4BNiF3Ak6ilbxYQMqV5SDNbAs3nHK25h98gTAfr0Z6Xt4nsngZKE62m7l-zen6zWMwQ3DCd5caz1fFYlMllbvOfyrkZO7PHL6NmPJz-jtJqp-TAM18qPxvgxzg0wa39yl4-lMzOuMnt3Rw3GxnUQ8K3iYm3L2O0V1n9LEccIWGXi2PeXYKPA";
 
 const config = {
     apiBase: "https://3w-api.mamale.vip/api/app",
     tenant: "c1863285-25d1-44fe-805c-5ddf611f83d3",
+    userid: "139dca39-470b-2b00-fd0a-3a16896e0a18",
+    author: "官方",
 
     getApiUrl(path) {
         const sep = path.includes('?') ? '&' : '?';
-        return `${this.apiBase}/${path}${sep}__tenant=${this.tenant}`;
+        return `${this.apiBase}/${path}${sep}type=3w-api&__tenant=${this.tenant}&author=${encodeURIComponent(this.author)}&userid=${this.userid}&username=${encodeURIComponent("雷君")}&token=${TOKEN}&teachertoken=${TEACHER_TOKEN}`;
     },
 
     getHeaders() {
         return {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${AUTH_TOKEN}`,
+            'Authorization': `Bearer ${TOKEN}`,
         };
     }
 };
@@ -28,6 +31,7 @@ const dbConfig = {
     apiBase: "https://data.520ai.cc/api/bases",
     baseId: "bsekddalnVrgIAiZYmM",
     tableId: "gaHY0ruUUs",
+    token: TOKEN,
 
     getRecordsUrl() {
         return `${this.apiBase}/${this.baseId}/tables/${this.tableId}/records`;
@@ -36,7 +40,7 @@ const dbConfig = {
     getHeaders() {
         return {
             'Content-Type': 'application/json',
-            'x-bm-token': AUTH_TOKEN,
+            'x-bm-token': this.token,
         };
     }
 };
@@ -50,18 +54,6 @@ const IMAGE_ENGINES = {
         apiPath: "aiJimeng3/myTextToImage",
         buildBody: (prompt) => ({
             prompt: prompt,
-            size: "1024*1024"
-        }),
-        parseResult: (result) => result.data?.[0]?.url || result.url || result.result,
-    },
-    chatgptten: {
-        id: "chatgptten",
-        label: "Chatgptten",
-        icon: "🤖",
-        apiPath: "aiChatgptten/myTextToImage",
-        buildBody: (prompt) => ({
-            prompt: prompt,
-            model: "nano-banana-2-hd",
             size: "1024*1024"
         }),
         parseResult: (result) => result.data?.[0]?.url || result.url || result.result,
@@ -232,8 +224,8 @@ function createChip(preset) {
     return chip;
 }
 
-// 生图引擎按优先级排序：即梦 > Chatgptten，默认使用第一个
-const ENGINE_PRIORITY = [IMAGE_ENGINES.jimeng, IMAGE_ENGINES.chatgptten];
+// 生图引擎：锁定使用即梦
+const ENGINE_PRIORITY = [IMAGE_ENGINES.jimeng];
 
 function setupEventListeners() {
     document.getElementById('generateBtn').onclick = startGeneration;
@@ -297,7 +289,10 @@ Only return the JSON array, no other text. Write Chinese for speech and captions
 
     const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: config.getHeaders(),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${TOKEN}`
+        },
         body: JSON.stringify({
             messages: [
                 { role: "system", content: systemPrompt },

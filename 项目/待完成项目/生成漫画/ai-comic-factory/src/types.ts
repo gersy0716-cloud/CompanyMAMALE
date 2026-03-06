@@ -204,6 +204,11 @@ export type Settings = {
   groqApiLanguageModel: string
   anthropicApiKey: string
   anthropicApiLanguageModel: string
+  mamaleApiKey: string
+  tenantId: string
+  teachertoken: string
+  userid: string
+  username: string
   hasGeneratedAtLeastOnce: boolean
   userDefinedMaxNumberOfPages: number
 }

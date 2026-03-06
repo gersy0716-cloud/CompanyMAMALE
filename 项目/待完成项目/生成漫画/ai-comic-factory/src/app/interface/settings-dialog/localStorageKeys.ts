@@ -2,7 +2,7 @@ import { Settings } from "@/types"
 
 // let's keep it "version 0" for now, so as to not disrupt current users
 // however at some point we might need to upgrade and invalid the default values
-const version = ``
+const version = `v3_`
 
 export const localStorageKeys: Record<keyof Settings, string> = {
   renderingModelVendor: `${version}CONF_RENDERING_MODEL_VENDOR`,
@@ -22,8 +22,13 @@ export const localStorageKeys: Record<keyof Settings, string> = {
   openaiApiLanguageModel: `${version}CONF_AUTH_OPENAI_API_LANGUAGE_MODEL`,
   groqApiKey: `${version}CONF_AUTH_GROQ_API_KEY`,
   groqApiLanguageModel: `${version}CONF_AUTH_GROQ_API_LANGUAGE_MODEL`,
-  anthropicApiKey: `${version}CONF_AUTH_ANTHROPIC_API_KEY`,
-  anthropicApiLanguageModel: `${version}CONF_AUTH_ANTHROPIC_API_LANGUAGE_MODEL`,
+  anthropicApiKey: "AI_COMIC_FACTORY_ANTHROPIC_API_KEY",
+  anthropicApiLanguageModel: "AI_COMIC_FACTORY_ANTHROPIC_API_LANGUAGE_MODEL",
+  mamaleApiKey: "AI_COMIC_FACTORY_MAMALE_API_KEY_V4",
+  tenantId: "AI_COMIC_FACTORY_MAMALE_TENANT_ID_V4",
+  teachertoken: "AI_COMIC_FACTORY_MAMALE_TEACHER_TOKEN_V4",
+  userid: "AI_COMIC_FACTORY_MAMALE_USER_ID_V4",
+  username: "AI_COMIC_FACTORY_MAMALE_USER_NAME_V4",
   hasGeneratedAtLeastOnce: `${version}CONF_HAS_GENERATED_AT_LEAST_ONCE`,
   userDefinedMaxNumberOfPages: `${version}CONF_USER_DEFINED_MAX_NUMBER_OF_PAGES`,
 }

@@ -49,7 +49,7 @@ export const useStore = create<{
   setPreviousNbPanels: (previousNbPanels: number) => void
   setCurrentNbPanels: (currentNbPanels: number) => void
   setMaxNbPanels: (maxNbPanels: number) => void
-  
+
   setRendered: (panelId: string, renderedScene: RenderedScene) => void
   addToUpscaleQueue: (panelId: string, renderedScene: RenderedScene) => void
   removeFromUpscaleQueue: (panelId: string) => void
@@ -71,7 +71,7 @@ export const useStore = create<{
   setGeneratingStory: (isGeneratingStory: boolean) => void
   setGeneratingImages: (panelId: string, value: boolean) => void
   setGeneratingText: (isGeneratingText: boolean) => void
-  
+
   // I think we should deprecate those three functions
   // this was used to keep track of the page HTML element,
   // for use with a HTML-to-bitmap library
@@ -104,8 +104,8 @@ export const useStore = create<{
 
   prompt:
     (getParam("stylePrompt", "") || getParam("storyPrompt", ""))
-     ? `${getParam("stylePrompt", "")}||${getParam("storyPrompt", "")}`
-     : "",
+      ? `${getParam("stylePrompt", "")}||${getParam("storyPrompt", "")}`
+      : "",
   font: "actionman",
   preset: getPreset(getParam("preset", defaultPreset)),
 
@@ -159,7 +159,7 @@ export const useStore = create<{
     const state = get()
 
     const newCurrentNumberOfPages = Math.min(state.maxNbPages, currentNbPages)
-    
+
     const newCurrentNbPanels = state.currentNbPanelsPerPage * newCurrentNumberOfPages
 
     /*
@@ -185,12 +185,12 @@ export const useStore = create<{
       // state.currentNbPanels gets copied to state.previousNbPanels
       previousNbPanels:
         newCurrentNbPanels > state.currentNbPanels ? state.currentNbPanels :
-        newCurrentNbPanels < state.currentNbPanels ? 0 :
-        state.previousNbPanels,
+          newCurrentNbPanels < state.currentNbPanels ? 0 :
+            state.previousNbPanels,
 
       currentNbPanels: newCurrentNbPanels,
       currentNbPages: newCurrentNumberOfPages,
-  
+
     })
   },
   setMaxNbPages: (maxNbPages: number) => {
@@ -231,9 +231,9 @@ export const useStore = create<{
       // state.currentNbPanels gets copied to state.previousNbPanels
       previousNbPanels:
         currentNbPanels > state.currentNbPanels ? state.currentNbPanels :
-        currentNbPanels < state.currentNbPanels ? 0 :
-        state.previousNbPanels,
-      
+          currentNbPanels < state.currentNbPanels ? 0 :
+            state.previousNbPanels,
+
       currentNbPanels,
     })
   },
@@ -242,7 +242,7 @@ export const useStore = create<{
       maxNbPanels
     })
   },
-  
+
   setRendered: (panelId: string, renderedScene: RenderedScene) => {
     const { renderedScenes } = get()
     set({
@@ -375,7 +375,7 @@ export const useStore = create<{
     })
   },
   setLayouts: (layouts: LayoutName[]) => set({ layouts }),
-  setZoomLevel: (zoomLevel: number) =>  set({ zoomLevel }),
+  setZoomLevel: (zoomLevel: number) => set({ zoomLevel }),
   setGeneratingStory: (isGeneratingStory: boolean) => set({ isGeneratingStory }),
   setGeneratingImages: (panelId: string, value: boolean) => {
     const panelGenerationStatus: Record<string, boolean> = {
@@ -384,7 +384,7 @@ export const useStore = create<{
     }
 
     const atLeastOnePanelIsBusy = Object.values(panelGenerationStatus).includes(true)
-    
+
     set({
       panelGenerationStatus,
       atLeastOnePanelIsBusy
@@ -463,7 +463,7 @@ export const useStore = create<{
       layouts,
     })
   },
-  
+
   convertComicToClap: async (): Promise<ClapProject> => {
     const {
       currentNbPanels,
@@ -517,7 +517,7 @@ export const useStore = create<{
         assetUrl: renderedScene?.assetUrl || "",
         status: ClapSegmentStatus.COMPLETED,
       }))
-  
+
       clap.segments.push(newSegment({
         track: 2,
         startTimeInMs: currentElapsedTimeInMs,
@@ -529,7 +529,7 @@ export const useStore = create<{
         outputType: ClapOutputType.TEXT,
         status: ClapSegmentStatus.COMPLETED,
       }))
-  
+
       clap.segments.push(newSegment({
         track: 3,
         startTimeInMs: currentElapsedTimeInMs,
@@ -539,7 +539,7 @@ export const useStore = create<{
         outputType: ClapOutputType.AUDIO,
         status: ClapSegmentStatus.TO_GENERATE,
       }))
-  
+
       // the presence of a camera is mandatory
       clap.segments.push(newSegment({
         track: 4,
@@ -550,7 +550,7 @@ export const useStore = create<{
         outputType: ClapOutputType.TEXT,
         status: ClapSegmentStatus.COMPLETED,
       }))
-  
+
       currentElapsedTimeInMs += defaultSegmentDurationInMs
     }
 
@@ -573,7 +573,14 @@ export const useStore = create<{
   }> => {
 
     const prompt = clap.meta.description
-    const [stylePrompt, storyPrompt] = prompt.split("||").map(x => x.trim())
+    let stylePrompt = ""
+    let storyPrompt = prompt
+
+    if (prompt.includes("||")) {
+      const parts = prompt.split("||").map(x => x.trim())
+      stylePrompt = parts[0]
+      storyPrompt = parts[1]
+    }
 
     const panels: string[] = []
     const renderedScenes: Record<string, RenderedScene> = {}
@@ -618,7 +625,7 @@ export const useStore = create<{
       const renderedScene: RenderedScene = {
         renderId: storyboard?.id || "",
         status: "pending",
-        assetUrl: "", 
+        assetUrl: "",
         alt: storyboard?.prompt || "",
         error: "",
         maskUrl: "",
@@ -633,7 +640,7 @@ export const useStore = create<{
       renderedScenes[id] = renderedScene
 
       panelGenerationStatus[id] = false
-      
+
       speeches.push(dialogue?.prompt || "")
 
       captions.push(ui?.prompt || "")
@@ -674,8 +681,11 @@ export const useStore = create<{
     } = await convertClapToComic(currentClap)
 
     // kids, don't do this in your projects: use state managers instead!
-    putTextInInput(document.getElementById("top-menu-input-style-prompt") as HTMLInputElement, stylePrompt)
-    putTextInInput(document.getElementById("top-menu-input-story-prompt") as HTMLInputElement, storyPrompt)
+    const stylePromptInput = document.getElementById("top-menu-input-style-prompt") as HTMLInputElement
+    if (stylePromptInput) putTextInInput(stylePromptInput, stylePrompt)
+
+    const storyPromptInput = document.getElementById("top-menu-input-story-prompt") as HTMLInputElement
+    if (storyPromptInput) putTextInInput(storyPromptInput, storyPrompt)
 
     set({
       currentClap,
@@ -705,12 +715,14 @@ export const useStore = create<{
 
     // Create an object URL for the compressed clap blob
     const objectUrl = URL.createObjectURL(currentClapBlob)
-  
+
     // Create an anchor element and force browser download
     const anchor = document.createElement("a")
     anchor.href = objectUrl
 
-    const [stylePrompt, storyPrompt] = prompt.split("||").map(x => x.trim())
+    const [stylePrompt, storyPrompt] = prompt.includes("||")
+      ? prompt.split("||").map(x => x.trim())
+      : ["", prompt]
 
     const cleanStylePrompt = (stylePrompt || "").replace(/([^a-z0-9, ]+)/gi, " ")
 
@@ -723,7 +735,7 @@ export const useStore = create<{
 
     document.body.appendChild(anchor) // Append to the body (could be removed once clicked)
     anchor.click() // Trigger the download
-  
+
     // Cleanup: revoke the object URL and remove the anchor element
     URL.revokeObjectURL(objectUrl)
     document.body.removeChild(anchor)

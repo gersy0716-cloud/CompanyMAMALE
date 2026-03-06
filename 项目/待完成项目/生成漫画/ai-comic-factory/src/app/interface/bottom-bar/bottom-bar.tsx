@@ -118,9 +118,9 @@ function BottomBar() {
   return (
     <div className={cn(
       `print:hidden`,
-      `fixed bottom-8 left-1/2 -translate-x-1/2`,
-      `flex flex-row items-center px-10 py-5`,
-      `bg-white border border-gray-200 shadow-xl rounded-full`,
+      `fixed bottom-10 left-1/2 -translate-x-1/2`,
+      `flex flex-row items-center px-12 py-6`,
+      `bg-white/80 backdrop-blur-3xl border border-white/50 shadow-2xl rounded-full`,
       `space-x-8 pointer-events-auto`,
       isGeneratingStory ? `scale-0 opacity-0` : `scale-100 opacity-100`,
       `transition-all duration-500 ease-in-out`
@@ -128,9 +128,9 @@ function BottomBar() {
       <Button
         onClick={handleSave}
         disabled={!prompt?.length || remainingImages > 0}
-        className="h-14 bg-[var(--primary)] hover:scale-105 active:scale-95 transition-all rounded-full px-10 font-bold text-base shadow-lg shadow-[var(--primary-glow)]"
+        className="h-16 xl:h-18 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 hover:scale-105 active:scale-90 transition-all rounded-full px-12 xl:px-16 font-bold text-xl xl:text-2xl shadow-xl shadow-blue-500/30 text-white"
       >
-        {remainingImages ? `生成中 ${allStatus.length - remainingImages}/${allStatus.length}` : `保存作品`}
+        {remainingImages ? `正在生成...` : `保存作品`}
       </Button>
     </div>
   )

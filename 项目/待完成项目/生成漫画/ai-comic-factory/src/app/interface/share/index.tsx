@@ -43,14 +43,19 @@ ${uploadUrl
 `;
     */
 
-    const storyPrompt = (prompt.split("||")[1] || "")
+    let storyPrompt = prompt
+    let stylePrompt = ""
+
+    if (prompt.includes("||")) {
+      const parts = prompt.split("||").map(x => x.trim())
+      stylePrompt = parts[0]
+      storyPrompt = parts[1]
+    }
 
     const storyPromptMd = storyPrompt ? `
 #### Story prompt:
 \`\`\`${storyPrompt}\`\`\`
 ` : ``
-
-    const stylePrompt = (prompt.split("||")[0] || "")
 
     const stylePromptMd = stylePrompt ? `
 #### Style/character prompt:

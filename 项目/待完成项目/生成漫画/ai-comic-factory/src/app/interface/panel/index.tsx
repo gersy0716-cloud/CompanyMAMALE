@@ -366,19 +366,18 @@ export function Panel({
   */
 
   const frameClassName = cn(
-    //`flex`,
     `relative`,
     `w-full h-full`,
-    `bg-white`,
-    `border-gray-300`,
-    `transition-all duration-200 ease-in-out`,
-    zoomLevel > 140 ? `border-[2px] md:border-[4px] rounded-xl` :
-      zoomLevel > 120 ? `border-[1.5px] md:border-[3px] rounded-lg` :
-        zoomLevel > 90 ? `border-[1px] md:border-[2px] rounded-md` :
-          zoomLevel > 40 ? `border-[0.5px] md:border-[1px] rounded-sm` :
-            `border-transparent md:border-[0.5px] rounded-none`,
-    `shadow-lg hover:shadow-xl`,
+    `bg-white/80`,
+    `transition-all duration-300 ease-in-out`,
+    zoomLevel > 140 ? `rounded-3xl` :
+      zoomLevel > 120 ? `rounded-2xl` :
+        zoomLevel > 90 ? `rounded-xl` :
+          zoomLevel > 40 ? `rounded-lg` :
+            `rounded-none`,
+    `shadow-xl hover:shadow-2xl hover:scale-[1.01]`,
     `overflow-hidden`,
+    `border border-white/40`,
     `print:border-[1.5px] print:shadow-none`,
   )
 
@@ -439,12 +438,12 @@ export function Panel({
               ? handleReload
               : undefined}
           className={cn(
-            `bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl`,
+            `glass-card border-none`,
             `flex flex-row space-x-2 items-center`,
             `py-1.5 px-4 md:py-2 md:px-5`,
-            `transition-all duration-200 ease-in-out shadow-sm`,
+            `transition-all duration-200 ease-in-out shadow-lg`,
             hasSucceededOrFailed
-              ? "opacity-95 cursor-pointer hover:bg-white hover:shadow-md"
+              ? "opacity-95 cursor-pointer hover:bg-white hover:scale-105"
               : "opacity-50 cursor-wait",
             mouseOver && (
               hasSucceededOrFailed
@@ -468,11 +467,11 @@ export function Panel({
         >
           <div
             className={cn(
-              `bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl`,
+              `glass-card border-none`,
               `flex flex-row space-x-2 items-center`,
               `py-1.5 px-4 md:py-2 md:px-5 cursor-pointer`,
-              `transition-all duration-200 ease-in-out shadow-sm`,
-              hasSucceededOrFailed ? "opacity-95 hover:bg-white hover:shadow-md" : "opacity-50",
+              `transition-all duration-200 ease-in-out shadow-lg`,
+              hasSucceededOrFailed ? "opacity-95 hover:bg-white hover:scale-105" : "opacity-50",
               mouseOver && hasSucceededOrFailed ? `scale-100 opacity-100` : `scale-0`
             )}>
             <RxPencil2

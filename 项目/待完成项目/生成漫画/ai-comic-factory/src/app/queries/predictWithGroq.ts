@@ -8,13 +8,14 @@ export async function predict({
   nbMaxNewTokens,
   llmVendorConfig
 }: LLMPredictionFunctionParams): Promise<string> {
-  const groqApiKey = ""
-  const groqApiModel = "mixtral-8x7b-32768"
+  const groqApiKey = llmVendorConfig.apiKey || ""
+  const groqApiModel = llmVendorConfig.modelId || "mixtral-8x7b-32768"
 
   if (!groqApiKey) { throw new Error(`cannot call Groq without an API key`) }
 
   const groq = new Groq({
     apiKey: groqApiKey,
+    dangerouslyAllowBrowser: true
   })
 
   const messages: Groq.Chat.Completions.CompletionCreateParams.Message[] = [

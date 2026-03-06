@@ -46,6 +46,10 @@ export function SettingsDialog() {
     localStorageKeys.userDefinedMaxNumberOfPages,
     defaultSettings.userDefinedMaxNumberOfPages
   )
+  const [mamaleApiKey, setMamaleApiKey] = useLocalStorage<string>(
+    localStorageKeys.mamaleApiKey,
+    defaultSettings.mamaleApiKey
+  )
 
   const { config: { maxNbPages }, isConfigReady } = useDynamicConfig()
 
@@ -128,6 +132,21 @@ export function SettingsDialog() {
                 自选通道目前由系统内置配置接管。
               </p>
             )}
+
+            <SectionTitle className="text-xl font-bold border-b-2 border-[var(--primary)] pb-2 inline-block mt-10">👇 认证选项</SectionTitle>
+            <Field className="space-y-4 pt-4">
+              <Label className="text-lg font-bold">码码乐/BaseMulti 认证令牌 (JWT)：</Label>
+              <Input
+                type="password"
+                placeholder="在此输入您的 JWT 令牌..."
+                value={mamaleApiKey}
+                onChange={(e) => setMamaleApiKey(e.target.value)}
+                className="bg-white h-14 text-base rounded-[var(--radius-md)] border-[var(--card-border)] px-6"
+              />
+              <p className="text-sm text-zinc-500 italic">
+                此令牌用于生图与数据库存储。若不清楚如何获取，请咨询管理员。
+              </p>
+            </Field>
 
             <SectionTitle className="text-xl font-bold border-b-2 border-[var(--primary)] pb-2 inline-block mt-10">👇 故事生成选项 (🚧 实验室功能 🚧)</SectionTitle>
 

@@ -10,7 +10,7 @@ import { joinWords } from "@/lib/joinWords"
 import { useDynamicConfig } from "@/lib/useDynamicConfig"
 import { Button } from "@/components/ui/button"
 
-import { TopMenu } from "./interface/top-menu"
+import { HeroSection } from "./interface/hero-section"
 import { useStore } from "./store"
 import { Zoom } from "./interface/zoom"
 import { BottomBar } from "./interface/bottom-bar"
@@ -19,6 +19,8 @@ import { getStoryContinuation } from "./queries/getStoryContinuation"
 import { localStorageKeys } from "./interface/settings-dialog/localStorageKeys"
 import { defaultSettings } from "./interface/settings-dialog/defaultSettings"
 import { useLLMVendorConfig } from "@/lib/useLLMVendorConfig"
+import { saveComicRecord, updateComicRecord } from "./queries/saveComicRecord"
+import { getSettings } from "./interface/settings-dialog/getSettings"
 
 export default function Main() {
   const [_isPending, startTransition] = useTransition()
@@ -64,6 +66,8 @@ export default function Main() {
     defaultSettings.userDefinedMaxNumberOfPages
   )
 
+  const [dbRecordId, setDbRecordId] = useState<number | null>(null)
+
   const numberOfPanels = Object.keys(panels).length
   const panelGenerationStatus = useStore(s => s.panelGenerationStatus)
   const allStatus = Object.values(panelGenerationStatus)
@@ -98,6 +102,26 @@ export default function Main() {
       setMaxNbPages(userDefinedMaxNumberOfPages)
     }
   }, [maxNbPages, userDefinedMaxNumberOfPages])
+
+  // self-repair: clear old corrupted or mismatched keys
+  useEffect(() => {
+    try {
+      const keysToClear = [
+        "AI_COMIC_FACTORY_MAMALE_API_KEY",
+        "AI_COMIC_FACTORY_MAMALE_API_KEY_V2",
+        "AI_COMIC_FACTORY_MAMALE_API_KEY_V3"
+      ]
+      let reloaded = false
+      keysToClear.forEach(key => {
+        if (localStorage.getItem(key)) {
+          console.log(`Cleaning up old key: ${key}`)
+          localStorage.removeItem(key)
+          reloaded = true
+        }
+      })
+      if (reloaded) window.location.reload()
+    } catch (e) { }
+  }, [])
 
 
   const ref = useRef({
@@ -156,7 +180,14 @@ export default function Main() {
       setWaitABitMore(false)
       setGeneratingStory(true)
 
-      const [stylePrompt, userStoryPrompt] = prompt.split("||").map(x => x.trim())
+      let stylePrompt = ""
+      let userStoryPrompt = prompt
+
+      if (prompt.includes("||")) {
+        const parts = prompt.split("||").map(x => x.trim())
+        stylePrompt = parts[0]
+        userStoryPrompt = parts[1]
+      }
 
       // we have to limit the size of the prompt, otherwise the rest of the style won't be followed
 
@@ -241,6 +272,17 @@ export default function Main() {
           setPanels(ref.current.newPanelsPrompts)
           setGeneratingStory(false)
 
+          // Save to database
+          const settings = getSettings()
+          const recordId = await saveComicRecord({
+            prompt: prompt,
+            styleId: preset.id,
+            panelsData: ref.current.existingPanels,
+            token: settings.mamaleApiKey,
+            tenantId: "c1863285-25d1-44fe-805c-5ddf611f83d3"
+          })
+          setDbRecordId(recordId)
+
           // TODO generate the clap here
 
         } catch (err) {
@@ -274,58 +316,102 @@ export default function Main() {
     maxNbPanels
   ]) // important: we need to react to preset changes too
 
+  // Update record when images are ready
+  useEffect(() => {
+    if (!dbRecordId) return
+
+    const settings = getSettings()
+    const imageUrls = panels.map((_, i) => renderedScenes[i]?.assetUrl || "")
+    const allFinished = imageUrls.every(url => !!url) || (numberOfPendingGenerations === 0 && panels.length > 0)
+
+    if (panels.length > 0) {
+      updateComicRecord({
+        recordId: dbRecordId,
+        imageUrls,
+        token: settings.mamaleApiKey
+      })
+    }
+  }, [JSON.stringify(renderedScenes), dbRecordId])
+
   return (
     <Suspense>
-      <TopMenu />
+      {/* Background Decorative Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 -right-32 w-[500px] h-[500px] bg-indigo-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] bg-cyan-400/15 rounded-full blur-3xl animate-bounce" style={{ animationDuration: '10s' }}></div>
+      </div>
+
+      {/* Hero Section Header */}
+      <div className="w-full flex flex-col items-center pt-20 pb-8 z-10 relative">
+        <h1 className="font-[var(--font-heading)] font-extrabold text-5xl tracking-tight mb-4 text-slate-800">
+          AI 生漫画
+        </h1>
+        <p className="text-xl text-slate-600 mb-10 font-medium">一句话，开启你的漫画宇宙</p>
+        <HeroSection />
+      </div>
+
       <div className={cn(
-        `flex items-start w-screen h-screen pt-32 overflow-y-scroll`,
-        `transition-all duration-200 ease-in-out`,
-        zoomLevel > 105 ? `px-0` : `px-6 md:px-12 lg:px-24`,
-
-        // important: in "print" mode we need to allow going out of the screen
-        `print:pt-0 print:px-0 print:pl-0 print:pr-0 print:h-auto print:w-auto print:overflow-visible`
+        `flex flex-col items-center`,
+        `transition-all duration-500 ease-in-out`,
+        `px-4 md:px-8 pb-32`,
+        `min-h-screen w-full`,
+        `relative z-0`
       )}>
-        <div
-          className={cn(
-            `flex flex-col w-full`,
-            zoomLevel > 105 ? `items-start` : `items-center`
+        <div className={cn(
+          `glass-card`,
+          `w-full max-w-[1700px]`,
+          `rounded-[var(--radius-lg)]`,
+          `shadow-2xl shadow-blue-500/10`,
+          `p-6 md:p-10 lg:p-16`,
+          `transition-all duration-500`,
+          zoomLevel > 105 ? `px-0` : ``
+        )}>
+          <div className={cn(
+            `flex flex-col`,
+            `space-y-12`
           )}>
-          <div
-            className={cn(
-              `comic-page`,
-
-              `grid grid-cols-1`,
-              currentNbPages > 1 ? `md:grid-cols-2` : ``,
-
-              // spaces between pages
-              `gap-x-6 gap-y-8`,
-
-              // when printed
-              `print:gap-x-3 print:gap-y-4 print:grid-cols-1`,
-            )}
-            style={{
-              width: `${zoomLevel}%`
-            }}>
-            {Array(currentNbPages).fill(0).map((_, i) => <Page key={i} page={i} />)}
-          </div>
-          {
-            showNextPageButton &&
             <div className={cn(
-              `flex flex-col items-center space-y-4 pt-8 pb-12`,
-              `print:hidden`
-            )}>
-              <div className="text-[var(--text-muted)] font-medium">对当前故事满意吗？</div>
-              <Button
-                className="bg-[var(--secondary)] hover:scale-105 transition-transform rounded-full px-8"
-                onClick={() => {
-                  setCurrentNbPages(currentNbPages + 1)
-                }}>继续生成第 {currentNbPages + 1} 页 👀</Button>
+              `comic-page`,
+              `grid grid-cols-1`,
+              currentNbPages > 1 ? `lg:grid-cols-2` : ``,
+              `gap-12 md:gap-16 lg:gap-24`,
+              `items-start justify-center`,
+              `mx-auto w-full`,
+              `print:grid-cols-1 print:gap-4`
+            )}
+              style={{
+                width: `${zoomLevel}%`
+              }}>
+              {Array(currentNbPages).fill(0).map((_, i) => (
+                <Page key={i} page={i} />
+              ))}
             </div>
-          }
+
+            {showNextPageButton && (
+              <div className={cn(
+                `flex flex-col items-center space-y-4 pt-8 pb-12`,
+                `print:hidden`
+              )}>
+                <div className="text-[var(--text-muted)] font-medium">对当前故事满意吗？</div>
+                <Button
+                  className="bg-[var(--secondary)] hover:scale-105 transition-transform rounded-full px-8 h-12"
+                  onClick={() => {
+                    setCurrentNbPages(currentNbPages + 1)
+                  }}
+                >
+                  继续生成第 {currentNbPages + 1} 页 👀
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
       <Zoom />
       <BottomBar />
+
+      {/* Loading Overlay */}
       <div className={cn(
         `print:hidden`,
         `z-50 fixed inset-0`,
@@ -348,6 +434,13 @@ export default function Main() {
           <div className="text-[var(--text-muted)]">
             {waitABitMore ? `请求较多，请稍候片刻...` : '码码乐 AI 正在为您排版布局'}
           </div>
+        </div>
+      </div>
+
+      {/* Version Info */}
+      <div className="fixed bottom-6 right-8 z-30 flex flex-col items-end space-y-2 pointer-events-none">
+        <div className="glass-card px-4 py-2 rounded-full text-xs font-bold text-slate-600 shadow-sm pointer-events-auto">
+          码码乐 AI 漫画工厂 v1.2.3
         </div>
       </div>
     </Suspense>
