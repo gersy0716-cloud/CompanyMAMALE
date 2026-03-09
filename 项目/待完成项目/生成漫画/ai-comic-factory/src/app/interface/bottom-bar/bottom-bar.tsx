@@ -115,6 +115,10 @@ function BottomBar() {
     alert("作品保存逻辑已触发（请查阅开发文档了解集成说明）")
   }
 
+  const dbRecordId = useStore(s => s.dbRecordId)
+
+  if (dbRecordId) return null
+
   return (
     <div className={cn(
       `print:hidden`,

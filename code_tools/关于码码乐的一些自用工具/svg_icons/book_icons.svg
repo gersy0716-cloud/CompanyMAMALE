@@ -1,42 +1,49 @@
 <!-- ============================================== -->
-<!-- 码码乐自用 - 图书借阅柜 方案B (正式版 - 极致防遮挡定稿) -->
-<!-- 提取时间：全细节还原，轻量化位移，互不遮挡 -->
+<!-- 码码乐自用 - 图书借阅柜 (专业手势版)               -->
+<!-- 基于 Tabler Icons 手势图标设计                      -->
+<!-- 取书: hand-grab 抓取手  | 放书: 张开手推入          -->
 <!-- ============================================== -->
 
 <!-- ============================================== -->
-<!-- 模式 1：静态版 (标准状态 - 优化布局)               -->
+<!-- 模式 1：静态版                                     -->
 <!-- ============================================== -->
 
-<!-- [静态] 取书 (Borrow) -->
+<!-- [静态] 取书 (Borrow) - 基于Tabler hand-grab -->
 <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
     <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="#e6fcf5" />
     <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="none" stroke="#0ab39c" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
     <rect x="40" y="55" width="55" height="75" rx="6" fill="#0ab39c" />
     <line x1="50" y1="55" x2="50" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
-    <g>
-        <path d="M 105 85 Q 135 85 135 55" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" />
-        <path d="M 125 65 L 135 55 L 145 65" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Tabler hand-grab: 翻转后手指朝下抓取 -->
+    <g transform="translate(100, 30) scale(2.8) rotate(180, 12, 12)" stroke="#0ab39c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M8 11v-3.5a1.5 1.5 0 0 1 3 0v2.5" />
+        <path d="M11 9.5v-3a1.5 1.5 0 0 1 3 0v3.5" />
+        <path d="M14 7.5a1.5 1.5 0 0 1 3 0v2.5" />
+        <path d="M17 9.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
     </g>
 </svg>
 
-<!-- [静态] 放书 (Return - 优化间距) -->
+<!-- [静态] 放书 (Return) - 基于Tabler hand-stop 展开手推入 -->
 <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
     <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="#fff4e6" />
     <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="none" stroke="#f39c12" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
     <rect x="65" y="55" width="55" height="75" rx="6" fill="#f39c12" />
     <line x1="75" y1="55" x2="75" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
-    <g>
-        <path d="M 15 105 Q 15 75 45 75" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" />
-        <path d="M 35 65 L 45 75 L 35 85" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Tabler hand-stop: 旋转-90°后手指朝右推入 -->
+    <g transform="translate(-2, 60) scale(2.8) rotate(-90, 12, 12)" stroke="#f39c12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5" />
+        <path d="M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5" />
+        <path d="M14 5.5a1.5 1.5 0 0 1 3 0v6.5" />
+        <path d="M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
     </g>
 </svg>
 
 
 <!-- ============================================== -->
-<!-- 模式 2：动态版 (轻量化往复循环定稿)                 -->
+<!-- 模式 2：动态版                                     -->
 <!-- ============================================== -->
 
-<!-- [动态] 取书 (Borrow - 轻量防遮挡) -->
+<!-- [动态] 取书 (Borrow) -->
 <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
     <style>
         .b-x { animation: bX_svg 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
@@ -44,8 +51,13 @@
         @keyframes bX_svg { 0%, 10% { transform: translateX(0); } 35%, 65% { transform: translateX(12px); } 90%, 100% { transform: translateX(0); } }
         @keyframes bY_svg { 0%, 15% { transform: translateY(0); } 40%, 65% { transform: translateY(-28px); } 90%, 100% { transform: translateY(0); } }
         
-        .b-arrow { animation: bA_svg 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-        @keyframes bA_svg { 0%, 10% { stroke-dashoffset: 80; opacity: 0; transform: translate(0,0); } 25% { stroke-dashoffset: 0; opacity: 1; } 40%, 65% { transform: translate(6px, -4px); opacity: 1; } 80%, 100% { opacity: 0; transform: translate(6px, -4px); } }
+        .b-hand { animation: bH_svg 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes bH_svg {
+            0%, 10% { opacity: 0.4; transform: translate(-4px, 6px); }
+            25% { opacity: 1; transform: translate(0, 0); }
+            40%, 65% { transform: translate(5px, -6px); opacity: 1; }
+            80%, 100% { opacity: 0.4; transform: translate(-4px, 6px); }
+        }
     </style>
     <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="#e6fcf5" />
     <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="none" stroke="#0ab39c" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
@@ -55,13 +67,17 @@
             <line x1="50" y1="55" x2="50" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
         </g>
     </g>
-    <g class="b-arrow" stroke-dasharray="80" stroke-dashoffset="0">
-        <path d="M 105 85 Q 135 85 135 55" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" />
-        <path d="M 125 65 L 135 55 L 145 65" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(100, 30) scale(2.8) rotate(180, 12, 12)">
+        <g class="b-hand" stroke="#0ab39c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M8 11v-3.5a1.5 1.5 0 0 1 3 0v2.5" />
+            <path d="M11 9.5v-3a1.5 1.5 0 0 1 3 0v3.5" />
+            <path d="M14 7.5a1.5 1.5 0 0 1 3 0v2.5" />
+            <path d="M17 9.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
+        </g>
     </g>
 </svg>
 
-<!-- [动态] 放书 (Return - 轻量防遮挡+优空间) -->
+<!-- [动态] 放书 (Return) -->
 <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
     <style>
         .r-x-svg { animation: rX_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
@@ -72,12 +88,12 @@
         @keyframes rY_s { 0%, 15% { transform: translateY(-8px); } 45%, 65% { transform: translateY(0); } 90%, 100% { transform: translateY(-8px); } }
         @keyframes rR_s { 0%, 12% { transform: rotate(-18deg); } 42%, 65% { transform: rotate(0deg); } 90%, 100% { transform: rotate(-18deg); } }
         
-        .r-arrow-svg { animation: rA_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-        @keyframes rA_s {
-            0%, 10% { transform: translate(-5px, -3px); opacity: 0; stroke-dashoffset: 80; }
-            22%  { transform: translate(-3px, -2px); opacity: 1; stroke-dashoffset: 0; }
-            42%, 65%  { transform: translate(8px, 0px); opacity: 1; stroke-dashoffset: 0; }
-            85%, 100% { transform: translate(8px, 0px); opacity: 0; stroke-dashoffset: 0; }
+        .r-hand-svg { animation: rHand_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes rHand_s {
+            0%, 10% { transform: translateX(-10px); opacity: 0.4; }
+            30% { opacity: 1; transform: translateX(-3px); }
+            42%, 65% { transform: translateX(0); opacity: 1; }
+            80%, 100% { transform: translateX(-10px); opacity: 0.4; }
         }
     </style>
     <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="#fff4e6" />
@@ -91,8 +107,12 @@
             </g>
         </g>
     </g>
-    <g class="r-arrow-svg" stroke-dasharray="80" stroke-dashoffset="0">
-        <path d="M 15 105 Q 15 75 45 75" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" />
-        <path d="M 35 65 L 45 75 L 35 85" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(-2, 60) scale(2.8) rotate(-90, 12, 12)">
+        <g class="r-hand-svg" stroke="#f39c12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5" />
+            <path d="M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5" />
+            <path d="M14 5.5a1.5 1.5 0 0 1 3 0v6.5" />
+            <path d="M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
+        </g>
     </g>
 </svg>

@@ -68,7 +68,7 @@ export async function newRender({
     let imageUrl = ""
     if (Array.isArray(result) && typeof result[0] === 'string') {
       // Direct array of strings format: ["https://s.mamale.vip/...png"]
-      imageUrl = result[0]
+      imageUrl = Array.isArray(result) ? result[0] : ""
     } else if (result.data && Array.isArray(result.data) && result.data[0]?.url) {
       imageUrl = result.data[0].url
     } else if (result.url) {
@@ -94,9 +94,9 @@ export async function newRender({
 
     throw new Error(`Jimeng returned no image URL`)
   } catch (err) {
-    console.error(`[Render] Jimeng failed -`, err instanceof Error ? err.message : String(err))
-
-    const finalError = "Jimeng image generation failed."
+    console.error(`[Render] Jimeng failed -`, err instanceof Error ? err.message : String(err));
+    const originalError = err instanceof Error ? err.message : String(err);
+    const finalError = originalError || "Jimeng image generation failed.";
     return {
       renderId: "",
       status: "error",
@@ -105,7 +105,7 @@ export async function newRender({
       error: finalError,
       maskUrl: "",
       segments: []
-    } as RenderedScene
+    } as RenderedScene;
   }
 }
 

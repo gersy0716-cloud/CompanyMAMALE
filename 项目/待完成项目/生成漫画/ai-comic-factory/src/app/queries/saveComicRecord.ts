@@ -81,7 +81,10 @@ export async function updateComicRecord({
 
     try {
         const url = `${dbConfig.apiBase}/${dbConfig.baseId}/tables/${dbConfig.tableId}/records/${recordId}`;
-        const hasImages = imageUrls.some(u => !!u);
+        const allFinished = imageUrls.every(u => !!u);
+        const anyFinished = imageUrls.some(u => !!u);
+
+        console.log(`[Database] Updating record ${recordId}. All finished: ${allFinished}, Any finished: ${anyFinished}`);
 
         await fetch(url, {
             method: 'PATCH',
@@ -91,7 +94,7 @@ export async function updateComicRecord({
             },
             body: JSON.stringify({
                 panel_images: JSON.stringify(imageUrls),
-                status: hasImages ? "已完成" : "失败",
+                status: allFinished ? "已完成" : "生成中",
             })
         });
 

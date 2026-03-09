@@ -37,3 +37,35 @@
 ## 课程目录
 
 > 此部分接口待补充文档
+
+---
+
+## 班级画布 (Canva)
+
+- **我的画布**: `GET https://{type}.mamale.vip/api/app/classCanva/my`
+- **共享画布**: `GET https://{type}.mamale.vip/api/app/classCanva/myWithShare`
+
+### 说明
+
+- **请求方式**: GET，支持分页和排序。
+- **参数**: `Sorting` (例如 `id desc`)，`PageIndex` (当前页)，`PageSize` (每页个数)。
+- **返回结构**:
+
+  ```json
+  {
+    "totalCount": 2,
+    "items": [
+      {
+        "canvaData": "https://...",
+        "creationTime": "2025-10-24 15:38:27",
+        "creatorId": "...",
+        "id": "...",
+        "isShare": false,
+        "user": {
+           "userName": "lickies",
+           "email": "lickies@qq.com"
+        }
+      }
+    ]
+  }
+  ```

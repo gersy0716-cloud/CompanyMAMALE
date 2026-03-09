@@ -31,7 +31,7 @@ const dbConfig = {
     apiBase: "https://data.520ai.cc/api/bases",
     baseId: "bsekddalnVrgIAiZYmM",
     tableId: "gaHY0ruUUs",
-    token: TOKEN,
+    apikey: "LlrO0TdkBt6AMRiE2KN8FYVJ8Ma1z9jZ7svOpvln",
 
     getRecordsUrl() {
         return `${this.apiBase}/${this.baseId}/tables/${this.tableId}/records`;
@@ -40,7 +40,7 @@ const dbConfig = {
     getHeaders() {
         return {
             'Content-Type': 'application/json',
-            'x-bm-token': this.token,
+            'x-bm-token': this.apikey,
         };
     }
 };
@@ -51,10 +51,12 @@ const IMAGE_ENGINES = {
         id: "jimeng",
         label: "即梦 AI",
         icon: "🎨",
-        apiPath: "aiJimeng3/myTextToImage",
+        apiPath: "aiJimeng/myTextToImage",
         buildBody: (prompt) => ({
             prompt: prompt,
-            size: "1024*1024"
+            seed: -1,
+            size: "1024*1024",
+            isHd: true
         }),
         parseResult: (result) => result.data?.[0]?.url || result.url || result.result,
     }
@@ -433,8 +435,8 @@ async function drawPanels(panels, preset) {
 
 // ─── 数据库操作 ────────────────────────────────────────
 async function saveToDb(prompt, styleId, panelsData) {
-    if (!dbConfig.token) {
-        console.warn("数据库 token 未配置，跳过保存");
+    if (!dbConfig.apikey) {
+        console.warn("数据库 apikey 未配置，跳过保存");
         return null;
     }
 
@@ -468,7 +470,7 @@ async function saveToDb(prompt, styleId, panelsData) {
 }
 
 async function updateDbRecord(recordId, imageUrls) {
-    if (!recordId || !dbConfig.token) return;
+    if (!recordId || !dbConfig.apikey) return;
 
     try {
         const url = `${dbConfig.getRecordsUrl()}/${recordId}`;

@@ -47,8 +47,6 @@ export function Panel({
   // the panel Id must be unique across all pages
   const panelId = `${panelIndex}`
 
-  // console.log(`panel/index.tsx: <Panel panelId=${panelId}> rendered again!`)
-
   const [mouseOver, setMouseOver] = useState(false)
   const ref = useRef<HTMLImageElement>(null)
   const font = useStore(s => s.font)
@@ -74,6 +72,7 @@ export function Panel({
   const zoomLevel = useStore(s => s.zoomLevel)
 
   const addToUpscaleQueue = useStore(s => s.addToUpscaleQueue)
+  const dbRecordId = useStore(s => s.dbRecordId)
 
   const [_isPending, startTransition] = useTransition()
   const renderedScenes = useStore(s => s.renderedScenes)
@@ -92,61 +91,16 @@ export function Panel({
 
   const enableRateLimiter = true
 
-  const [renderingModelVendor, _setRenderingModelVendor] = useLocalStorage<RenderingModelVendor>(
+  const [renderingModelVendor] = useLocalStorage<RenderingModelVendor>(
     localStorageKeys.renderingModelVendor,
     defaultSettings.renderingModelVendor
   )
 
   let delay = enableRateLimiter ? (2000 * panelIndex) : 1000
 
-
-  const addSpeechBubble = async () => {
-    if (!renderedRef.current) { return }
-
-    // story generation failed
-    if (speech.trim() === "...") { return }
-
-    if (!showSpeeches) { return }
-
-    console.log('Generating speech bubbles (this is experimental!)')
-    try {
-      const result = await injectSpeechBubbleInTheBackground({
-        inputImageInBase64: renderedRef.current.assetUrl,
-        text: speech,
-        shape: "oval",
-        line: "straight", // "straight", "bubble", "chaotic"
-        //  font?: string;
-        // debug: true,
-      })
-      renderedRef.current.assetUrl = result
-      setRendered(panelId, renderedRef.current)
-    } catch (err) {
-      console.log(`error: failed to inject the speech bubble: ${err}`)
-    }
-  }
-  /*
-  console.log("panel/index.tsx: DEBUG: " + JSON.stringify({
-    page,
-    nbPanels,
-    panel,
-    panelIndex,
-    panelId,
-    revision,
-    renderedScenes: Object.keys(renderedScenes),
-  }, null, 2))
-  */
-
-  // Let's be gentle with Replicate or else they will believe they are under attack
   if (renderingModelVendor === "REPLICATE") {
     delay += 8000
   }
-
-  // nbFrames == 1 -> image
-  // nbFrames >= 2 -> video
-  // for AnimateLCM (the current supported engine)
-  // the value is between 12 and 20, default is 16
-  // This is not the ideal wait to configure this,
-  // but the AI Comic Factory is a just a prototype, so it will do
 
   const nbFrames = preset.id.startsWith("video")
     ? 16
@@ -161,22 +115,14 @@ export function Panel({
   }) => {
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-    console.log(`panel/index.tsx: startImageGeneration(${JSON.stringify({ prompt, width, height, nbFrames, revision }, null, 2)})`)
     if (!prompt?.length) { return }
 
-    // important: update the status, and clear the scene
     setGeneratingImages(panelId, true)
-
-    // just to empty it
     setRendered(panelId, getInitialRenderedScene())
 
     setTimeout(() => {
       startTransition(async () => {
-
         const withCache = revision === 0
-
-        // atrocious and very, very, very, very, very, very, very ugly hack for the Inference API
-        // as apparently "use_cache: false" doesn't work, or doesn't do what we want it to do
         let cacheInvalidationHack = ""
         const nbMaxRevisions = 20
         for (let i = 0; i < revision && revision < nbMaxRevisions; i++) {
@@ -186,24 +132,18 @@ export function Panel({
 
         let newRendered: RenderedScene
         try {
-
           newRendered = await newRender({
             prompt: cacheInvalidationHack + " " + prompt,
             width,
             height,
             nbFrames,
-
-            // TODO: here we never reset the revision, so only the first user
-            // comic will be cached (we should fix that later)
             withCache: revision === 0,
             settings: getSettings(),
           })
           if (!newRendered.status || newRendered.status === "error") {
-            throw new Error("invalid status")
+            throw new Error(newRendered.error || "invalid status")
           }
         } catch (err) {
-          // "Failed to load the panel! Don't worry, we are retrying..")
-          // Add random jitter before retry to further stagger requests
           await sleep(3000 + Math.random() * 3000)
           try {
             newRendered = await newRender({
@@ -215,16 +155,16 @@ export function Panel({
               settings: getSettings(),
             })
             if (!newRendered.status || newRendered.status === "error") {
-              throw new Error("invalid status")
+              throw new Error(newRendered.error || "invalid status")
             }
           } catch (err2) {
             newRendered = {
               renderId: "",
               status: "error",
               assetUrl: "",
-              alt: "",
+              alt: prompt,
               maskUrl: "",
-              error: `${err2 || "unknown error"}`,
+              error: `${err2 instanceof Error ? err2.message : String(err2)}`,
               segments: []
             }
           }
@@ -232,83 +172,50 @@ export function Panel({
 
         if (newRendered) {
           setRendered(panelId, newRendered)
-
           if (newRendered.status === "completed") {
             setGeneratingImages(panelId, false)
             addToUpscaleQueue(panelId, newRendered)
-            // addSpeechBubble() // Disabled experimental pixel-injection
-          } else if (!newRendered.status || newRendered.status === "error") {
+          } else if (newRendered.status === "error") {
             setGeneratingImages(panelId, false)
-          } else {
-            // still loading
           }
-
-
         } else {
-          // 
           setRendered(panelId, {
             renderId: "",
             status: "error",
             assetUrl: "",
-            alt: "",
+            alt: prompt,
             maskUrl: "",
             error: "empty newRendered",
             segments: []
           })
           setGeneratingImages(panelId, false)
-          return
         }
       })
     }, enableRateLimiter ? 1000 * panel : 0)
   }
 
-
   const checkStatus = () => {
     startTransition(async () => {
       clearTimeout(timeoutRef.current)
-
       if (!renderedRef.current?.renderId || renderedRef.current?.status !== "pending") {
         timeoutRef.current = setTimeout(checkStatus, delay)
         return
       }
-
       try {
         setGeneratingImages(panelId, true)
         const newRendered = await getRender(renderedRef.current.renderId, getSettings())
-
         if (JSON.stringify(renderedRef.current) !== JSON.stringify(newRendered)) {
           setRendered(panelId, renderedRef.current = newRendered)
           setGeneratingImages(panelId, true)
         }
-
         if (newRendered.status === "pending") {
           timeoutRef.current = setTimeout(checkStatus, delay)
-        } else if (!newRendered.status || newRendered.status === "error" ||
-          (newRendered.status === "completed" && !newRendered.assetUrl?.length)) {
-          try {
-            // we try only once
-            const newAttempt = await newRender({
-              prompt,
-              width,
-              height,
-              nbFrames,
-              withCache: false,
-              settings: getSettings(),
-            })
-            if (!newAttempt.status || newAttempt.status === "error") {
-              throw new Error("invalid status")
-            }
-            setRendered(panelId, newAttempt)
-          } catch (err) {
-            console.error("yeah sorry, something is wrong.. aborting", err)
-            setGeneratingImages(panelId, false)
-          }
+        } else if (newRendered.status === "error" || (newRendered.status === "completed" && !newRendered.assetUrl?.length)) {
+          console.error("Panel generation failed, aborting status check")
+          setGeneratingImages(panelId, false)
         } else {
-          console.log("panel finished!")
           setGeneratingImages(panelId, false)
           addToUpscaleQueue(panelId, newRendered)
-          // addSpeechBubble() // Disabled experimental pixel-injection
-
         }
       } catch (err) {
         console.error(err)
@@ -319,112 +226,48 @@ export function Panel({
 
   useEffect(() => {
     if (!prompt.length) { return }
-
-    const renderedScene: RenderedScene | undefined = useStore.getState().renderedScenes[panelIndex]
-
-    // console.log("renderedScene:", renderedScene)
-
-    // I'm trying to find a rule to handle the case were we load a .clap file
-    // I think we should trash all the Panel objects for this to work properly 
+    const renderedScene = useStore.getState().renderedScenes[panelIndex]
     if (renderedScene && renderedScene.status === "pregenerated" && renderedScene.assetUrl) {
-      console.log(`loading a pre-generated panel..`)
       return
     }
-
     startImageGeneration({ prompt, width, height, nbFrames, revision })
-
     clearTimeout(timeoutRef.current)
-
-    // normally it should reply in < 1sec, but we could also use an interval
     timeoutRef.current = setTimeout(checkStatus, delay)
-
-    return () => {
-      clearTimeout(timeoutRef.current)
-    }
+    return () => { clearTimeout(timeoutRef.current) }
   }, [prompt, width, height, nbFrames, revision])
 
-  /*
-  doing the captionning from the browser is expensive
-  a simpler solution is to caption directly during SDXL generation
-
-  useEffect(() => {
-    if (!rendered.assetUrl) { return }
-    // the asset url can evolve with time (link to a better resolution image)
-    // however it would be costly to ask for the caption, the low resolution is enough for the semantic resolution
-    // so we just do nothing if we already have the caption
-    if (caption) { return }
-    startTransition(async () => {
-      try {
-        const newCaption = await see({
-          prompt: "please caption the following image",
-          imageBase64: rendered.assetUrl 
-        })
-        if (newCaption) {
-          setCaption(newCaption)
-        }
-      } catch (err) {
-        console.error(`failed to generate the caption:`, err)
-      }
-    })
-  }, [rendered.assetUrl, caption])
-  */
-
   const frameClassName = cn(
-    `relative`,
-    `w-full h-full`,
-    `bg-white/80`,
-    `transition-all duration-300 ease-in-out`,
+    `relative w-full h-full bg-white/80 transition-all duration-300 ease-in-out shadow-xl hover:shadow-2xl hover:scale-[1.01] overflow-hidden border border-white/40 print:border-[1.5px] print:shadow-none`,
     zoomLevel > 140 ? `rounded-3xl` :
       zoomLevel > 120 ? `rounded-2xl` :
         zoomLevel > 90 ? `rounded-xl` :
-          zoomLevel > 40 ? `rounded-lg` :
-            `rounded-none`,
-    `shadow-xl hover:shadow-2xl hover:scale-[1.01]`,
-    `overflow-hidden`,
-    `border border-white/40`,
-    `print:border-[1.5px] print:shadow-none`,
+          zoomLevel > 40 ? `rounded-lg` : `rounded-none`,
   )
 
-  const handleReload = () => {
-    console.log(`Asked to reload panel ${panelId}`)
-    setRevision(revision + 1)
-  }
+  const handleReload = () => setRevision(revision + 1)
+  const handleSavePrompt = (newPrompt: string) => setPanelPrompt(newPrompt, panelIndex)
+  const handleSaveSpeech = (newSpeech: string) => setPanelSpeech(newSpeech, panelIndex)
+  const handleSaveCaption = (newCaption: string) => setPanelCaption(newCaption, panelIndex)
 
-
-  const handleSavePrompt = (newPrompt: string) => {
-    console.log(`Asked to save a new prompt: ${newPrompt}`)
-    setPanelPrompt(newPrompt, panelIndex)
-  }
-
-  const handleSaveSpeech = (newSpeech: string) => {
-    console.log(`Asked to save a new speech: ${newSpeech}`)
-    setPanelSpeech(newSpeech, panelIndex)
-  }
-
-  const handleSaveCaption = (newCaption: string) => {
-    console.log(`Asked to save a new caption: ${newCaption}`)
-    setPanelCaption(newCaption, panelIndex)
-  }
   if (prompt && !rendered.assetUrl) {
     return (
-      <div className={cn(
-        frameClassName,
-        `flex flex-col items-center justify-center p-8 text-center`,
-        className,
-      )}>
+      <div className={cn(frameClassName, `flex flex-col items-center justify-center p-8 text-center`, className)}>
         {rendered.status === "error" ? (
           <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
             <div className="text-4xl text-slate-300 mb-2">⚠️</div>
-            <div className="text-slate-500 font-bold text-sm">
-              {rendered.error?.includes("Limit") ? "服务器太忙了" : "生成出错了"}
+            <div className="text-slate-500 font-bold text-sm text-slate-600">
+              {rendered.error?.includes("Limit") ? "绘图接口并发已达上限" : "生成出错了"}
             </div>
+            {rendered.error?.includes("Limit") ? (
+              <p className="text-slate-400 text-xs mt-1 px-4 leading-relaxed">
+                码码乐的绘图服务器目前正忙<br />请等待约 10-30 秒后再次尝试
+              </p>
+            ) : null}
             <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReload}
-              className="mt-2 rounded-full border-slate-200 text-slate-500 hover:bg-slate-50 font-bold"
+              variant="outline" size="sm" onClick={handleReload}
+              className="mt-2 rounded-full border-slate-200 text-slate-500 hover:bg-slate-50 font-bold px-6 shadow-sm"
             >
-              重试一下
+              再试一次
             </Button>
           </div>
         ) : (
@@ -440,103 +283,40 @@ export function Panel({
     rendered.status === "pregenerated"
 
   return (
-    <div className={cn(
-      frameClassName,
-      { "grayscale": preset.color === "grayscale" },
-      className
-    )}
+    <div className={cn(frameClassName, { "grayscale": preset.color === "grayscale" }, className)}
       onMouseEnter={() => setMouseOver(true)}
       onMouseLeave={() => setMouseOver(false)}
     >
-      {(prompt && rendered.assetUrl && speech)
-        ? <Bubble variant="speech" onChange={handleSaveSpeech}>{speech}</Bubble>
-        : null}
-      {(prompt && rendered.assetUrl && caption)
-        ? <Bubble variant="caption" onChange={handleSaveCaption}>{caption}</Bubble>
-        : null}
-      <div
-        className={cn(
-          `absolute`,
-          `top-0 w-full`,
-          `flex justify-between`,
-          `p-2 space-x-2`,
-          `print:hidden`
-        )}>
-        <div
-          onClick={
-            hasSucceededOrFailed
-              ? handleReload
-              : undefined}
-          className={cn(
-            `glass-card border-none`,
-            `flex flex-row space-x-2 items-center`,
-            `py-1.5 px-4 md:py-2 md:px-5`,
-            `transition-all duration-200 ease-in-out shadow-lg`,
-            hasSucceededOrFailed
-              ? "opacity-95 cursor-pointer hover:bg-white hover:scale-105"
-              : "opacity-50 cursor-wait",
-            mouseOver && (
-              hasSucceededOrFailed
-            ) ? `scale-100 opacity-100` : `scale-0`
-          )}>
-          <RxReload
-            className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
-          />
-          <span className={cn(
-            zoomLevel > 80
-              ? `text-xs md:text-sm lg:text-base` :
-              zoomLevel > 40
-                ? `text-2xs md:text-xs lg:text-sm` :
-                `text-3xs md:text-2xs lg:text-xs`
-          )}>Redraw</span>
-        </div>
-        <EditModal
-          isEnabled={hasSucceededOrFailed}
-          existingPrompt={prompt}
-          onSave={handleSavePrompt}
-        >
-          <div
-            className={cn(
-              `glass-card border-none`,
-              `flex flex-row space-x-2 items-center`,
-              `py-1.5 px-4 md:py-2 md:px-5 cursor-pointer`,
-              `transition-all duration-200 ease-in-out shadow-lg`,
-              hasSucceededOrFailed ? "opacity-95 hover:bg-white hover:scale-105" : "opacity-50",
-              mouseOver && hasSucceededOrFailed ? `scale-100 opacity-100` : `scale-0`
-            )}>
-            <RxPencil2
-              className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
-            />
-            <span className={cn(
-              zoomLevel > 80
-                ? `text-xs md:text-sm lg:text-base` :
-                zoomLevel > 40
-                  ? `text-2xs md:text-xs lg:text-sm` :
-                  `text-3xs md:text-2xs lg:text-xs`
-            )}>Edit</span>
-          </div>
-
-        </EditModal>
+      {(prompt && rendered.assetUrl && speech) ? <Bubble variant="speech" onChange={handleSaveSpeech}>{speech}</Bubble> : null}
+      {(prompt && rendered.assetUrl && caption) ? <Bubble variant="caption" onChange={handleSaveCaption}>{caption}</Bubble> : null}
+      <div className={cn(`absolute top-0 w-full flex justify-between p-2 space-x-2 print:hidden`)}>
+        {!dbRecordId && (
+          <>
+            <div onClick={hasSucceededOrFailed ? handleReload : undefined}
+              className={cn(
+                `glass-card border-none flex flex-row space-x-2 items-center py-1.5 px-4 md:py-2 md:px-5 transition-all duration-200 ease-in-out shadow-lg`,
+                hasSucceededOrFailed ? "opacity-95 cursor-pointer hover:bg-white hover:scale-105" : "opacity-50 cursor-wait",
+                mouseOver && hasSucceededOrFailed ? `scale-100 opacity-100` : `scale-0`
+              )}>
+              <RxReload className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5" />
+              <span className={cn(zoomLevel > 80 ? `text-xs md:text-sm lg:text-base` : zoomLevel > 40 ? `text-2xs md:text-xs lg:text-sm` : `text-3xs md:text-2xs lg:text-xs`)}>Redraw</span>
+            </div>
+            <EditModal isEnabled={hasSucceededOrFailed} existingPrompt={prompt} onSave={handleSavePrompt}>
+              <div className={cn(
+                `glass-card border-none flex flex-row space-x-2 items-center py-1.5 px-4 md:py-2 md:px-5 cursor-pointer transition-all duration-200 ease-in-out shadow-lg`,
+                hasSucceededOrFailed ? "opacity-95 hover:bg-white hover:scale-105" : "opacity-50",
+                mouseOver && hasSucceededOrFailed ? `scale-100 opacity-100` : `scale-0`
+              )}>
+                <RxPencil2 className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:w-5" />
+                <span className={cn(zoomLevel > 80 ? `text-xs md:text-sm lg:text-base` : zoomLevel > 40 ? `text-2xs md:text-xs lg:text-sm` : `text-3xs md:text-2xs lg:text-xs`)}>Edit</span>
+              </div>
+            </EditModal>
+          </>
+        )}
       </div>
-
-      {rendered.assetUrl &&
-        <img
-          ref={ref}
-          src={rendered.assetUrl}
-          width={width}
-          height={height}
-          alt={rendered.alt}
-          className={cn(
-            `comic-panel w-full h-full`,
-            `object-cover`,
-
-            // I think we can remove this to improve compatibility,
-            // in case the generate image isn't exactly the same size
-            // `max-w-max`,
-
-            // showCaptions ? `-mt-11` : ''
-          )}
-        />}
+      {rendered.assetUrl && (
+        <img ref={ref} src={rendered.assetUrl} width={width} height={height} alt={rendered.alt} className="comic-panel w-full h-full object-cover" />
+      )}
     </div>
   )
 }

@@ -176,7 +176,7 @@ export function HeroSection() {
         <div className={cn(
             "w-full max-w-[1100px] mx-auto",
             "bg-white/90 backdrop-blur-xl border border-white rounded-[24px] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),_0_10px_10px_-5px_rgba(0,0,0,0.04)]",
-            "p-6 md:p-10 mb-12",
+            "p-4 md:p-6 mb-8",
             "relative z-20"
         )}>
             <div className="flex flex-col gap-6">

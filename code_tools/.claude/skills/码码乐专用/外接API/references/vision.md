@@ -18,18 +18,49 @@
 
 ### AI 即梦 (火山引擎) ⭐ 推荐
 
-- **接口**: `POST api/app/aiJimeng3/myTextToImage`
+- **接口**: `POST api/app/aiJimeng/myTextToImage` (图片生成)
+- **参数示例**:
+
+  ```json
+  {
+    "prompt": "超现实风格，治愈系傍晚夜幕降临...",
+    "seed": -1,
+    "size": "288*512",
+    "isHd": true
+  }
+  ```
+
 - **限制**: 20张/人/天
-- **参数**: `prompt`, `size` (1024*1024), `image` (参考图)
-
-### 其他
-
-- **Chatgptten**: 使用模型 `nano-banana-2-hd`。
+- **其他**:
+  - **Chatgptten**: 使用模型 `nano-banana-2-hd`。
 
 ---
 
 ## 图像处理
 
-- **图片解析 (豆包)**: `POST api/app/aiJimeng3/myImageToDesc`
+### 图片理解接口
+
+- **接口**: `POST api/app/aiJimeng3/myImageToDesc`
+- **参数示例**:
+
+  ```json
+  {
+    "items": [
+      {
+        "type": "text",
+        "value": "图片主要讲了什么?"
+      },
+      {
+        "type": "image",
+        "value": "https://..."
+      }
+    ],
+    "model": "doubao-seed-1-6-250615",
+    "role": "user"
+  }
+  ```
+
+### 其他图像处理
+
 - **阿里云抠图**: `POST api/app/aliyun/aliyunImageSegmentCommonMy`
   - 参数: `{ imageUrl: "..." }`

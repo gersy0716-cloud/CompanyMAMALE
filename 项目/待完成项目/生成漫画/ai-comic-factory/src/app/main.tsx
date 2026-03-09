@@ -337,7 +337,7 @@ export default function Main() {
       }
 
       // Save to database only once after the whole generation loop
-      if (ref.current.existingPanels.length > 0) {
+      if (ref.current.existingPanels.length > 0 && !dbRecordId) {
         const settings = getSettings()
         const recordId = await saveComicRecord({
           prompt: prompt,
@@ -372,16 +372,17 @@ export default function Main() {
 
     const settings = getSettings()
     const imageUrls = panels.map((_, i) => renderedScenes[i]?.assetUrl || "")
-    const allFinished = imageUrls.every(url => !!url) || (numberOfPendingGenerations === 0 && panels.length > 0)
+    const numberOfPanels = panels.length
 
-    if (panels.length > 0) {
+    if (numberOfPanels > 0) {
+      console.log(`[Main] Triggering DB sync for record ${dbRecordId}. Panels: ${numberOfPanels}, Images found: ${imageUrls.filter(u => !!u).length}`)
       updateComicRecord({
         recordId: dbRecordId,
         imageUrls,
         token: settings.mamaleApiKey
       })
     }
-  }, [JSON.stringify(renderedScenes), dbRecordId])
+  }, [JSON.stringify(renderedScenes), dbRecordId, panels.length])
 
   return (
     <Suspense>
@@ -402,8 +403,8 @@ export default function Main() {
       {/* Hero Section Header */}
       {!hasAtLeastOnePage && (
         <div className={cn(
-          "w-full flex flex-col items-center pt-20 pb-8 z-10 relative",
-          "min-h-screen"
+          "w-full flex flex-col items-center pt-2 pb-8 z-10 relative",
+          "min-h-[50vh]"
         )}>
           {/* 漫画历史记录入口按钮 (右上角) */}
           <div className="absolute top-8 right-12 z-30">
@@ -419,7 +420,7 @@ export default function Main() {
             )}
           </div>
 
-          <h1 className="font-[var(--font-heading)] font-extrabold text-5xl tracking-tight mb-4 text-slate-800 mt-[5vh]">
+          <h1 className="font-[var(--font-heading)] font-extrabold text-5xl tracking-tight mb-4 text-slate-800 mt-2">
             AI 生漫画
           </h1>
           <p className="text-xl text-slate-600 mb-10 font-medium">一句话，开启你的漫画宇宙</p>
@@ -490,25 +491,23 @@ export default function Main() {
           )}
 
           <div className={cn(
-            "glass-card",
-            "w-full max-w-[1920px]",
+            "w-full max-w-[2800px]",
             "rounded-none md:rounded-[var(--radius-lg)]",
-            "shadow-2xl shadow-blue-500/10",
-            "p-1 md:p-2 lg:p-4",
+            "p-0",
             "transition-all duration-500",
-            "h-[calc(100vh-120px)] flex flex-col items-center justify-center overflow-hidden"
+            "w-full flex flex-col items-center justify-center min-h-[92vh]"
           )}>
             <div className={cn(
-              "flex flex-col h-full w-full items-center justify-center"
+              "flex flex-col h-full w-full items-center justify-center min-h-0"
             )}>
               <div className={cn(
                 "comic-page",
-                "grid",
-                currentNbPages > 1 ? "grid-cols-2" : "grid-cols-1",
+                "flex",
+                currentNbPages > 1 ? "flex-col lg:flex-row" : "flex-col",
                 "gap-2 md:gap-4",
                 "items-center justify-center",
-                "mx-auto w-full h-full",
-                "print:grid-cols-1 print:gap-4"
+                "mx-auto w-full h-full min-h-0",
+                "print:block print:gap-4"
               )}>
                 {Array(currentNbPages).fill(0).map((_, i) => (
                   <Page key={i} page={i} />

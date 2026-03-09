@@ -57,12 +57,12 @@ export function Page({ page }: { page: number }) {
   return (
     <div
       className={cn(
-        `w-full h-full flex items-center justify-center`,
+        `relative flex items-center justify-center h-full w-full min-h-0 min-w-0`,
         `print:w-screen`,
         `print:break-after-all`
       )}
       style={{
-        padding: `12px`
+        padding: `4px`
       }}
     >
       <div
@@ -73,15 +73,13 @@ export function Page({ page }: { page: number }) {
           `border border-white/40 shadow-xl`,
           `print:shadow-none`,
           `print:border-0`,
-          `flex flex-col`
+          `flex flex-col max-h-full max-w-full relative shrink-0`
         )}
         style={{
-          padding: `clamp(8px, 2vh, 20px)`,
-          maxHeight: `100%`,
-          maxWidth: `100%`,
-          width: `auto`,
-          height: `auto`,
-          aspectRatio: `297 / 210`
+          padding: `clamp(2px, 0.5vh, 4px)`,
+          aspectRatio: `297 / 210`,
+          height: `100%`,
+          width: `auto`
         }}
       >
         <LayoutElement page={page} nbPanels={panelsPerPage} />

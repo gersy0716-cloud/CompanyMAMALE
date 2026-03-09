@@ -20,8 +20,8 @@ export function Layout0({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={0}
-          width={1024}
-          height={768}
+          width={900}
+          height={900}
         />
       </div>
       <div className="bg-zinc-100  col-span-1 row-span-1">
@@ -29,8 +29,8 @@ export function Layout0({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={1}
-          width={1024}
-          height={768}
+          width={900}
+          height={900}
         />
       </div>
       <div className="bg-gray-100  col-span-1 row-span-1">
@@ -38,8 +38,8 @@ export function Layout0({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={2}
-          width={1024}
-          height={768}
+          width={900}
+          height={900}
         />
       </div>
       <div className="bg-slate-100 col-span-1 row-span-1">
@@ -47,8 +47,8 @@ export function Layout0({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={3}
-          width={1024}
-          height={768}
+          width={900}
+          height={900}
         />
       </div>
     </Grid>
@@ -63,8 +63,8 @@ export function Layout1({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={0}
-          width={1024}
-          height={512}
+          width={1200}
+          height={675}
         />
       </div>
       <div className="bg-zinc-100 row-span-2 col-span-1">
@@ -72,8 +72,8 @@ export function Layout1({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={1}
-          width={768}
-          height={1024}
+          width={900}
+          height={1350}
         />
       </div>
       <div className="bg-gray-100 row-span-2 col-span-1">
@@ -81,8 +81,8 @@ export function Layout1({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={2}
-          width={768}
-          height={1024}
+          width={900}
+          height={1350}
         />
       </div>
       <div className="bg-slate-100 row-span-1 col-span-1">
@@ -90,8 +90,8 @@ export function Layout1({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={3}
-          width={1024}
-          height={512}
+          width={1200}
+          height={675}
         />
       </div>
     </Grid>
@@ -106,8 +106,8 @@ export function Layout2({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={0}
-          width={768}
-          height={768}
+          width={750}
+          height={750}
         />
       </div>
       <div className="bg-zinc-100 col-span-1 row-span-1">
@@ -115,8 +115,8 @@ export function Layout2({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={1}
-          width={768}
-          height={768}
+          width={750}
+          height={750}
         />
       </div>
       <div className="bg-stone-100 row-span-2 col-span-1">
@@ -124,8 +124,8 @@ export function Layout2({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={2}
-          width={512}
-          height={1024}
+          width={600}
+          height={1350}
         />
       </div>
       <div className="bg-slate-100 row-span-1 col-span-2">
@@ -133,8 +133,8 @@ export function Layout2({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={3}
-          width={1024}
-          height={768}
+          width={1200}
+          height={675}
         />
       </div>
     </Grid>
@@ -149,8 +149,8 @@ export function Layout3({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={0}
-          width={1024}
-          height={768}
+          width={1200}
+          height={675}
         />
       </div>
       <div className="bg-zinc-100 col-span-1 row-span-1">
@@ -158,8 +158,8 @@ export function Layout3({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={1}
-          width={768}
-          height={768}
+          width={600}
+          height={675}
         />
       </div>
       <div className="bg-stone-100 row-span-1 col-span-1">
@@ -167,8 +167,8 @@ export function Layout3({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={2}
-          width={768}
-          height={768}
+          width={600}
+          height={675}
         />
       </div>
       <div className="bg-slate-100 row-span-1 col-span-2">
@@ -176,52 +176,52 @@ export function Layout3({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={3}
-          width={1024}
-          height={768}
+          width={1200}
+          height={675}
         />
       </div>
     </Grid>
   )
 }
 
-// squares + vertical
+// cinema style: 1 large top + 3 small bottom
 export function Layout4({ page, nbPanels }: LayoutProps) {
   return (
-    <Grid className="grid-cols-8 grid-rows-8">
-      <div className="bg-zinc-100 col-start-1 col-end-7 row-start-1 row-end-3">
+    <Grid className="grid-cols-3 grid-rows-2">
+      <div className="bg-zinc-100 col-span-3 row-span-1">
         <Panel
           page={page}
           nbPanels={nbPanels}
           panel={0}
-          width={1024}
-          height={512}
+          width={1200}
+          height={600}
         />
       </div>
-      <div className="bg-zinc-100 col-start-3 col-end-9 row-start-3 row-end-4">
+      <div className="bg-zinc-100 col-span-1 row-span-1">
         <Panel
           page={page}
           nbPanels={nbPanels}
           panel={1}
-          width={1024}
-          height={384}
+          width={400}
+          height={400}
         />
       </div>
-      <div className="bg-stone-100 col-start-2 col-end-8 row-start-4 row-end-6">
+      <div className="bg-stone-100 col-span-1 row-span-1">
         <Panel
           page={page}
           nbPanels={nbPanels}
           panel={2}
-          width={1024}
-          height={600}
+          width={400}
+          height={400}
         />
       </div>
-      <div className="bg-slate-100 col-start-1 col-end-9 row-start-6 row-end-8">
+      <div className="bg-slate-100 col-span-1 row-span-1">
         <Panel
           page={page}
           nbPanels={nbPanels}
           panel={3}
-          width={1024}
-          height={512}
+          width={400}
+          height={400}
         />
       </div>
     </Grid>
@@ -237,8 +237,8 @@ export function Layout5({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={0}
-          width={1024}
-          height={1024}
+          width={900}
+          height={900}
         />
       </div>
       <div className="bg-zinc-100">
@@ -246,8 +246,8 @@ export function Layout5({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={1}
-          width={1024}
-          height={1024}
+          width={900}
+          height={900}
         />
       </div>
       <div className="bg-stone-100">
@@ -255,8 +255,8 @@ export function Layout5({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={2}
-          width={1024}
-          height={1024}
+          width={900}
+          height={900}
         />
       </div>
       <div className="bg-slate-100">
@@ -264,8 +264,8 @@ export function Layout5({ page, nbPanels }: LayoutProps) {
           page={page}
           nbPanels={nbPanels}
           panel={3}
-          width={1024}
-          height={1024}
+          width={900}
+          height={900}
         />
       </div>
     </Grid>
@@ -288,7 +288,7 @@ export const allLayoutLabels = {
   Layout1: "三格对角 (2x3)",
   Layout2: "宽窄组合 (3x2)",
   Layout3: "经典跨版 (3x2)",
-  // Layout4: "Blocks 1",
+  Layout4: "电影感 (1+3)",
 }
 
 // note for reference: A4 (297mm x 210mm)
@@ -297,7 +297,7 @@ export const allLayoutAspectRatios = {
   Layout1: "aspect-[297/210]",
   Layout2: "aspect-[297/210]",
   Layout3: "aspect-[297/210]",
-  // Layout4: "aspect-[1/3]",
+  Layout4: "aspect-[297/210]",
 }
 
 export type LayoutName = keyof typeof allLayouts

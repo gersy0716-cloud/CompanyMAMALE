@@ -18,6 +18,7 @@ export function Bubble({ children, onChange, variant = "caption" }: {
   const zoomLevel = useStore(s => s.zoomLevel)
   const showSpeeches = useStore(s => s.showSpeeches)
   const showCaptions = useStore(s => s.showCaptions)
+  const dbRecordId = useStore(s => s.dbRecordId)
 
   const text = useRef(`${children || ''}`)
 
@@ -63,18 +64,28 @@ export function Bubble({ children, onChange, variant = "caption" }: {
               zoomLevel > 100 ? `p-2 md:p-4` :
                 `p-1.5 md:p-2`,
 
-          // Font size logic (further enlarged for readability)
-          zoomLevel > 220 ? `text-2xl md:text-3xl lg:text-4xl` :
-            zoomLevel > 200 ? `text-xl md:text-2xl lg:text-3xl` :
-              zoomLevel > 180 ? `text-lg md:text-xl lg:text-2xl` :
-                zoomLevel > 140 ? `text-base md:text-lg lg:text-xl` :
-                  zoomLevel > 120 ? `text-sm md:text-base lg:text-lg` :
-                    zoomLevel > 100 ? `text-xs md:text-sm` :
-                      `text-2xs md:text-xs`,
+          // Font size logic (further refined for caption vs speech)
+          variant === "caption" ? (
+            zoomLevel > 220 ? `text-xl md:text-2xl lg:text-3xl` :
+              zoomLevel > 200 ? `text-lg md:text-xl lg:text-2xl` :
+                zoomLevel > 180 ? `text-base md:text-lg lg:text-xl` :
+                  zoomLevel > 140 ? `text-sm md:text-base lg:text-lg` :
+                    zoomLevel > 120 ? `text-xs md:text-sm lg:text-base` :
+                      zoomLevel > 100 ? `text-2xs md:text-xs` :
+                        `text-[8px] md:text-2xs`
+          ) : (
+            zoomLevel > 220 ? `text-2xl md:text-3xl lg:text-4xl` :
+              zoomLevel > 200 ? `text-xl md:text-2xl lg:text-3xl` :
+                zoomLevel > 180 ? `text-lg md:text-xl lg:text-2xl` :
+                  zoomLevel > 140 ? `text-base md:text-lg lg:text-xl` :
+                    zoomLevel > 120 ? `text-sm md:text-base lg:text-lg` :
+                      zoomLevel > 100 ? `text-xs md:text-sm` :
+                        `text-2xs md:text-xs`
+          ),
 
           // Variant specific styling
           variant === "speech"
-            ? "rounded-[100px] bg-white text-slate-900 italic font-medium max-w-[85%]"
+            ? "rounded-[100px] bg-white text-slate-900 font-medium max-w-[85%]"
             : "rounded-none bg-transparent text-white font-bold border-none shadow-none max-w-[95%] [text-shadow:0_2px_4px_rgba(0,0,0,0.8),0_0_10px_rgba(0,0,0,0.5)]",
 
           isVisible ? `block animate-in fade-in zoom-in duration-500` : `hidden`,
@@ -90,15 +101,24 @@ export function Bubble({ children, onChange, variant = "caption" }: {
           )} />
         )}
 
-        <ContentEditable
-          html={text.current}
-          className={cn(
+        {dbRecordId ? (
+          <div className={cn(
             "line-clamp-3 select-text",
-            variant === "caption" ? "text-xl md:text-2xl lg:text-3xl" : ""
-          )}
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
+            variant === "caption" ? "text-xs md:text-sm lg:text-base" : ""
+          )}>
+            {text.current}
+          </div>
+        ) : (
+          <ContentEditable
+            html={text.current}
+            className={cn(
+              "line-clamp-3 select-text",
+              variant === "caption" ? "text-xs md:text-sm lg:text-base" : ""
+            )}
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+        )}
       </div>
     </div>
   )

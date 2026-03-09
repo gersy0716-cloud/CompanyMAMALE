@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { getComicRecords } from "@/app/queries/getComicRecords"
 import { cn } from "@/lib/utils"
 import { useStore } from "@/app/store"
-import { getPreset } from "@/app/engine/presets"
+import { getPreset, PresetName, presets } from "@/app/engine/presets"
 import { RenderedScene } from "@/types"
 
 import { Play, Calendar, Layers, Clock } from "lucide-react"
@@ -20,7 +20,6 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
         const fetchRecords = async () => {
             try {
                 const data = await getComicRecords()
-                console.log("Fetched records:", data)
                 setRecords(data)
                 onDataLoaded?.(data.length)
             } catch (err) {
@@ -43,10 +42,8 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
             let savedLayouts: string[] = []
 
             if (Array.isArray(panelsJsonRaw)) {
-                // legacy format
                 panelsData = panelsJsonRaw
             } else if (panelsJsonRaw.panels) {
-                // new format
                 panelsData = panelsJsonRaw.panels
                 savedLayouts = panelsJsonRaw.layouts || []
             }
@@ -59,11 +56,10 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
 
             const renderedScenes: Record<string, RenderedScene> = {}
 
-            // We use the full images array (which now preserves indices)
             images.forEach((url: string, i: number) => {
-                if (!url) return // still skip empty values for the actual scene, or keep it as empty?
+                if (!url) return
                 renderedScenes[`${i}`] = {
-                    renderId: `history_${record.Id}_${i}`,
+                    renderId: `history_${record.id || record.Id}_${i}`,
                     status: "pregenerated",
                     assetUrl: url,
                     alt: panels[i] || "",
@@ -91,16 +87,12 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
                 isGeneratingText: false,
             })
 
-            // Set the record ID for updates/continuation
-            setDbRecordId(record.Id)
+            setDbRecordId(record.id || record.Id)
 
             if (isPage) {
                 router.push('/')
             } else {
-                window.scrollTo({
-                    top: document.body.scrollHeight,
-                    behavior: 'smooth'
-                })
+                window.scrollTo({ top: 0, behavior: 'smooth' })
             }
         } catch (e) {
             console.error("Failed to load comic:", e)
@@ -118,9 +110,7 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
         )
     }
 
-    if (records.length === 0) {
-        return null;
-    }
+    if (records.length === 0) return null
 
     return (
         <div className={cn("w-full max-w-[1700px] mx-auto py-12 px-4 md:px-8 relative z-10", isPage ? "pt-4" : "")}>
@@ -133,14 +123,15 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-12">
                 {records.map((record, index) => {
-                    const uniqueKey = record.Id || `comic_${index}`
+                    const recordId = record.id || record.Id
+                    const uniqueKey = recordId || `comic_${index}`
                     let images: string[] = []
                     try {
                         images = typeof record.panel_images === 'string' ? JSON.parse(record.panel_images) : record.panel_images
                     } catch (e) { }
 
-                    const hasImages = images && images.length > 0;
-                    const coverImage = hasImages ? images[0] : null;
+                    const hasImages = images && images.length > 0
+                    const coverImage = hasImages ? images[0] : null
 
                     return (
                         <div
@@ -148,26 +139,14 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
                             onClick={() => handleLoadComic(record)}
                             className="group relative cursor-pointer"
                         >
-                            {/* Comic Book Stack Effect */}
                             <div className="relative aspect-[3/4] mb-4">
-                                {/* Bottom Layer */}
                                 <div className="absolute inset-0 bg-white rounded-lg shadow-sm translate-x-1.5 translate-y-1.5 border border-slate-200/60" />
-                                {/* Middle Layer */}
                                 <div className="absolute inset-0 bg-white rounded-lg shadow-sm translate-x-0.75 translate-y-0.75 border border-slate-200/60" />
-
-                                {/* Top Layer (Cover) */}
                                 <div className="absolute inset-0 bg-white rounded-lg overflow-hidden border border-slate-200 shadow-md group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-500">
                                     {coverImage ? (
                                         <div className="w-full h-full relative overflow-hidden">
                                             <img src={coverImage} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                            {/* Hover Overlay */}
-                                            <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-all duration-500 flex items-center justify-center">
-                                                <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                                                    <div className="bg-white text-slate-900 rounded-full p-3 shadow-2xl">
-                                                        <Play className="w-6 h-6 fill-current ml-0.5" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-all duration-500" />
                                         </div>
                                     ) : (
                                         <div className="w-full h-full bg-slate-50 flex flex-col items-center justify-center p-6 gap-3">
@@ -176,25 +155,19 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
                                         </div>
                                     )}
 
-                                    {/* Style Tag */}
                                     <div className="absolute top-3 left-3">
-                                        <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[9px] font-black tracking-widest px-2 py-0.5 rounded shadow-sm border border-slate-100 uppercase">
-                                            {record.style || 'DEFAULT'}
+                                        <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm border border-white/50">
+                                            风格：{presets[record.style as PresetName]?.label || record.style || '默认'}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Info Section */}
                             <div className="flex flex-col gap-1.5 px-0.5 transition-colors group-hover:text-slate-900">
                                 <h3 className="font-bold text-slate-700 text-sm line-clamp-2 leading-snug tracking-tight">
                                     {record.prompt || "未命名故事"}
                                 </h3>
                                 <div className="flex items-center gap-3 text-slate-400 text-[10px] font-semibold">
-                                    <div className="flex items-center gap-1">
-                                        <Layers className="w-3 h-3" />
-                                        <span>{hasImages ? images.length : 0} 镜</span>
-                                    </div>
                                     {record.status !== "已完成" && (
                                         <div className="flex items-center gap-1 text-amber-500">
                                             <Clock className="w-3 h-3" />
@@ -207,7 +180,6 @@ export function RecentComics({ isPage = false, onDataLoaded }: { isPage?: boolea
                     )
                 })}
             </div>
-
-        </div >
+        </div>
     )
 }
