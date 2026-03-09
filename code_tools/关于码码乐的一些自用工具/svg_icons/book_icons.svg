@@ -1,27 +1,98 @@
-<!-- Borrow Icon (借阅 - 拿走) -->
-<svg width="200" height="200" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Shelf Background -->
-  <path d="M50 400 H462" stroke="#adb5bd" stroke-width="20" stroke-linecap="round"/>
-  <!-- Static Books (Gray) -->
-  <rect x="80" y="200" width="60" height="200" rx="10" fill="#dee2e6" />
-  <rect x="150" y="200" width="60" height="200" rx="10" fill="#dee2e6" />
-  <!-- Moving Book (Blue) -->
-  <g transform="translate(100, -80) rotate(10)">
-    <rect x="220" y="150" width="80" height="200" rx="15" fill="#4dabf7" stroke="#339af0" stroke-width="5"/>
-    <path d="M320 180 L420 80 M420 80 L370 80 M420 80 L420 130" stroke="#51cf66" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
+<!-- ============================================== -->
+<!-- 码码乐自用 - 图书借阅柜 方案B (正式版 - 极致防遮挡定稿) -->
+<!-- 提取时间：全细节还原，轻量化位移，互不遮挡 -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- 模式 1：静态版 (标准状态 - 优化布局)               -->
+<!-- ============================================== -->
+
+<!-- [静态] 取书 (Borrow) -->
+<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="#e6fcf5" />
+    <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="none" stroke="#0ab39c" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="40" y="55" width="55" height="75" rx="6" fill="#0ab39c" />
+    <line x1="50" y1="55" x2="50" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
+    <g>
+        <path d="M 105 85 Q 135 85 135 55" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" />
+        <path d="M 125 65 L 135 55 L 145 65" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
 </svg>
 
-<!-- Return Icon (归还 - 放入) -->
-<svg width="200" height="200" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Shelf Background -->
-  <path d="M50 400 H462" stroke="#adb5bd" stroke-width="20" stroke-linecap="round"/>
-  <!-- Static Books (Gray) -->
-  <rect x="80" y="200" width="60" height="200" rx="10" fill="#dee2e6" />
-  <rect x="372" y="200" width="60" height="200" rx="10" fill="#dee2e6" />
-  <!-- Moving Book (Orange) -->
-  <g transform="translate(0, -100)">
-    <rect x="226" y="150" width="80" height="200" rx="15" fill="#ff922b" stroke="#f76707" stroke-width="5"/>
-    <path d="M266 120 V20 M266 120 L236 90 M266 120 L296 90" stroke="#ff6b6b" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
+<!-- [静态] 放书 (Return - 优化间距) -->
+<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="#fff4e6" />
+    <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="none" stroke="#f39c12" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="65" y="55" width="55" height="75" rx="6" fill="#f39c12" />
+    <line x1="75" y1="55" x2="75" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
+    <g>
+        <path d="M 15 105 Q 15 75 45 75" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" />
+        <path d="M 35 65 L 45 75 L 35 85" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+</svg>
+
+
+<!-- ============================================== -->
+<!-- 模式 2：动态版 (轻量化往复循环定稿)                 -->
+<!-- ============================================== -->
+
+<!-- [动态] 取书 (Borrow - 轻量防遮挡) -->
+<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .b-x { animation: bX_svg 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .b-y { animation: bY_svg 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes bX_svg { 0%, 10% { transform: translateX(0); } 35%, 65% { transform: translateX(12px); } 90%, 100% { transform: translateX(0); } }
+        @keyframes bY_svg { 0%, 15% { transform: translateY(0); } 40%, 65% { transform: translateY(-28px); } 90%, 100% { transform: translateY(0); } }
+        
+        .b-arrow { animation: bA_svg 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes bA_svg { 0%, 10% { stroke-dashoffset: 80; opacity: 0; transform: translate(0,0); } 25% { stroke-dashoffset: 0; opacity: 1; } 40%, 65% { transform: translate(6px, -4px); opacity: 1; } 80%, 100% { opacity: 0; transform: translate(6px, -4px); } }
+    </style>
+    <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="#e6fcf5" />
+    <path d="M 40 40 L 90 50 V 120 L 40 110 Z" fill="none" stroke="#0ab39c" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
+    <g class="b-x">
+        <g class="b-y">
+            <rect x="40" y="55" width="55" height="75" rx="6" fill="#0ab39c" />
+            <line x1="50" y1="55" x2="50" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
+        </g>
+    </g>
+    <g class="b-arrow" stroke-dasharray="80" stroke-dashoffset="0">
+        <path d="M 105 85 Q 135 85 135 55" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" />
+        <path d="M 125 65 L 135 55 L 145 65" stroke="#0ab39c" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+</svg>
+
+<!-- [动态] 放书 (Return - 轻量防遮挡+优空间) -->
+<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .r-x-svg { animation: rX_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .r-y-svg { animation: rY_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .r-rot-svg { animation: rR_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; transform-origin: 120px 130px; }
+        
+        @keyframes rX_s { 0%, 10% { transform: translateX(-18px); } 40%, 65% { transform: translateX(0); } 90%, 100% { transform: translateX(-18px); } }
+        @keyframes rY_s { 0%, 15% { transform: translateY(-8px); } 45%, 65% { transform: translateY(0); } 90%, 100% { transform: translateY(-8px); } }
+        @keyframes rR_s { 0%, 12% { transform: rotate(-18deg); } 42%, 65% { transform: rotate(0deg); } 90%, 100% { transform: rotate(-18deg); } }
+        
+        .r-arrow-svg { animation: rA_s 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes rA_s {
+            0%, 10% { transform: translate(-5px, -3px); opacity: 0; stroke-dashoffset: 80; }
+            22%  { transform: translate(-3px, -2px); opacity: 1; stroke-dashoffset: 0; }
+            42%, 65%  { transform: translate(8px, 0px); opacity: 1; stroke-dashoffset: 0; }
+            85%, 100% { transform: translate(8px, 0px); opacity: 0; stroke-dashoffset: 0; }
+        }
+    </style>
+    <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="#fff4e6" />
+    <path d="M 70 50 L 120 40 V 110 L 70 120 Z" fill="none" stroke="#f39c12" opacity="0.3" stroke-width="4" stroke-linejoin="round"/>
+    <g class="r-x-svg">
+        <g class="r-y-svg">
+            <g class="r-rot-svg">
+                <rect x="65" y="55" width="55" height="75" rx="6" fill="#f39c12" />
+                <line x1="75" y1="55" x2="75" y2="130" stroke="#ffffff" stroke-width="3" opacity="0.5" />
+                <circle cx="120" cy="125" r="3" fill="#ffffff" opacity="0.8" />
+            </g>
+        </g>
+    </g>
+    <g class="r-arrow-svg" stroke-dasharray="80" stroke-dashoffset="0">
+        <path d="M 15 105 Q 15 75 45 75" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" />
+        <path d="M 35 65 L 45 75 L 35 85" stroke="#f39c12" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
 </svg>
