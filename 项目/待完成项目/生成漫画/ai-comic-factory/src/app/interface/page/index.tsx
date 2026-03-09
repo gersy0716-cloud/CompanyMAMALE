@@ -56,16 +56,13 @@ export function Page({ page }: { page: number }) {
 
   return (
     <div
-      // deprecated
-      // ref={pageRef}
       className={cn(
-        `w-full`,
+        `w-full h-full flex items-center justify-center`,
         `print:w-screen`,
         `print:break-after-all`
       )}
       style={{
-        padding: `${Math.round((zoomLevel / 100) * 16)}px`
-        // marginLeft: `${zoomLevel > 100 ? `100`}`
+        padding: `12px`
       }}
     >
       <div
@@ -74,12 +71,17 @@ export function Page({ page }: { page: number }) {
           `transition-all duration-300 ease-in-out`,
           `bg-white rounded-[var(--radius-lg)]`,
           `border border-white/40 shadow-xl`,
-          `hover:shadow-2xl hover:-translate-y-1`,
           `print:shadow-none`,
           `print:border-0`,
+          `flex flex-col`
         )}
         style={{
-          padding: `${Math.round((zoomLevel / 100) * 20)}px`
+          padding: `clamp(8px, 2vh, 20px)`,
+          maxHeight: `100%`,
+          maxWidth: `100%`,
+          width: `auto`,
+          height: `auto`,
+          aspectRatio: `297 / 210`
         }}
       >
         <LayoutElement page={page} nbPanels={panelsPerPage} />

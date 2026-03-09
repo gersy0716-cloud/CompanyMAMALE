@@ -7,7 +7,7 @@ import { RenderedScene, Settings } from "@/types"
  * Prioritized sequence: gemini-3.1-flash-image-preview -> gemini-3-pro-image-preview-2k -> nano-banana-2
  */
 
-const serverImageApiUrl = "https://3w-api.mamale.vip/api/app/aiJimeng3/myTextToImage"
+const serverImageApiUrl = "https://3w-api.mamale.vip/api/app/aiJimeng/myTextToImage"
 const serverImageApiToken = "c1863285-25d1-44fe-805c-5ddf611f83d3"
 
 export async function newRender({
@@ -48,7 +48,9 @@ export async function newRender({
       },
       body: JSON.stringify({
         prompt,
+        seed: -1,
         size: "1024*1024",
+        isHd: true
       }),
       cache: "no-store",
     })
@@ -60,10 +62,14 @@ export async function newRender({
     }
 
     const result = await res.json()
+    console.log(`[Render] Jimeng API full response:`, JSON.stringify(result, null, 2))
 
     // Handle both OpenAI standard format and internal Mamale formats
     let imageUrl = ""
-    if (result.data && Array.isArray(result.data) && result.data[0]?.url) {
+    if (Array.isArray(result) && typeof result[0] === 'string') {
+      // Direct array of strings format: ["https://s.mamale.vip/...png"]
+      imageUrl = result[0]
+    } else if (result.data && Array.isArray(result.data) && result.data[0]?.url) {
       imageUrl = result.data[0].url
     } else if (result.url) {
       imageUrl = result.url

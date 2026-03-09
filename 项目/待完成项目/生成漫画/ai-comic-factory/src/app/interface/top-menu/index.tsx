@@ -132,19 +132,6 @@ export function TopMenu() {
       `space-y-6 xl:space-y-0 xl:space-x-10`,
       `font-[var(--font-main)]`
     )}>
-      <div className="flex flex-row items-center space-x-6 shrink-0">
-        <button
-          onClick={() => router.push('/')}
-          className="flex items-center justify-center w-14 h-14 glass-input hover:bg-white/40 text-slate-700 rounded-full shadow-md transition-all active:scale-90"
-          title="返回主页"
-        >
-          <span className="text-2xl">←</span>
-        </button>
-        <div className="flex flex-row items-center font-[var(--font-heading)] font-bold text-3xl tracking-tight mr-4">
-          <span className="text-slate-800 text-2xl xl:text-3xl">码码乐</span>
-          <span className="bg-gradient-to-br from-blue-500 to-indigo-600 bg-clip-text text-transparent ml-2 text-2xl xl:text-3xl">AI</span>
-        </div>
-      </div>
       {/* Middle Controls: Style, Layout, Toggles */}
       <div className="flex flex-row items-center gap-4 w-full xl:w-auto overflow-x-auto no-scrollbar py-2 px-1">
         {/* Style and Layout Group */}

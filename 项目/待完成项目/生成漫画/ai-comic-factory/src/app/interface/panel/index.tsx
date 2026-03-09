@@ -11,6 +11,7 @@ import { injectSpeechBubbleInTheBackground } from "@/lib/bubble/injectSpeechBubb
 import { cn } from "@/lib/utils"
 import { getInitialRenderedScene } from "@/lib/getInitialRenderedScene"
 import { Progress } from "@/app/interface/progress"
+import { Button } from "@/components/ui/button"
 
 import { EditModal } from "../edit-modal"
 import { getSettings } from "../settings-dialog/getSettings"
@@ -89,14 +90,14 @@ export function Panel({
 
   const timeoutRef = useRef<any>(null)
 
-  const enableRateLimiter = false
+  const enableRateLimiter = true
 
   const [renderingModelVendor, _setRenderingModelVendor] = useLocalStorage<RenderingModelVendor>(
     localStorageKeys.renderingModelVendor,
     defaultSettings.renderingModelVendor
   )
 
-  let delay = enableRateLimiter ? (1000 + (500 * panelIndex)) : 1000
+  let delay = enableRateLimiter ? (2000 * panelIndex) : 1000
 
 
   const addSpeechBubble = async () => {
@@ -158,6 +159,8 @@ export function Panel({
     nbFrames: number
     revision: number
   }) => {
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
     console.log(`panel/index.tsx: startImageGeneration(${JSON.stringify({ prompt, width, height, nbFrames, revision }, null, 2)})`)
     if (!prompt?.length) { return }
 
@@ -200,7 +203,8 @@ export function Panel({
           }
         } catch (err) {
           // "Failed to load the panel! Don't worry, we are retrying..")
-
+          // Add random jitter before retry to further stagger requests
+          await sleep(3000 + Math.random() * 3000)
           try {
             newRendered = await newRender({
               prompt: cacheInvalidationHack + "   " + prompt,
@@ -232,7 +236,7 @@ export function Panel({
           if (newRendered.status === "completed") {
             setGeneratingImages(panelId, false)
             addToUpscaleQueue(panelId, newRendered)
-            addSpeechBubble()
+            // addSpeechBubble() // Disabled experimental pixel-injection
           } else if (!newRendered.status || newRendered.status === "error") {
             setGeneratingImages(panelId, false)
           } else {
@@ -303,7 +307,7 @@ export function Panel({
           console.log("panel finished!")
           setGeneratingImages(panelId, false)
           addToUpscaleQueue(panelId, newRendered)
-          addSpeechBubble()
+          // addSpeechBubble() // Disabled experimental pixel-injection
 
         }
       } catch (err) {
@@ -392,6 +396,11 @@ export function Panel({
     setPanelPrompt(newPrompt, panelIndex)
   }
 
+  const handleSaveSpeech = (newSpeech: string) => {
+    console.log(`Asked to save a new speech: ${newSpeech}`)
+    setPanelSpeech(newSpeech, panelIndex)
+  }
+
   const handleSaveCaption = (newCaption: string) => {
     console.log(`Asked to save a new caption: ${newCaption}`)
     setPanelCaption(newCaption, panelIndex)
@@ -400,17 +409,35 @@ export function Panel({
     return (
       <div className={cn(
         frameClassName,
-        `flex flex-col items-center justify-center`,
+        `flex flex-col items-center justify-center p-8 text-center`,
         className,
       )}>
-        <Progress isLoading />
+        {rendered.status === "error" ? (
+          <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
+            <div className="text-4xl text-slate-300 mb-2">⚠️</div>
+            <div className="text-slate-500 font-bold text-sm">
+              {rendered.error?.includes("Limit") ? "服务器太忙了" : "生成出错了"}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReload}
+              className="mt-2 rounded-full border-slate-200 text-slate-500 hover:bg-slate-50 font-bold"
+            >
+              重试一下
+            </Button>
+          </div>
+        ) : (
+          <Progress isLoading />
+        )}
       </div>
     )
   }
 
   const hasSucceededOrFailed =
     rendered.status === "completed" ||
-    rendered.status === "error"
+    rendered.status === "error" ||
+    rendered.status === "pregenerated"
 
   return (
     <div className={cn(
@@ -421,8 +448,11 @@ export function Panel({
       onMouseEnter={() => setMouseOver(true)}
       onMouseLeave={() => setMouseOver(false)}
     >
+      {(prompt && rendered.assetUrl && speech)
+        ? <Bubble variant="speech" onChange={handleSaveSpeech}>{speech}</Bubble>
+        : null}
       {(prompt && rendered.assetUrl && caption)
-        ? <Bubble onChange={handleSaveCaption}>{caption}</Bubble>
+        ? <Bubble variant="caption" onChange={handleSaveCaption}>{caption}</Bubble>
         : null}
       <div
         className={cn(

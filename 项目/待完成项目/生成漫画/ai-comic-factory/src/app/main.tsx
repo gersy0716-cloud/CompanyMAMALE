@@ -2,6 +2,8 @@
 
 import { Suspense, useEffect, useRef, useState, useTransition } from "react"
 import { useLocalStorage } from "usehooks-ts"
+import { useRouter } from "next/navigation"
+import { Book, ArrowLeft } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { fonts } from "@/lib/fonts"
@@ -13,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { HeroSection } from "./interface/hero-section"
 import { useStore } from "./store"
 import { Zoom } from "./interface/zoom"
+import { TopMenu } from "./interface/top-menu"
 import { BottomBar } from "./interface/bottom-bar"
 import { Page } from "./interface/page"
 import { getStoryContinuation } from "./queries/getStoryContinuation"
@@ -24,6 +27,7 @@ import { getSettings } from "./interface/settings-dialog/getSettings"
 
 export default function Main() {
   const [_isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const llmVendorConfig = useLLMVendorConfig()
   const { config, isConfigReady } = useDynamicConfig()
@@ -53,10 +57,12 @@ export default function Main() {
 
   const speeches = useStore(s => s.speeches)
   const setSpeeches = useStore(s => s.setSpeeches)
-
   const captions = useStore(s => s.captions)
   const setCaptions = useStore(s => s.setCaptions)
-
+  const showCaptions = useStore(s => s.showCaptions)
+  const setShowCaptions = useStore(s => s.setShowCaptions)
+  const showSpeeches = useStore(s => s.showSpeeches)
+  const setShowSpeeches = useStore(s => s.setShowSpeeches)
   const zoomLevel = useStore(s => s.zoomLevel)
 
   const [waitABitMore, setWaitABitMore] = useState(false)
@@ -66,7 +72,13 @@ export default function Main() {
     defaultSettings.userDefinedMaxNumberOfPages
   )
 
-  const [dbRecordId, setDbRecordId] = useState<number | null>(null)
+  const dbRecordId = useStore(s => s.dbRecordId)
+  const setDbRecordId = useStore(s => s.setDbRecordId)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const numberOfPanels = Object.keys(panels).length
   const panelGenerationStatus = useStore(s => s.panelGenerationStatus)
@@ -114,7 +126,7 @@ export default function Main() {
       let reloaded = false
       keysToClear.forEach(key => {
         if (localStorage.getItem(key)) {
-          console.log(`Cleaning up old key: ${key}`)
+          console.log(`Cleaning up old key: ${key} `)
           localStorage.removeItem(key)
           reloaded = true
         }
@@ -133,6 +145,16 @@ export default function Main() {
     preset: "",
   })
 
+  // Auto-scroll to comic when loading finishes
+  useEffect(() => {
+    if (hasAtLeastOnePage && hasNoPendingGeneration && !isGeneratingStory) {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  }, [hasNoPendingGeneration, isGeneratingStory, hasAtLeastOnePage])
+
   useEffect(() => {
     if (isConfigReady) {
 
@@ -145,17 +167,42 @@ export default function Main() {
 
   // react to prompt changes
   useEffect(() => {
-    // console.log(`main.tsx: asked to re-generate!!`)
+    // console.log(`main.tsx: asked to re - generate!!`)
     if (!prompt) { return }
 
 
     // a quick and dirty hack to skip prompt regeneration,
     // unless the prompt has really changed
+    // modified guard: allow continuation if previousNbPanels < currentNbPanels
+    const isInitialGeneration = previousNbPanels === 0
     if (
-      prompt === useStore.getState().currentClap?.meta.description
+      (prompt === useStore.getState().currentClap?.meta.description ||
+        useStore.getState().renderedScenes["0"]?.status === "pregenerated") &&
+      isInitialGeneration
     ) {
-      console.log(`loading a pre-generated comic, so skipping prompt regeneration..`)
+      console.log(`loading a pre - generated comic, and it's initial, so skipping prompt regeneration..`)
       return
+    }
+
+    // Initialize ref.current if we are resuming from a story that already has panels in the store
+    // but the ref is empty (e.g. after loading from history)
+    if (ref.current.existingPanels.length === 0 && panels.length > 0) {
+      console.log("Initializing ref.current.existingPanels from store...")
+      // We reconstruct temporary GeneratedPanel objects from existing store data
+      // This is a bit of a shim but needed for the continuity logic
+      ref.current.existingPanels = panels.map((p, i) => ({
+        panel: i,
+        instructions: p,
+        speech: speeches[i] || "",
+        caption: captions[i] || ""
+      }))
+      ref.current.prompt = prompt
+      ref.current.preset = preset?.label || ""
+
+      // Also sync prompts/speeches/captions to ref
+      ref.current.newPanelsPrompts = [...panels]
+      ref.current.newSpeeches = [...speeches]
+      ref.current.newCaptions = [...captions]
     }
 
     // if the prompt or preset changed, we clear the cache
@@ -243,7 +290,7 @@ export default function Main() {
           ref.current.existingPanels.push(...candidatePanels)
           // console.log("ref.current.existingPanels.push(...candidatePanels) successful, now we have ref.current.existingPanels = ", ref.current.existingPanels)
 
-          // console.log(`main.tsx: converting the ${nbPanelsToGenerate} new panels into image prompts..`)
+          // console.log(`main.tsx: converting the ${ nbPanelsToGenerate } new panels into image prompts..`)
 
           const startAt = currentPanel
           const endAt = currentPanel + nbPanelsToGenerate
@@ -272,17 +319,6 @@ export default function Main() {
           setPanels(ref.current.newPanelsPrompts)
           setGeneratingStory(false)
 
-          // Save to database
-          const settings = getSettings()
-          const recordId = await saveComicRecord({
-            prompt: prompt,
-            styleId: preset.id,
-            panelsData: ref.current.existingPanels,
-            token: settings.mamaleApiKey,
-            tenantId: "c1863285-25d1-44fe-805c-5ddf611f83d3"
-          })
-          setDbRecordId(recordId)
-
           // TODO generate the clap here
 
         } catch (err) {
@@ -298,6 +334,20 @@ export default function Main() {
 
         // we could sleep here if we want to
         // await sleep(1000)
+      }
+
+      // Save to database only once after the whole generation loop
+      if (ref.current.existingPanels.length > 0) {
+        const settings = getSettings()
+        const recordId = await saveComicRecord({
+          prompt: prompt,
+          styleId: preset.id,
+          panelsData: ref.current.existingPanels,
+          layouts: useStore.getState().layouts,
+          token: settings.mamaleApiKey,
+          tenantId: "c1863285-25d1-44fe-805c-5ddf611f83d3"
+        })
+        setDbRecordId(recordId)
       }
 
       /*
@@ -342,107 +392,184 @@ export default function Main() {
         <div className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] bg-cyan-400/15 rounded-full blur-3xl animate-bounce" style={{ animationDuration: '10s' }}></div>
       </div>
 
+      {/* Top Menu (hidden on print and in showcase mode) */}
+      {hasAtLeastOnePage && (isGeneratingStory || !hasNoPendingGeneration) && (
+        <div className="print:hidden">
+          <TopMenu />
+        </div>
+      )}
+
       {/* Hero Section Header */}
-      <div className="w-full flex flex-col items-center pt-20 pb-8 z-10 relative">
-        <h1 className="font-[var(--font-heading)] font-extrabold text-5xl tracking-tight mb-4 text-slate-800">
-          AI 生漫画
-        </h1>
-        <p className="text-xl text-slate-600 mb-10 font-medium">一句话，开启你的漫画宇宙</p>
-        <HeroSection />
-      </div>
-
-      <div className={cn(
-        `flex flex-col items-center`,
-        `transition-all duration-500 ease-in-out`,
-        `px-4 md:px-8 pb-32`,
-        `min-h-screen w-full`,
-        `relative z-0`
-      )}>
+      {!hasAtLeastOnePage && (
         <div className={cn(
-          `glass-card`,
-          `w-full max-w-[1700px]`,
-          `rounded-[var(--radius-lg)]`,
-          `shadow-2xl shadow-blue-500/10`,
-          `p-6 md:p-10 lg:p-16`,
-          `transition-all duration-500`,
-          zoomLevel > 105 ? `px-0` : ``
+          "w-full flex flex-col items-center pt-20 pb-8 z-10 relative",
+          "min-h-screen"
         )}>
-          <div className={cn(
-            `flex flex-col`,
-            `space-y-12`
-          )}>
-            <div className={cn(
-              `comic-page`,
-              `grid grid-cols-1`,
-              currentNbPages > 1 ? `lg:grid-cols-2` : ``,
-              `gap-12 md:gap-16 lg:gap-24`,
-              `items-start justify-center`,
-              `mx-auto w-full`,
-              `print:grid-cols-1 print:gap-4`
+          {/* 漫画历史记录入口按钮 (右上角) */}
+          <div className="absolute top-8 right-12 z-30">
+            {isMounted && (
+              <Button
+                variant="ghost"
+                onClick={() => router.push('/history')}
+                className="bg-white/40 backdrop-blur-md hover:bg-white/80 text-slate-600 hover:text-slate-900 font-bold py-4 px-8 rounded-full shadow-sm border border-white/50 hover:shadow-md transition-all flex items-center gap-2.5 text-xl group"
+              >
+                <Book className="w-5 h-5 text-slate-500 group-hover:text-blue-500 transition-colors" />
+                <span>查看记录</span>
+              </Button>
             )}
-              style={{
-                width: `${zoomLevel}%`
-              }}>
-              {Array(currentNbPages).fill(0).map((_, i) => (
-                <Page key={i} page={i} />
-              ))}
-            </div>
+          </div>
 
-            {showNextPageButton && (
-              <div className={cn(
-                `flex flex-col items-center space-y-4 pt-8 pb-12`,
-                `print:hidden`
-              )}>
-                <div className="text-[var(--text-muted)] font-medium">对当前故事满意吗？</div>
+          <h1 className="font-[var(--font-heading)] font-extrabold text-5xl tracking-tight mb-4 text-slate-800 mt-[5vh]">
+            AI 生漫画
+          </h1>
+          <p className="text-xl text-slate-600 mb-10 font-medium">一句话，开启你的漫画宇宙</p>
+          <HeroSection />
+
+        </div>
+      )}
+
+      {hasAtLeastOnePage && (
+        <div className={cn(
+          "flex flex-col items-center",
+          "transition-all duration-500 ease-in-out",
+          "px-4 md:px-8 pb-32",
+          "min-h-screen w-full",
+          "relative z-0"
+        )}>
+          {/* Showcase Mode Back Button (Top Left) */}
+          {!isGeneratingStory && hasNoPendingGeneration && (
+            <div className="w-full max-w-[1700px] flex justify-start pt-8 pb-4">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  useStore.setState({
+                    prompt: "",
+                    dbRecordId: null,
+                    panels: [],
+                    speeches: [],
+                    captions: [],
+                    renderedScenes: {},
+                    currentNbPages: 1,
+                    currentNbPanels: useStore.getState().currentNbPanelsPerPage || 4,
+                    isGeneratingStory: false,
+                    isGeneratingText: false,
+                  })
+                  setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 50)
+                }}
+                className="flex items-center gap-3 text-slate-500 hover:text-blue-600 font-bold transition-all group py-5 px-10 rounded-full bg-white/60 hover:bg-white backdrop-blur-md shadow-md border border-white/60 text-2xl hover:scale-105 active:scale-95"
+              >
+                <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
+                <span>返回创作</span>
+              </Button>
+
+              <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md p-1.5 rounded-full border border-white/60 shadow-md ml-auto mr-4">
                 <Button
-                  className="bg-[var(--secondary)] hover:scale-105 transition-transform rounded-full px-8 h-12"
-                  onClick={() => {
-                    setCurrentNbPages(currentNbPages + 1)
-                  }}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCaptions(!showCaptions)}
+                  className={cn(
+                    "rounded-full px-5 py-1.5 text-xs font-bold transition-all h-9",
+                    showCaptions ? "bg-blue-500 text-white shadow-sm" : "text-slate-500 hover:bg-white/50"
+                  )}
                 >
-                  继续生成第 {currentNbPages + 1} 页 👀
+                  旁白文字 {showCaptions ? "ON" : "OFF"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSpeeches(!showSpeeches)}
+                  className={cn(
+                    "rounded-full px-5 py-1.5 text-xs font-bold transition-all h-9",
+                    showSpeeches ? "bg-indigo-500 text-white shadow-sm" : "text-slate-500 hover:bg-white/50"
+                  )}
+                >
+                  对话气泡 {showSpeeches ? "ON" : "OFF"}
                 </Button>
               </div>
-            )}
+            </div>
+          )}
+
+          <div className={cn(
+            "glass-card",
+            "w-full max-w-[1920px]",
+            "rounded-none md:rounded-[var(--radius-lg)]",
+            "shadow-2xl shadow-blue-500/10",
+            "p-1 md:p-2 lg:p-4",
+            "transition-all duration-500",
+            "h-[calc(100vh-120px)] flex flex-col items-center justify-center overflow-hidden"
+          )}>
+            <div className={cn(
+              "flex flex-col h-full w-full items-center justify-center"
+            )}>
+              <div className={cn(
+                "comic-page",
+                "grid",
+                currentNbPages > 1 ? "grid-cols-2" : "grid-cols-1",
+                "gap-2 md:gap-4",
+                "items-center justify-center",
+                "mx-auto w-full h-full",
+                "print:grid-cols-1 print:gap-4"
+              )}>
+                {Array(currentNbPages).fill(0).map((_, i) => (
+                  <Page key={i} page={i} />
+                ))}
+              </div>
+
+              <div className={cn(
+                "flex flex-col items-center space-y-6 pt-12 pb-12",
+                "print:hidden"
+              )}>
+                {showNextPageButton && (
+                  <div className="flex flex-col items-center gap-6">
+                    <div className="text-[var(--text-muted)] font-bold text-lg tracking-wider bg-slate-100/50 py-2 px-6 rounded-full">
+                      对当前故事满意吗？
+                    </div>
+                    <Button
+                      className="bg-indigo-600 hover:bg-indigo-700 hover:scale-105 transition-transform rounded-full px-12 h-16 text-white font-bold text-xl shadow-xl shadow-indigo-500/20"
+                      onClick={() => {
+                        setCurrentNbPages(currentNbPages + 1)
+                      }}
+                    >
+                      继续生成第 {currentNbPages + 1} 页 👀
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <Zoom />
-      <BottomBar />
+      {hasAtLeastOnePage && <BottomBar />}
 
       {/* Loading Overlay */}
-      <div className={cn(
-        `print:hidden`,
-        `z-50 fixed inset-0`,
-        `flex flex-row items-center justify-center`,
-        `transition-all duration-500 ease-in-out`,
-        isGeneratingStory
-          ? `bg-white/40 backdrop-blur-xl`
-          : `opacity-0 pointer-events-none`,
-        `font-[var(--font-heading)]`
-      )}>
+      {isMounted && (
         <div className={cn(
-          `text-center p-12 bg-white/80 rounded-[var(--radius-lg)] shadow-2xl border border-white/50`,
-          `transition-all duration-500 ease-in-out transform`,
-          isGeneratingStory ? `scale-100 opacity-100` : `scale-90 opacity-0`,
+          "print:hidden",
+          "z-50 fixed inset-0",
+          "flex flex-row items-center justify-center",
+          "transition-all duration-500 ease-in-out",
+          (isGeneratingStory || !hasNoPendingGeneration)
+            ? "bg-white/40 backdrop-blur-xl"
+            : "opacity-0 pointer-events-none"
         )}>
-          <div className="w-12 h-12 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-          <div className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent mb-2">
-            {waitABitMore ? `正在努力加载中...` : '正在构思精彩分镜...'}
-          </div>
-          <div className="text-[var(--text-muted)]">
-            {waitABitMore ? `请求较多，请稍候片刻...` : '码码乐 AI 正在为您排版布局'}
-          </div>
-        </div>
-      </div>
+          <div className={cn(
+            "text-center p-12 bg-white/80 rounded-[var(--radius-lg)] shadow-2xl border border-white/50",
+            "transition-all duration-500 ease-in-out transform",
+            (isGeneratingStory || !hasNoPendingGeneration) ? "scale-100 opacity-100" : "scale-90 opacity-0",
+          )}>
+            <div className="w-12 h-12 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent mb-2">
+              {waitABitMore ? "正在努力加载中..." : "正在构思精彩分镜..."}
+            </div>
+            <div className="text-[var(--text-muted)] mb-8">
+              {waitABitMore ? "请求较多，请稍候片刻..." : "码码乐 AI 正在为您排版布局"}
+            </div>
 
-      {/* Version Info */}
-      <div className="fixed bottom-6 right-8 z-30 flex flex-col items-end space-y-2 pointer-events-none">
-        <div className="glass-card px-4 py-2 rounded-full text-xs font-bold text-slate-600 shadow-sm pointer-events-auto">
-          码码乐 AI 漫画工厂 v1.2.3
+          </div>
         </div>
-      </div>
+      )}
+
     </Suspense>
   )
 }

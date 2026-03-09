@@ -41,6 +41,7 @@ export const useStore = create<{
   panelGenerationStatus: Record<number, boolean>
   isGeneratingText: boolean
   atLeastOnePanelIsBusy: boolean
+  dbRecordId: number | null
 
   setCurrentNbPanelsPerPage: (currentNbPanelsPerPage: number) => void
   setMaxNbPanelsPerPage: (maxNbPanelsPerPage: number) => void
@@ -71,6 +72,7 @@ export const useStore = create<{
   setGeneratingStory: (isGeneratingStory: boolean) => void
   setGeneratingImages: (panelId: string, value: boolean) => void
   setGeneratingText: (isGeneratingText: boolean) => void
+  setDbRecordId: (dbRecordId: number | null) => void
 
   // I think we should deprecate those three functions
   // this was used to keep track of the page HTML element,
@@ -131,10 +133,11 @@ export const useStore = create<{
 
   layouts: [defaultLayout, defaultLayout, defaultLayout, defaultLayout],
 
-  zoomLevel: getParam("zoomLevel", 60),
+  zoomLevel: 100,
 
   // deprecated?
   page: undefined as unknown as HTMLDivElement,
+  dbRecordId: null as number | null,
 
   isGeneratingStory: false,
   panelGenerationStatus: {},
@@ -243,6 +246,9 @@ export const useStore = create<{
     })
   },
 
+  setDbRecordId: (dbRecordId: number | null) => {
+    set({ dbRecordId })
+  },
   setRendered: (panelId: string, renderedScene: RenderedScene) => {
     const { renderedScenes } = get()
     set({

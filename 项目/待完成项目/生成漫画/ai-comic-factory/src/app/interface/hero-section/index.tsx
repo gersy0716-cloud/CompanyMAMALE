@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLocalStorage } from "usehooks-ts"
+import { Mic, Dices, Sparkles } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { PresetName, defaultPreset, presets } from "@/app/engine/presets"
@@ -10,6 +11,7 @@ import { useStore } from "@/app/store"
 import { Button } from "@/components/ui/button"
 import { useOAuth } from "@/lib/useOAuth"
 import { useIsBusy } from "@/lib/useIsBusy"
+import { getRandomInspiration } from "@/app/queries/getRandomInspiration"
 
 import { localStorageKeys } from "../settings-dialog/localStorageKeys"
 import { defaultSettings } from "../settings-dialog/defaultSettings"
@@ -20,8 +22,21 @@ import { getLocalStorageShowSpeeches } from "@/lib/getLocalStorageShowSpeeches"
 const PRESET_GROUPS = {
     "🌸 亚洲": Object.values(presets).filter(p => p.family === "asian"),
     "🦅 美式": Object.values(presets).filter(p => p.family === "american"),
-    "🏰 欧洲": Object.values(presets).filter(p => p.family === "european"),
+    "🏰 欧洲": Object.values(presets).filter(p => p.family === "european" && p.id !== "random"),
 }
+
+const RANDOM_PROMPTS = [
+    "宇航员在火星发现了一只发光的赛博朋克流浪猫",
+    "一只背着双肩包的柴犬在东京街头当侦探调查骨头失踪案",
+    "魔法学院里，一个不会用魔力的小男孩竟然用科学实验打败了巨龙",
+    "未来2080年的夜之城，送货员小明驾驶飞车遭遇了黑客幽灵的袭击",
+    "童话森林里，大灰狼决定金盆洗手开了一家素食面包店",
+    "三国时期的诸葛亮意外穿越到了现代的电竞总决赛现场并且成为了指挥",
+    "一只在故宫里迷路的神兽饕餮遇到了一群拿着相机的外国游客",
+    "沉睡百年的吸血鬼醒来后发现自己竟然对WiFi信号过敏",
+    "深海里的人鱼公主不仅不开演唱会了，还成了一个狂热的机械工程师",
+    "在世界末日后的一片废墟中，一个小女孩和一台老旧的服务机器人一起种出了一朵向日葵",
+]
 
 export function HeroSection() {
     const searchParams = useSearchParams()
@@ -41,6 +56,8 @@ export function HeroSection() {
     const generate = useStore(s => s.generate)
     const isBusy = useIsBusy()
 
+    const [isMounted, setIsMounted] = useState(false)
+
     const [lastDraftPromptB, setLastDraftPromptB] = useLocalStorage<string>(
         "AI_COMIC_FACTORY_LAST_DRAFT_PROMPT_B",
         requestedStoryPrompt
@@ -57,10 +74,10 @@ export function HeroSection() {
     )
 
     const [showAuthWall, setShowAuthWall] = useState(false)
-    const [isMounted, setIsMounted] = useState(false)
 
     // 语音识别状态
     const [isRecording, setIsRecording] = useState(false)
+    const [isInspirationLoading, setIsInspirationLoading] = useState(false)
     const recognitionRef = useRef<any>(null)
 
     useEffect(() => {
@@ -137,6 +154,24 @@ export function HeroSection() {
         }
     }
 
+    const setRandomPrompt = async () => {
+        if (isInspirationLoading) return
+        setIsInspirationLoading(true)
+        try {
+            const newPrompt = await getRandomInspiration()
+            if (newPrompt) {
+                setDraftPrompt(newPrompt)
+            }
+        } catch (e) {
+            console.error("Failed to get inspiration:", e)
+            // fallback to local if needed
+            const randomIndex = Math.floor(Math.random() * RANDOM_PROMPTS.length)
+            setDraftPrompt(RANDOM_PROMPTS[randomIndex])
+        } finally {
+            setIsInspirationLoading(false)
+        }
+    }
+
     return (
         <div className={cn(
             "w-full max-w-[1100px] mx-auto",
@@ -146,14 +181,12 @@ export function HeroSection() {
         )}>
             <div className="flex flex-col gap-6">
 
-                {/* 输入框区域 */}
-                <div className="relative group">
+                {/* 输入框与操作区复合容器 */}
+                <div className="bg-slate-50 border-2 border-slate-100 rounded-[28px] overflow-hidden focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all shadow-inner">
                     <textarea
                         className={cn(
-                            "w-full min-h-[140px] p-6 text-lg md:text-xl",
-                            "bg-slate-50 border-2 border-slate-100 rounded-2xl",
-                            "focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all resize-y",
-                            "placeholder:text-slate-400 text-slate-800 font-medium"
+                            "w-full min-h-[160px] p-8 text-xl md:text-2xl outline-none bg-transparent",
+                            "placeholder:text-slate-300 text-slate-800 font-medium resize-none"
                         )}
                         placeholder="描述你的故事场景... (例如：宇航员在火星发现一只发光的猫咪)"
                         value={draftPrompt}
@@ -161,40 +194,67 @@ export function HeroSection() {
                         disabled={isBusy}
                     />
 
-                    {/* 右下角的操作按钮 */}
-                    <div className="absolute bottom-4 right-4 flex items-center gap-3">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className={cn(
-                                "w-12 h-12 rounded-full border-2 transition-all shadow-sm bg-white hover:bg-slate-50",
-                                isRecording ? "border-red-500 text-red-500 animate-pulse bg-red-50" : "border-slate-200 text-slate-500 hover:text-slate-700"
-                            )}
-                            onClick={toggleRecording}
-                            title={isRecording ? "停止录音" : "语音输入"}
-                            disabled={isBusy}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                                <line x1="12" x2="12" y1="19" y2="22" />
-                            </svg>
-                        </Button>
+                    {/* 一体化操作工具栏 */}
+                    <div className="px-6 py-4 bg-white/50 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <Button
+                                variant="ghost"
+                                className={cn(
+                                    "h-12 px-5 rounded-xl transition-all font-bold text-base flex items-center gap-2",
+                                    isRecording
+                                        ? "bg-red-50 text-red-500 border-red-200 border animate-pulse"
+                                        : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/80"
+                                )}
+                                onClick={toggleRecording}
+                                disabled={isBusy}
+                            >
+                                {isMounted && <Mic className={cn("w-5 h-5", isRecording ? "animate-pulse" : "")} />}
+                                <span>{isRecording ? "正在倾听..." : "语音输入"}</span>
+                            </Button>
+
+                            <Button
+                                variant="ghost"
+                                className={cn(
+                                    "h-12 px-5 rounded-xl text-amber-600 hover:bg-amber-50 font-bold text-base flex items-center gap-2",
+                                    isInspirationLoading && "opacity-70 cursor-not-allowed"
+                                )}
+                                onClick={setRandomPrompt}
+                                disabled={isBusy || isInspirationLoading}
+                            >
+                                {isInspirationLoading ? (
+                                    <div className="w-4 h-4 border-2 border-amber-600/30 border-t-amber-600 rounded-full animate-spin" />
+                                ) : (
+                                    isMounted && <Dices className="w-5 h-5" />
+                                )}
+                                <span>{isInspirationLoading ? "正在寻找灵感..." : "随机灵感"}</span>
+                            </Button>
+                        </div>
 
                         <Button
                             className={cn(
-                                "h-12 px-8 text-lg font-bold rounded-xl transition-all",
-                                "bg-gradient-to-br from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white shadow-lg shadow-green-500/30",
+                                "w-full sm:w-auto h-14 px-10 text-xl font-bold rounded-2xl transition-all flex items-center gap-3",
+                                "bg-gradient-to-br from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white shadow-lg shadow-green-500/20",
                                 "hover:scale-105 active:scale-95",
-                                isBusy && "animate-jelly opacity-80 cursor-not-allowed"
+                                isBusy && "opacity-80 cursor-not-allowed"
                             )}
                             onClick={handleSubmit}
                             disabled={!isMounted || !draftPrompt?.trim().length || isBusy}
                         >
-                            {isBusy ? "生成中..." : "立即生成"}
+                            {isBusy ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    <span>生成中...</span>
+                                </div>
+                            ) : (
+                                <>
+                                    {isMounted && <Sparkles className="w-6 h-6" />}
+                                    <span>立即生成漫画</span>
+                                </>
+                            )}
                         </Button>
                     </div>
                 </div>
+
 
                 {/* 画风选择区域 */}
                 <div className="pt-6 border-t border-slate-100">

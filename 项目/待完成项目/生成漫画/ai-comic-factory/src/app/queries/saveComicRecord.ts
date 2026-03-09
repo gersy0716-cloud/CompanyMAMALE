@@ -4,27 +4,30 @@ const dbConfig = {
     apiBase: "https://data.520ai.cc/api/bases",
     baseId: "bsekddalnVrgIAiZYmM",
     tableId: "gaHY0ruUUs",
+    apikey: "LlrO0TdkBt6AMRiE2KN8FYVJ8Ma1z9jZ7svOpvln"
 };
 
 export async function saveComicRecord({
     prompt,
     styleId,
     panelsData,
+    layouts,
     token,
     tenantId
 }: {
     prompt: string;
     styleId: string;
     panelsData: GeneratedPanel[];
+    layouts: string[];
     token: string;
     tenantId: string;
 }): Promise<number | null> {
-    if (!token) {
-        console.warn("Database token not configured, skipping save");
+    if (!dbConfig.apikey) {
+        console.warn("Database apikey not configured, skipping save");
         return null;
     }
 
-    console.log(`[Database] Attempting save with token (len: ${token.length}, prefix: ${token.substring(0, 20)}...)`);
+    console.log(`[Database] Attempting save with apikey (len: ${dbConfig.apikey.length}, prefix: ${dbConfig.apikey.substring(0, 5)}...)`);
 
     try {
         const payload = {
@@ -32,7 +35,10 @@ export async function saveComicRecord({
             tenantid: tenantId,
             prompt: prompt,
             style: styleId,
-            panels_json: JSON.stringify(panelsData),
+            panels_json: JSON.stringify({
+                panels: panelsData,
+                layouts: layouts
+            }),
             panel_images: "[]",
             status: "生成中",
         };
@@ -42,7 +48,7 @@ export async function saveComicRecord({
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-bm-token': token,
+                'x-bm-token': dbConfig.apikey,
             },
             body: JSON.stringify(payload)
         });
@@ -71,7 +77,7 @@ export async function updateComicRecord({
     imageUrls: string[];
     token: string;
 }): Promise<void> {
-    if (!recordId || !token) return;
+    if (!recordId || !dbConfig.apikey) return;
 
     try {
         const url = `${dbConfig.apiBase}/${dbConfig.baseId}/tables/${dbConfig.tableId}/records/${recordId}`;
@@ -81,10 +87,10 @@ export async function updateComicRecord({
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'x-bm-token': token,
+                'x-bm-token': dbConfig.apikey,
             },
             body: JSON.stringify({
-                panel_images: JSON.stringify(imageUrls.filter(Boolean)),
+                panel_images: JSON.stringify(imageUrls),
                 status: hasImages ? "已完成" : "失败",
             })
         });
