@@ -42,7 +42,7 @@ export function HeroSection() {
     const searchParams = useSearchParams()
     const router = useRouter()
 
-    const requestedPreset = (searchParams?.get('preset') as PresetName) || defaultPreset
+    const requestedPreset = (searchParams?.get('preset') as PresetName) || "random"
     const requestedStoryPrompt = (searchParams?.get('storyPrompt') as string) || ""
 
     const preset = useStore(s => s.preset)

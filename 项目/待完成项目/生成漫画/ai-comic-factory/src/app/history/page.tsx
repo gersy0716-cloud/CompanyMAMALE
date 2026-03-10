@@ -18,16 +18,18 @@ export default function HistoryPage() {
                 <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[120px]"></div>
             </div>
 
-            <div className="max-w-[1700px] mx-auto px-6 md:px-12 py-12 md:py-20 flex flex-col gap-10 relative z-10">
-                <div className="flex justify-start">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="flex items-center gap-3 text-slate-400 hover:text-slate-900 font-bold transition-all group w-fit text-lg md:text-xl py-2.5 px-5 rounded-full hover:bg-slate-100/80"
-                    >
-                        <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
-                        <span>返回创作中心</span>
-                    </button>
-                </div>
+            {/* 统一的返回按钮：左上角绝对定位，样式与主页一致 */}
+            <div className="absolute top-8 left-12 z-30">
+                <button
+                    onClick={() => router.push('/')}
+                    className="bg-white/40 backdrop-blur-md hover:bg-white/80 text-slate-600 hover:text-slate-900 font-bold py-4 px-8 rounded-full shadow-sm border border-white/50 hover:shadow-md transition-all flex items-center gap-2.5 text-xl group"
+                >
+                    <ArrowLeft className="w-5 h-5 text-slate-500 group-hover:text-blue-500 transition-colors" />
+                    <span>返回创作</span>
+                </button>
+            </div>
+
+            <div className="max-w-[1700px] mx-auto px-6 md:px-12 py-12 md:py-20 flex flex-col gap-10 relative z-10 pt-24">
 
                 <div className={cn(
                     "flex flex-col items-center text-center transition-all duration-700",

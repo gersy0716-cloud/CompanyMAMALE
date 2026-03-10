@@ -403,9 +403,30 @@ export default function Main() {
       {/* Hero Section Header */}
       {!hasAtLeastOnePage && (
         <div className={cn(
-          "w-full flex flex-col items-center pt-2 pb-8 z-10 relative",
+          "w-full flex flex-col items-center pt-32 pb-8 z-10 relative",
           "min-h-[50vh]"
         )}>
+          {/* 返回互动大屏主页按钮 (左上角) */}
+          <div className="absolute top-8 left-12 z-30">
+            {isMounted && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  // 通过 postMessage 通知父窗口（InteractiveDisplay）返回主页
+                  if (window.parent !== window) {
+                    window.parent.postMessage({ type: 'navigate-home' }, '*')
+                  } else {
+                    window.history.back()
+                  }
+                }}
+                className="bg-white/40 backdrop-blur-md hover:bg-white/80 text-slate-600 hover:text-slate-900 font-bold py-4 px-8 rounded-full shadow-sm border border-white/50 hover:shadow-md transition-all flex items-center gap-2.5 text-xl group"
+              >
+                <ArrowLeft className="w-5 h-5 text-slate-500 group-hover:text-blue-500 transition-colors" />
+                <span>返回主页</span>
+              </Button>
+            )}
+          </div>
+
           {/* 漫画历史记录入口按钮 (右上角) */}
           <div className="absolute top-8 right-12 z-30">
             {isMounted && (
@@ -437,9 +458,9 @@ export default function Main() {
           "min-h-screen w-full",
           "relative z-0"
         )}>
-          {/* Showcase Mode Back Button (Top Left) */}
+          {/* Showcase Mode Back Button (Top Left) Unified Style */}
           {!isGeneratingStory && hasNoPendingGeneration && (
-            <div className="w-full max-w-[1700px] flex justify-start pt-8 pb-4">
+            <div className="absolute top-8 left-12 z-40">
               <Button
                 variant="ghost"
                 onClick={() => {
@@ -457,11 +478,16 @@ export default function Main() {
                   })
                   setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 50)
                 }}
-                className="flex items-center gap-3 text-slate-500 hover:text-blue-600 font-bold transition-all group py-5 px-10 rounded-full bg-white/60 hover:bg-white backdrop-blur-md shadow-md border border-white/60 text-2xl hover:scale-105 active:scale-95"
+                className="bg-white/40 backdrop-blur-md hover:bg-white/80 text-slate-600 hover:text-slate-900 font-bold py-4 px-8 rounded-full shadow-sm border border-white/50 hover:shadow-md transition-all flex items-center gap-2.5 text-xl group"
               >
-                <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
+                <ArrowLeft className="w-5 h-5 text-slate-500 group-hover:text-blue-500 transition-colors" />
                 <span>返回创作</span>
               </Button>
+            </div>
+          )}
+
+          {!isGeneratingStory && hasNoPendingGeneration && (
+            <div className="w-full max-w-[1700px] flex justify-end pt-8 pb-4">
 
               <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md p-1.5 rounded-full border border-white/60 shadow-md ml-auto mr-4">
                 <Button
